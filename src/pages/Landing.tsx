@@ -90,9 +90,9 @@ export default function Landing() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden flex-1 flex items-center min-h-[calc(100vh-4rem)]">
+      <section className="relative overflow-hidden flex-1 flex items-center min-h-[600px] md:min-h-[calc(100vh-4rem)]">
         <div className="absolute inset-0 gradient-hero opacity-[0.03] pointer-events-none" />
-        <div className="container mx-auto px-4 py-20 md:py-32">
+        <div className="container mx-auto px-4 py-12 md:py-32">
           <div className="mx-auto max-w-4xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
               <Shield className="h-4 w-4" />
