@@ -7,19 +7,19 @@ import {
 
 const faqs = [
   {
-    question: "How does TrustLock escrow work?",
+    question: "How does Vault Agency escrow work?",
     answer:
-      "TrustLock acts as a trusted middleman. When a buyer wants to purchase something, they pay into our secure escrow. We hold the funds while the seller delivers the product or service. Once the buyer confirms receipt and both parties provide proof, the admin reviews and releases the payment to the seller.",
+      "Vault Agency acts as a trusted middleman. When a buyer wants to purchase something, they pay into our secure escrow. We hold the funds while the seller delivers the product or service. Once the buyer confirms receipt and both parties provide proof, the admin reviews and releases the payment to the seller.",
   },
   {
-    question: "Is my money safe with TrustLock?",
+    question: "Is my money safe with Vault Agency?",
     answer:
       "Absolutely! Your funds are securely held and never released until you confirm successful delivery. Our manual verification process ensures every transaction is reviewed by our team before any money changes hands.",
   },
   {
-    question: "What types of transactions can I use TrustLock for?",
+    question: "What types of transactions can I use Vault Agency for?",
     answer:
-      "TrustLock supports three types of transactions: Physical Products (electronics, vehicles, clothing), Digital Products (software, files, online courses), and Services (freelance work, repairs, consulting). Essentially, any deal where you want protection from scams.",
+      "Vault Agency supports three types of transactions: Physical Products (electronics, vehicles, clothing), Digital Products (software, files, online courses), and Services (freelance work, repairs, consulting). Essentially, any transaction where you want protection from scams.",
   },
   {
     question: "What happens if the seller doesn't deliver?",
@@ -34,7 +34,7 @@ const faqs = [
   {
     question: "Does the seller need to have an account?",
     answer:
-      "No! When a buyer creates a transaction, the seller receives a notification via email with all the deal details. The seller can view their transactions by logging in with the email address used in the transaction.",
+      "No! When a buyer creates a transaction, the seller receives a notification via email with all the transaction details. The seller can view their transactions by logging in with the email address used in the transaction.",
   },
   {
     question: "What proof do I need to upload?",
@@ -42,9 +42,9 @@ const faqs = [
       "Buyers should upload proof of delivery receipt (photos, screenshots of delivery confirmation, etc.). Sellers should upload proof of delivery/completion (shipping receipts, delivery photos, service completion screenshots). This protects both parties.",
   },
   {
-    question: "Are there any fees for using TrustLock?",
+    question: "Are there any fees for using Vault Agency?",
     answer:
-      "TrustLock charges a small service fee on each transaction to cover platform operations and security. The exact fee is displayed before you confirm your payment, so there are no hidden charges.",
+      "Vault Agency charges a small service fee on each transaction to cover platform operations and security. The exact fee is displayed before you confirm your payment, so there are no hidden charges.",
   },
 ];
 

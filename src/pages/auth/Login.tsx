@@ -58,7 +58,7 @@ export default function Login() {
             </div>
             <CardTitle className="text-2xl">Welcome Back</CardTitle>
             <CardDescription>
-              Log in to your TrustLock account
+              Log in to your Vault Agency account
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
@@ -75,7 +75,12 @@ export default function Login() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Password</Label>
+                  <Link to="/forgot-password" className="text-xs text-primary hover:underline">
+                    Forgot password?
+                  </Link>
+                </div>
                 <PasswordInput
                   id="password"
                   placeholder="••••••••"

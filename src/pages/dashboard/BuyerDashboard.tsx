@@ -109,7 +109,7 @@ export default function BuyerDashboard() {
               </div>
               <Button onClick={() => setView("create")} className="gradient-hero border-0 gap-2">
                 <Plus className="h-4 w-4" />
-                Create a Deal
+                New Transaction
               </Button>
             </div>
 
@@ -169,7 +169,7 @@ export default function BuyerDashboard() {
                   </p>
                   <Button onClick={() => setView("create")} className="gradient-hero border-0">
                     <Plus className="mr-2 h-4 w-4" />
-                    Create a Deal
+                    New Transaction
                   </Button>
                 </CardContent>
               </Card>

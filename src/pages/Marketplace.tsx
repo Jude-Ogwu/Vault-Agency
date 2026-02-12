@@ -25,7 +25,7 @@ export default function Marketplace() {
 
                     {/* Title */}
                     <h1 className="text-3xl font-bold mb-3 md:text-4xl">
-                        TrustLock Marketplace
+                        Vault Agency Marketplace
                     </h1>
                     <p className="text-lg text-muted-foreground mb-12">
                         A secure marketplace where buyers and sellers can trade with escrow protection built-in.
@@ -52,7 +52,7 @@ export default function Marketplace() {
                                 </div>
                                 <div>
                                     <h3 className="font-semibold mb-1">Escrow Protected</h3>
-                                    <p className="text-sm text-muted-foreground">Every transaction secured by TrustLock escrow.</p>
+                                    <p className="text-sm text-muted-foreground">Every transaction secured by Vault Agency escrow.</p>
                                 </div>
                             </CardContent>
                         </Card>

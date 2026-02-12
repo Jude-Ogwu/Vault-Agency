@@ -123,7 +123,7 @@ export default function SellerDashboard() {
                     <Package className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Incoming Deals</p>
+                    <p className="text-sm text-muted-foreground">Incoming Transactions</p>
                     <p className="text-2xl font-bold">{transactions.length}</p>
                   </div>
                 </CardContent>

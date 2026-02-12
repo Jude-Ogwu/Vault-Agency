@@ -7,6 +7,8 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Landing from "./pages/Landing";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 import BuyerDashboard from "./pages/dashboard/BuyerDashboard";
 import SellerDashboard from "./pages/dashboard/SellerDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
@@ -27,6 +29,8 @@ const App = () => (
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/dashboard" element={<BuyerDashboard />} />
             <Route path="/seller" element={<SellerDashboard />} />
             <Route path="/admin" element={<AdminDashboard />} />

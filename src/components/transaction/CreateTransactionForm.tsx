@@ -43,13 +43,14 @@ export function CreateTransactionForm({ onSuccess, onCancel }: CreateTransaction
   });
 
   // Load service fee from DB
+  // Note: site_settings table exists in DB but is not in the generated Supabase types yet
   useEffect(() => {
-    supabase
+    (supabase as any)
       .from("site_settings")
       .select("value")
       .eq("key", "service_fee_percent")
       .single()
-      .then(({ data }) => {
+      .then(({ data }: { data: { value: string } | null }) => {
         if (data) setFeePercent(parseFloat(data.value) || DEFAULT_FEE);
       });
   }, []);
@@ -151,8 +152,8 @@ export function CreateTransactionForm({ onSuccess, onCancel }: CreateTransaction
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <CardTitle>Start New Deal</CardTitle>
-            <CardDescription>Create a secure escrow deal</CardDescription>
+            <CardTitle>New Transaction</CardTitle>
+            <CardDescription>Create a secure escrow transaction</CardDescription>
           </div>
         </div>
       </CardHeader>
@@ -187,9 +188,9 @@ export function CreateTransactionForm({ onSuccess, onCancel }: CreateTransaction
             </div>
           </div>
 
-          {/* Deal Title */}
+          {/* Transaction Title */}
           <div className="space-y-2">
-            <Label htmlFor="dealTitle">Deal Title</Label>
+            <Label htmlFor="dealTitle">Transaction Title</Label>
             <Input
               id="dealTitle"
               placeholder="e.g., iPhone 15 Pro Max"
@@ -200,7 +201,7 @@ export function CreateTransactionForm({ onSuccess, onCancel }: CreateTransaction
             />
           </div>
 
-          {/* Deal Description */}
+          {/* Transaction Description */}
           <div className="space-y-2">
             <Label htmlFor="dealDescription">Description (Optional)</Label>
             <Textarea
@@ -267,7 +268,7 @@ export function CreateTransactionForm({ onSuccess, onCancel }: CreateTransaction
                         For large transactions, you can negotiate the service fee with our admin.
                       </p>
                       <Textarea
-                        placeholder="Explain your deal and preferred fee..."
+                        placeholder="Explain your transaction and preferred fee..."
                         value={negotiateMessage}
                         onChange={(e) => setNegotiateMessage(e.target.value)}
                         rows={3}
@@ -326,7 +327,7 @@ export function CreateTransactionForm({ onSuccess, onCancel }: CreateTransaction
             </Button>
             <Button type="submit" className="flex-1 gradient-hero border-0" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Deal {baseAmount > 0 ? `(${formatNaira(totalAmount)})` : ""}
+              Create Transaction {baseAmount > 0 ? `(${formatNaira(totalAmount)})` : ""}
             </Button>
           </div>
         </form>
