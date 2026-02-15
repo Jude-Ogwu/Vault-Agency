@@ -39,7 +39,7 @@ export default function BuyerDashboard() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [view, setView] = useState<View>("list");
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
@@ -53,6 +53,12 @@ export default function BuyerDashboard() {
     if (!user) return;
 
     setLoading(true);
+
+    // Safety timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+    }, 10000);
+
     try {
       const { data, error } = await supabase
         .from("transactions")
@@ -60,12 +66,15 @@ export default function BuyerDashboard() {
         .eq("buyer_id", user.id)
         .order("created_at", { ascending: false });
 
-      if (!error && data) {
+      if (error) throw error;
+
+      if (data) {
         setTransactions(data as Transaction[]);
       }
     } catch (err) {
       console.error("Failed to fetch transactions:", err);
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   };

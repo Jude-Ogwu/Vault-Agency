@@ -70,7 +70,7 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [view, setView] = useState<View>("list");
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -94,29 +94,57 @@ export default function AdminDashboard() {
 
   const fetchTransactions = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("transactions")
-      .select("*")
-      .order("created_at", { ascending: false });
 
-    if (!error && data) {
-      setTransactions(data as Transaction[]);
-      setFilteredTransactions(data as Transaction[]);
+    // Safety timeout
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+    }, 10000);
+
+    try {
+      const { data, error } = await supabase
+        .from("transactions")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      if (data) {
+        setTransactions(data as Transaction[]);
+        setFilteredTransactions(data as Transaction[]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch transactions:", err);
+    } finally {
+      clearTimeout(timeoutId);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const fetchComplaints = async () => {
     setComplaintsLoading(true);
-    const { data, error } = await (supabase as any)
-      .from("complaints")
-      .select("*")
-      .order("created_at", { ascending: false });
 
-    if (!error && data) {
-      setComplaints(data as Complaint[]);
+    // Safety timeout
+    const timeoutId = setTimeout(() => {
+      setComplaintsLoading(false);
+    }, 10000);
+
+    try {
+      const { data, error } = await (supabase as any)
+        .from("complaints")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      if (data) {
+        setComplaints(data as Complaint[]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch complaints:", err);
+    } finally {
+      clearTimeout(timeoutId);
+      setComplaintsLoading(false);
     }
-    setComplaintsLoading(false);
   };
 
   useEffect(() => {

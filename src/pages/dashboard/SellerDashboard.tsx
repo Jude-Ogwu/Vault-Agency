@@ -37,7 +37,7 @@ export default function SellerDashboard() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [view, setView] = useState<View>("list");
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
@@ -48,22 +48,31 @@ export default function SellerDashboard() {
   }, [user, authLoading, navigate]);
 
   const fetchTransactions = async () => {
-    if (!user?.email) return;
+    if (!user) return;
 
     setLoading(true);
+
+    // Safety timeout
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+    }, 10000);
+
     try {
       const { data, error } = await supabase
         .from("transactions")
         .select("*")
-        .eq("seller_email", user.email.toLowerCase())
+        .eq("seller_email", user.email)
         .order("created_at", { ascending: false });
 
-      if (!error && data) {
+      if (error) throw error;
+
+      if (data) {
         setTransactions(data as Transaction[]);
       }
     } catch (err) {
       console.error("Failed to fetch transactions:", err);
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   };
