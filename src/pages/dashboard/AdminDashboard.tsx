@@ -353,8 +353,10 @@ export default function AdminDashboard() {
 
             {/* Transactions List */}
             {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <div className="flex flex-col items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+                <p className="text-lg font-medium">Loading transactions...</p>
+                <p className="text-sm text-muted-foreground mt-2">Please wait, this may take a moment.</p>
               </div>
             ) : filteredTransactions.length === 0 ? (
               <Card className="border-dashed">
