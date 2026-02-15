@@ -17,7 +17,7 @@ export function Footer() {
               <span className="text-xl font-bold text-primary">Vault Agency</span>
             </Link>
             <p className="text-sm text-muted-foreground">
-              Nigeria's trusted escrow service for secure online transactions.
+              Global trusted escrow service for secure online transactions.
             </p>
           </div>
 
@@ -70,7 +70,7 @@ export function Footer() {
 
         <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} Vault Agency. All rights reserved.</p>
-          <p className="mt-1">Proudly serving Nigerian businesses and consumers.</p>
+          <p className="mt-1">Proudly serving businesses and consumers worldwide.</p>
         </div>
       </div>
     </footer>

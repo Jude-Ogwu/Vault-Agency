@@ -1,4 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
@@ -89,40 +90,46 @@ export function Navbar() {
             </Link>
 
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    <User className="h-4 w-4" />
-                    <span className="max-w-[120px] truncate">{user.email}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem onClick={() => navigate("/dashboard")}>
-                    Buyer Dashboard
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/seller")}>
-                    Seller Dashboard
-                  </DropdownMenuItem>
-                  {isAdmin && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => navigate("/admin")}>
-                        Admin Dashboard
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="flex items-center gap-4">
+                <ModeToggle />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      <User className="h-4 w-4" />
+                      <span className="max-w-[120px] truncate">{user.email}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                      Buyer Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/seller")}>
+                      Seller Dashboard
+                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => navigate("/admin")}>
+                          Admin Dashboard
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             ) : (
               <div className="flex items-center gap-3">
                 <Button variant="ghost" onClick={() => navigate("/login")}>
                   Log In
                 </Button>
+                <div className="hidden md:block">
+                  <ModeToggle />
+                </div>
                 <Button onClick={() => navigate("/signup")} className="gradient-hero border-0">
                   Get Started
                 </Button>
@@ -209,12 +216,18 @@ export function Navbar() {
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign Out
                   </Button>
+                  <div className="flex justify-center py-2 border-t mt-2">
+                    <ModeToggle />
+                  </div>
                 </>
               ) : (
                 <div className="flex flex-col gap-2 pt-2">
                   <Button variant="outline" onClick={() => navigate("/login")}>
                     Log In
                   </Button>
+                  <div className="flex justify-center py-2">
+                    <ModeToggle />
+                  </div>
                   <Button onClick={() => navigate("/signup")} className="gradient-hero border-0">
                     Get Started
                   </Button>

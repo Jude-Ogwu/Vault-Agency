@@ -101,7 +101,7 @@ export default function Landing() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden flex-1 flex items-center justify-center min-h-[calc(100vh-4rem)]">
+      <section className="relative overflow-hidden flex-1 flex items-start pt-20 md:pt-0 md:items-center justify-center min-h-[calc(100vh-4rem)]">
         <div className="absolute inset-0 gradient-hero opacity-[0.03] pointer-events-none" />
         <div className="container mx-auto px-4 py-12 md:py-32">
           <div className="mx-auto max-w-4xl text-center">

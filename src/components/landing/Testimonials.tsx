@@ -13,7 +13,7 @@ const testimonials = [
     name: "Chidinma Okafor",
     role: "Buyer",
     content:
-      "I was scammed twice before I found Vault Agency. Now I only buy through escrow. It's the peace of mind I needed for online shopping in Nigeria.",
+      "I was scammed twice before I found Vault Agency. Now I only buy through escrow. It's the peace of mind I needed for online shopping.",
     rating: 5,
   },
   {
@@ -34,7 +34,7 @@ export function Testimonials() {
             What Our Users Say
           </h2>
           <p className="text-muted-foreground">
-            Join thousands of Nigerians who trust Vault Agency for secure
+            Join thousands of users worldwide who trust Vault Agency for secure
             transactions.
           </p>
         </div>
