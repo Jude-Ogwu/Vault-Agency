@@ -108,7 +108,7 @@ export default function AdminDashboard() {
 
   const fetchComplaints = async () => {
     setComplaintsLoading(true);
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("complaints")
       .select("*")
       .order("created_at", { ascending: false });
@@ -152,7 +152,7 @@ export default function AdminDashboard() {
   };
 
   const handleResolveComplaint = async (complaintId: string) => {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("complaints")
       .update({
         resolved: true,
@@ -207,7 +207,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Stats */}
-            <div className="grid gap-4 mb-8 md:grid-cols-5">
+            <div className="grid gap-4 mb-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-5">
               <Card>
                 <CardContent className="flex items-center gap-4 p-6">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">

@@ -21,6 +21,7 @@ import {
   BadgeCheck,
   ChevronUp,
 } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -87,16 +88,26 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Vault Agency — Global Trusted Escrow Service</title>
+        <meta
+          name="description"
+          content="Buy and sell online without fear. Vault Agency protects your transactions worldwide by holding funds until both parties are satisfied."
+        />
+        <meta property="og:title" content="Vault Agency — Global Trusted Escrow Service" />
+        <meta property="og:description" content="Secure payments for buyers and sellers worldwide." />
+        <meta property="og:image" content="/favicon.png" />
+      </Helmet>
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden flex-1 flex items-center min-h-[600px] md:min-h-[calc(100vh-4rem)]">
+      <section className="relative overflow-hidden flex-1 flex items-center justify-center min-h-[calc(100vh-4rem)]">
         <div className="absolute inset-0 gradient-hero opacity-[0.03] pointer-events-none" />
         <div className="container mx-auto px-4 py-12 md:py-32">
           <div className="mx-auto max-w-4xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
               <Shield className="h-4 w-4" />
-              Nigeria's Trusted Escrow Service
+              Global Trusted Escrow Service
             </div>
             <h1 className="mb-6 text-4xl font-extrabold tracking-tight md:text-6xl">
               Buy & Sell{" "}
@@ -200,7 +211,7 @@ export default function Landing() {
           <div className="mx-auto max-w-3xl text-center mb-16">
             <h2 className="mb-4 text-3xl font-bold md:text-4xl">Why Choose Vault Agency?</h2>
             <p className="text-muted-foreground">
-              Built with security and trust at its core for Nigerian buyers and sellers.
+              Built with security and trust at its core for buyers and sellers worldwide.
             </p>
           </div>
 
@@ -238,7 +249,7 @@ export default function Landing() {
                 Ready to Trade Securely?
               </h2>
               <p className="mb-8 text-lg opacity-90 max-w-2xl mx-auto">
-                Join thousands of Nigerians who trust Vault Agency for their online transactions.
+                Join thousands of users who trust Vault Agency for their online transactions.
               </p>
               <Button
                 size="lg"

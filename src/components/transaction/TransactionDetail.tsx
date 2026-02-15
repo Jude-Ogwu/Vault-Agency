@@ -35,6 +35,7 @@ import {
   AlertTriangle,
   RotateCcw,
   Store,
+  Settings,
 } from "lucide-react";
 
 type PaymentMethod = "paystack" | "crypto" | "stripe" | "paypal";
@@ -112,6 +113,10 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
   const [showRefundForm, setShowRefundForm] = useState(false);
   const [refundReason, setRefundReason] = useState("");
 
+  // Admin Manual Update
+  const [manualStatus, setManualStatus] = useState<TransactionStatus | "">("");
+  const [manualNote, setManualNote] = useState("");
+
   const ProductIcon = productIcons[transaction.product_type] || Package;
   const productLabel = PRODUCT_TYPES[transaction.product_type]?.label || "Unknown";
 
@@ -151,10 +156,10 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
     const { error } = await supabase
       .from("transactions")
       .update({
-        status: "held" as TransactionStatus,
+        status: "held",
         paid_at: new Date().toISOString(),
         payment_reference: response.reference,
-      })
+      } as any)
       .eq("id", transaction.id);
 
     if (error) {
@@ -209,12 +214,12 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
     const { error } = await supabase
       .from("transactions")
       .update({
-        status: "held" as TransactionStatus,
+        status: "held",
         paid_at: new Date().toISOString(),
         payment_reference: paymentRef,
         proof_url: proofUrl || null,
         proof_description: `Crypto payment via ${CRYPTO_WALLETS[selectedCrypto].label}. Sender: ${cryptoForm.senderAddress}. Amount: ${cryptoForm.amountSent}. TX Hash: ${cryptoForm.txHash}`,
-      })
+      } as any)
       .eq("id", transaction.id);
 
     if (error) {
@@ -265,7 +270,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
     setLoading(true);
 
     // File complaint
-    await supabase.from("complaints").insert({
+    await (supabase as any).from("complaints").insert({
       transaction_id: transaction.id,
       user_id: user!.id,
       user_email: user!.email!,
@@ -274,7 +279,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
     });
 
     // Update status
-    await handleUpdateStatus("refund_requested" as TransactionStatus, `Buyer requests refund: ${refundReason.trim()}`);
+    await handleUpdateStatus("refund_requested" as any, `Buyer requests refund: ${refundReason.trim()}`);
     notifyAdmin("refund_requested", { reason: refundReason.trim() });
     setShowRefundForm(false);
     setRefundReason("");
@@ -285,7 +290,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
     if (!complaintMessage.trim()) return;
     setLoading(true);
 
-    const { error } = await supabase.from("complaints").insert({
+    const { error } = await (supabase as any).from("complaints").insert({
       transaction_id: transaction.id,
       user_id: user!.id,
       user_email: user!.email!,
@@ -425,8 +430,8 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
                         type="button"
                         onClick={() => { setSelectedCrypto(key); setShowCryptoPaymentForm(false); }}
                         className={`flex items-center gap-3 rounded-lg border-2 p-3 text-left transition-all ${selectedCrypto === key
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50"
+                          ? "border-primary bg-primary/5"
+                          : "border-border hover:border-primary/50"
                           }`}
                       >
                         <span className="text-xl">{wallet.icon}</span>
@@ -671,32 +676,85 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
   // =============================================
   const renderAdminActions = () => {
     return (
-      <div className="space-y-3">
-        {transaction.status === "pending_release" && (
-          <Button onClick={() => openConfirmDialog("release")} className="w-full gradient-success border-0" disabled={loading}>
-            <CheckCircle2 className="mr-2 h-4 w-4" /> Release Funds to Seller
-          </Button>
-        )}
-        {transaction.status === "refund_requested" && (
-          <>
-            <Button onClick={() => openConfirmDialog("approve_refund")} className="w-full bg-destructive hover:bg-destructive/90" disabled={loading}>
-              <RotateCcw className="mr-2 h-4 w-4" /> Approve Refund
+      <div className="space-y-6">
+        <div className="space-y-3">
+          {transaction.status === "pending_release" && (
+            <Button onClick={() => openConfirmDialog("release")} className="w-full gradient-success border-0" disabled={loading}>
+              <CheckCircle2 className="mr-2 h-4 w-4" /> Release Funds to Seller
             </Button>
-            <Button variant="outline" onClick={() => openConfirmDialog("deny_refund")} className="w-full" disabled={loading}>
-              <XCircle className="mr-2 h-4 w-4" /> Deny Refund & Continue
+          )}
+          {transaction.status === "refund_requested" && (
+            <>
+              <Button onClick={() => openConfirmDialog("approve_refund")} className="w-full bg-destructive hover:bg-destructive/90" disabled={loading}>
+                <RotateCcw className="mr-2 h-4 w-4" /> Approve Refund
+              </Button>
+              <Button variant="outline" onClick={() => openConfirmDialog("deny_refund")} className="w-full" disabled={loading}>
+                <XCircle className="mr-2 h-4 w-4" /> Deny Refund & Continue
+              </Button>
+            </>
+          )}
+          {transaction.status === "held" && (
+            <Button onClick={() => openConfirmDialog("move_delivery")} variant="outline" className="w-full" disabled={loading}>
+              <Truck className="mr-2 h-4 w-4" /> Move to Pending Delivery
             </Button>
-          </>
-        )}
-        {transaction.status === "held" && (
-          <Button onClick={() => openConfirmDialog("move_delivery")} variant="outline" className="w-full" disabled={loading}>
-            <Truck className="mr-2 h-4 w-4" /> Move to Pending Delivery
+          )}
+          {transaction.status !== "released" && transaction.status !== "cancelled" && (
+            <Button variant="outline" onClick={() => openConfirmDialog("dispute")} className="w-full" disabled={loading}>
+              <XCircle className="mr-2 h-4 w-4" /> Mark as Disputed
+            </Button>
+          )}
+        </div>
+
+        {/* Admin Manual Override */}
+        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-3">
+          <div className="flex items-center gap-2 text-primary font-medium">
+            <Settings className="h-4 w-4" />
+            <h3>Admin Override Zone</h3>
+          </div>
+          <p className="text-xs text-muted-foreground">Force update the transaction status (use with caution).</p>
+
+          <div className="space-y-2">
+            <Label>New Status</Label>
+            <Select value={manualStatus} onValueChange={(val) => setManualStatus(val as TransactionStatus)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select status to force..." />
+              </SelectTrigger>
+              <SelectContent>
+                {(Object.keys(TRANSACTION_STATUSES) as TransactionStatus[]).map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {TRANSACTION_STATUSES[status].label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Admin Note (Required for override)</Label>
+            <Input
+              placeholder="Reason for manual update..."
+              value={manualNote}
+              onChange={(e) => setManualNote(e.target.value)}
+            />
+          </div>
+
+          <Button
+            onClick={() => {
+              if (manualStatus && manualNote) {
+                handleUpdateStatus(manualStatus as TransactionStatus, `MANUAL OVERRIDE: ${manualNote}`);
+                setManualStatus("");
+                setManualNote("");
+              } else {
+                toast({ title: "Start Missing Details", description: "Select a status and add a note.", variant: "destructive" });
+              }
+            }}
+            disabled={loading || !manualStatus || !manualNote}
+            className="w-full"
+            variant="secondary"
+          >
+            <CheckCircle2 className="mr-2 h-4 w-4" /> Force Update Status
           </Button>
-        )}
-        {transaction.status !== "released" && transaction.status !== "cancelled" && (
-          <Button variant="outline" onClick={() => openConfirmDialog("dispute")} className="w-full" disabled={loading}>
-            <XCircle className="mr-2 h-4 w-4" /> Mark as Disputed
-          </Button>
-        )}
+        </div>
       </div>
     );
   };

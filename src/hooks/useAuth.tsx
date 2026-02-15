@@ -15,9 +15,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Hardcoded admin email as a safety net — even if DB check fails,
-// this email is always recognized as admin
-const ADMIN_EMAIL = "ogwujude872@gmail.com";
+// Admin email from env
+const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || "ogwujude872@gmail.com";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
