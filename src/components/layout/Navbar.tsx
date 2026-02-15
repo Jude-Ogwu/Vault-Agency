@@ -21,9 +21,8 @@ export function Navbar() {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/");
-    // Optional: Force reload to clear any lingering memory state
-    // window.location.href = "/"; 
+    // Hard redirect to fully clear all React state and start fresh
+    window.location.href = "/";
   };
 
   // Smooth-scroll to a section on the landing page

@@ -1,70 +1,88 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 
+/**
+ * AuthCallback — handles the OAuth redirect from Google.
+ *
+ * Flow:
+ * 1. Google redirects here with a hash fragment (#access_token=...).
+ * 2. Supabase JS client automatically detects the hash and exchanges it for a session.
+ * 3. The onAuthStateChange listener fires with SIGNED_IN event.
+ * 4. We redirect to /dashboard.
+ *
+ * If nothing happens after 5 seconds, we show an error with a retry button.
+ */
 export default function AuthCallback() {
     const navigate = useNavigate();
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         let mounted = true;
+        let redirected = false;
 
-        const handleAuth = async () => {
-            try {
-                // 1. Immediate check: Do we already have a session?
-                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-
-                if (sessionError) {
-                    throw sessionError;
-                }
-
-                if (session) {
-                    if (mounted) navigate("/dashboard");
-                    return;
-                }
-
-                // 2. If no session, listen for the event (which triggers after hash processing)
-                const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-                    if (mounted) {
-                        if (event === "SIGNED_IN" && session) {
-                            navigate("/dashboard");
-                        } else if (event === "SIGNED_OUT") {
-                            // Only redirect to login if we specifically get a signed out event vs just initializing
-                            // navigate("/login");
-                        }
-                    }
-                });
-
-                // 3. Fallback/Safety: If hash exists but nothing happened after a short delay
-                setTimeout(async () => {
-                    if (!mounted) return;
-                    const { data: { session: currentSession } } = await supabase.auth.getSession();
-                    if (currentSession) {
-                        navigate("/dashboard");
-                    } else {
-                        // If we have an error hash in URL
-                        const fragment = window.location.hash;
-                        if (fragment.includes("error_description")) {
-                            const params = new URLSearchParams(fragment.substring(1));
-                            setError(params.get("error_description"));
-                        }
-                    }
-                }, 1000); // Check again after 1s
-
-                return () => {
-                    subscription.unsubscribe();
-                };
-
-            } catch (err: any) {
-                if (mounted) setError(err.message || "Authentication failed");
+        const goToDashboard = () => {
+            if (mounted && !redirected) {
+                redirected = true;
+                navigate("/dashboard", { replace: true });
             }
         };
 
-        handleAuth();
+        // Listen for the auth state change (this catches the hash fragment processing)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (event === "SIGNED_IN" && session) {
+                goToDashboard();
+            }
+            // Also handle TOKEN_REFRESHED which can happen on callback
+            if (event === "TOKEN_REFRESHED" && session) {
+                goToDashboard();
+            }
+        });
+
+        // Also do a direct session check after a short delay
+        // (gives Supabase time to process the hash fragment)
+        const checkTimer = setTimeout(async () => {
+            if (!mounted || redirected) return;
+
+            try {
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+                if (sessionError) {
+                    if (mounted) setError(sessionError.message);
+                    return;
+                }
+
+                if (session) {
+                    goToDashboard();
+                }
+            } catch (err: any) {
+                if (mounted) setError(err.message || "Failed to verify session");
+            }
+        }, 500);
+
+        // Safety timeout — if nothing happens after 5 seconds, show error
+        const safetyTimer = setTimeout(() => {
+            if (!mounted || redirected) return;
+
+            // Check URL hash for error info from OAuth provider
+            const hash = window.location.hash;
+            if (hash.includes("error_description")) {
+                const params = new URLSearchParams(hash.substring(1));
+                setError(params.get("error_description") || "Authentication failed");
+            } else if (hash.includes("error")) {
+                const params = new URLSearchParams(hash.substring(1));
+                setError(params.get("error") || "Authentication failed");
+            } else {
+                setError("Authentication timed out. Please try again.");
+            }
+        }, 5000);
 
         return () => {
             mounted = false;
+            subscription.unsubscribe();
+            clearTimeout(checkTimer);
+            clearTimeout(safetyTimer);
         };
     }, [navigate]);
 
@@ -72,17 +90,24 @@ export default function AuthCallback() {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-muted/30 p-4">
                 <div className="bg-destructive/10 p-4 rounded-full mb-4">
-                    <Loader2 className="h-8 w-8 text-destructive animate-spin" />
-                    {/* Using spinner as placeholdericon or finding an error icon if handy, but changing color */}
+                    <AlertCircle className="h-8 w-8 text-destructive" />
                 </div>
                 <h2 className="text-xl font-bold text-destructive mb-2">Authentication Error</h2>
                 <p className="text-muted-foreground text-center max-w-md mb-6">{error}</p>
-                <button
-                    onClick={() => navigate("/login")}
-                    className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-                >
-                    Return to Login
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => navigate("/login", { replace: true })}
+                        className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+                    >
+                        Return to Login
+                    </button>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="px-4 py-2 border border-input rounded-md hover:bg-accent"
+                    >
+                        Retry
+                    </button>
+                </div>
             </div>
         );
     }
