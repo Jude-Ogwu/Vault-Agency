@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PRODUCT_TYPES, TRANSACTION_STATUSES, CRYPTO_WALLETS, ADMIN_EMAIL, ProductType, TransactionStatus, CryptoWalletKey } from "@/lib/constants";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -380,7 +381,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
         return (
           <div className="space-y-4">
             <Label>Select Payment Method</Label>
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
               {paymentMethods.map((method) => {
                 const Icon = method.icon;
                 const isSelected = selectedPayment === method.id;
@@ -763,13 +764,13 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
     <>
       <Card className="border-0 shadow-escrow-lg">
         <CardHeader>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={onBack}>
+          <div className="flex items-start gap-3 sm:gap-4">
+            <Button variant="ghost" size="icon" onClick={onBack} className="shrink-0 mt-0.5">
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <CardTitle>{transaction.deal_title}</CardTitle>
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <CardTitle className="text-lg sm:text-xl break-words">{transaction.deal_title}</CardTitle>
                 <StatusBadge status={transaction.status} />
               </div>
               <CardDescription className="flex items-center gap-2 mt-1">
@@ -783,7 +784,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
           {/* Amount */}
           <div className="rounded-lg bg-muted/50 p-4 text-center">
             <p className="text-sm text-muted-foreground mb-1">Transaction Amount</p>
-            <p className="text-3xl font-bold text-primary">{formatAmount(transaction.amount)}</p>
+            <p className="text-2xl sm:text-3xl font-bold text-primary break-all">{formatAmount(transaction.amount)}</p>
           </div>
 
           {/* Status */}
@@ -800,7 +801,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
           )}
 
           {/* Parties */}
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
             <div className="rounded-lg border p-4">
               <Label className="text-muted-foreground">Buyer</Label>
               <p className="mt-1 font-medium">{transaction.buyer_email}</p>

@@ -49,7 +49,7 @@ export function TransactionCard({ transaction, onClick, role }: TransactionCardP
               <ProductIcon className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold leading-tight">{transaction.deal_title}</h3>
+              <h3 className="font-semibold leading-tight break-words">{transaction.deal_title}</h3>
               <p className="text-xs text-muted-foreground">{productLabel}</p>
             </div>
           </div>
@@ -62,7 +62,7 @@ export function TransactionCard({ transaction, onClick, role }: TransactionCardP
             {transaction.deal_description}
           </p>
         )}
-        
+
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <Banknote className="h-4 w-4" />
@@ -74,10 +74,17 @@ export function TransactionCard({ transaction, onClick, role }: TransactionCardP
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
-          <span>
-            {role === "buyer" ? "Seller" : role === "seller" ? "Buyer" : "Buyer"}: {role === "buyer" ? transaction.seller_email : transaction.buyer_email}
-          </span>
+        <div className={`flex ${role === "admin" ? "flex-col gap-1" : "items-center justify-between"} text-xs text-muted-foreground pt-2 border-t min-w-0`}>
+          {role === "admin" ? (
+            <>
+              <span className="truncate">Buyer: {transaction.buyer_email}</span>
+              <span className="truncate">Seller: {transaction.seller_email}</span>
+            </>
+          ) : (
+            <span className="truncate">
+              {role === "buyer" ? "Seller" : "Buyer"}: {role === "buyer" ? transaction.seller_email : transaction.buyer_email}
+            </span>
+          )}
         </div>
       </CardContent>
     </Card>

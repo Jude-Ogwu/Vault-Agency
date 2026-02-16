@@ -123,21 +123,18 @@ export function CreateTransactionForm({ onSuccess, onCancel }: CreateTransaction
       toast({ title: "Failed to create transaction", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Transaction created!", description: "Proceed to make payment." });
-      try {
-        await supabase.functions.invoke("notify-transaction", {
-          body: {
-            event_type: "transaction_created",
-            transaction: {
-              deal_title: formData.dealTitle.trim(),
-              amount: totalAmount,
-              buyer_email: user.email!,
-              seller_email: formData.sellerEmail.trim().toLowerCase(),
-            },
+      // Fire-and-forget: don't block UI waiting for email notification
+      supabase.functions.invoke("notify-transaction", {
+        body: {
+          event_type: "transaction_created",
+          transaction: {
+            deal_title: formData.dealTitle.trim(),
+            amount: totalAmount,
+            buyer_email: user.email!,
+            seller_email: formData.sellerEmail.trim().toLowerCase(),
           },
-        });
-      } catch (err) {
-        console.warn("Email notification failed:", err);
-      }
+        },
+      }).catch((err) => console.warn("Email notification failed:", err));
       onSuccess();
     }
 
@@ -162,7 +159,7 @@ export function CreateTransactionForm({ onSuccess, onCancel }: CreateTransaction
           {/* Product Type Selection */}
           <div className="space-y-3">
             <Label>Product Type</Label>
-            <div className="grid gap-3 md:grid-cols-3">
+            <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
               {(Object.entries(PRODUCT_TYPES) as [ProductType, typeof PRODUCT_TYPES[ProductType]][]).map(
                 ([key, value]) => {
                   const Icon = productIcons[key];

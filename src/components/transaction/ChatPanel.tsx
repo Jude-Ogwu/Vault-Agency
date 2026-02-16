@@ -66,7 +66,7 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
     }, [transactionId]);
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }, [messages]);
 
     const handleSend = async (e: React.FormEvent) => {
@@ -133,8 +133,8 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
                                 </div>
                                 <div
                                     className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${isMe
-                                            ? "bg-primary text-primary-foreground"
-                                            : "bg-muted"
+                                        ? "bg-primary text-primary-foreground"
+                                        : "bg-muted"
                                         }`}
                                 >
                                     {msg.content}
