@@ -9,7 +9,12 @@ const faqs = [
   {
     question: "How does Vault Agency escrow work?",
     answer:
-      "Vault Agency acts as a trusted middleman. When a buyer wants to purchase something, they pay into our secure escrow. We hold the funds while the seller delivers the product or service. Once the buyer confirms receipt and both parties provide proof, the admin reviews and releases the payment to the seller.",
+      "Vault Agency acts as a trusted middleman. When a buyer wants to purchase something, they pay into our secure escrow. We hold the funds while the seller delivers the product or service. Once the buyer confirms receipt and both parties provide proof, VA reviews and releases the payment to the seller.",
+  },
+  {
+    question: "Are there any fees for using Vault Agency?",
+    answer:
+      "Vault Agency charges a standard service fee of 5% for transactions under ₦10,000. For transactions of ₦10,000 and above, the fee is reduced to 2%. The exact fee is displayed before you confirm your payment.",
   },
   {
     question: "Is my money safe with Vault Agency?",
@@ -24,12 +29,12 @@ const faqs = [
   {
     question: "What happens if the seller doesn't deliver?",
     answer:
-      "If the seller fails to deliver as promised, you can raise a dispute. Our admin team will review the case, and if the seller is at fault, your funds will be returned to you. You never lose money for products or services you didn't receive.",
+      "If the seller fails to deliver as promised, you can raise a dispute. Our VA team will review the case, and if the seller is at fault, your funds will be returned to you. You never lose money for products or services you didn't receive.",
   },
   {
     question: "How long does it take to release funds?",
     answer:
-      "Once the buyer confirms successful delivery and both parties upload proof, our admin team reviews the transaction. Fund release typically happens within 24-48 hours after admin approval.",
+      "Once the buyer confirms successful delivery and both parties upload proof, our VA team reviews the transaction. Fund release typically happens within 24-48 hours after VA approval.",
   },
   {
     question: "Does the seller need to have an account?",
@@ -40,11 +45,6 @@ const faqs = [
     question: "What proof do I need to upload?",
     answer:
       "Buyers should upload proof of delivery receipt (photos, screenshots of delivery confirmation, etc.). Sellers should upload proof of delivery/completion (shipping receipts, delivery photos, service completion screenshots). This protects both parties.",
-  },
-  {
-    question: "Are there any fees for using Vault Agency?",
-    answer:
-      "Vault Agency charges a standard service fee of 5% for transactions under ₦10,000. For transactions of ₦10,000 and above, the fee is reduced to 2%. The exact fee is displayed before you confirm your payment.",
   },
 ];
 

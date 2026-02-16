@@ -57,8 +57,8 @@ export default function Landing() {
     },
     {
       icon: UserCheck,
-      title: "Admin Releases",
-      description: "Once buyer confirms receipt, admin verifies and releases funds to seller.",
+      title: "VA Releases",
+      description: "Once buyer confirms receipt, VA verifies and releases funds to seller.",
     },
   ];
 
