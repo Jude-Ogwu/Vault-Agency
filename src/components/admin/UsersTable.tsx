@@ -74,7 +74,7 @@ export function UsersTable() {
             .update({
                 status: "suspended",
                 suspension_reason: suspensionReason
-            })
+            } as any)
             .eq("id", selectedUser.id);
 
         if (error) {
@@ -100,7 +100,7 @@ export function UsersTable() {
             .update({
                 status: "active",
                 suspension_reason: null
-            })
+            } as any)
             .eq("id", user.id);
 
         if (error) {
@@ -135,10 +135,44 @@ export function UsersTable() {
         }
     };
 
+    const handleDeleteUserAndData = async (user: UserProfile) => {
+        setLoading(true);
+        try {
+            // 1. Delete notifications
+            await supabase.from('notifications').delete().eq('user_id', user.id);
+
+            // 2. Delete messages sent by user
+            await supabase.from('messages').delete().eq('sender_id', user.id);
+
+            // 3. Delete transactions where user is buyer
+            await supabase.from('transactions').delete().eq('buyer_id', user.id);
+
+            // 4. Finally delete profile
+            const { error } = await supabase.from('profiles').delete().eq('id', user.id);
+
+            if (error) throw error;
+
+            toast({
+                title: "User and data deleted",
+                description: "The user and their associated data have been permanently deleted."
+            });
+            fetchUsers();
+
+        } catch (error: any) {
+            toast({
+                title: "Error deleting user data",
+                description: error.message || "Could not delete user and data.",
+                variant: "destructive"
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const toggleChatPermission = async (user: UserProfile) => {
         const { error } = await supabase
             .from("profiles")
-            .update({ can_chat: !user.can_chat })
+            .update({ can_chat: !user.can_chat } as any)
             .eq("id", user.id);
 
         if (error) {
@@ -285,22 +319,38 @@ export function UsersTable() {
                                                 </DialogTrigger>
                                                 <DialogContent>
                                                     <DialogHeader>
-                                                        <DialogTitle>Delete User Permanently</DialogTitle>
+                                                        <DialogTitle>Delete User</DialogTitle>
                                                         <DialogDescription>
                                                             Are you sure you want to delete {user.email}?
                                                             <br /><br />
                                                             <span className="font-bold text-destructive">Warning: This action cannot be undone.</span>
-                                                            <br />
-                                                            This will permanently remove the user and may fail if they have active transactions or history that needs to be preserved for audit.
                                                         </DialogDescription>
                                                     </DialogHeader>
-                                                    <DialogFooter>
-                                                        <Button variant="outline">Cancel</Button>
+                                                    <div className="flex flex-col gap-4 py-4">
+                                                        <div className="p-4 border rounded bg-muted/50 text-sm">
+                                                            <p className="font-medium mb-1">Option 1: Standard Delete</p>
+                                                            <p className="text-muted-foreground">Attempts to delete the user only. Will fail if they have active transactions.</p>
+                                                        </div>
+                                                        <div className="p-4 border rounded bg-destructive/10 text-sm">
+                                                            <p className="font-medium mb-1 text-destructive">Option 2: Delete User & Data</p>
+                                                            <p className="text-destructive-foreground">Forcefully deletes user's messages, notifications, and buyer history.</p>
+                                                        </div>
+                                                    </div>
+                                                    <DialogFooter className="flex-col sm:flex-row gap-2">
+                                                        <Button variant="outline" className="w-full sm:w-auto">Cancel</Button>
                                                         <Button
-                                                            variant="destructive"
+                                                            variant="default"
+                                                            className="bg-red-600 hover:bg-red-700 w-full sm:w-auto"
                                                             onClick={() => handleDeleteUser(user)}
                                                         >
-                                                            Delete Permanently
+                                                            Standard Delete
+                                                        </Button>
+                                                        <Button
+                                                            variant="destructive"
+                                                            className="w-full sm:w-auto"
+                                                            onClick={() => handleDeleteUserAndData(user)}
+                                                        >
+                                                            Delete User & Data
                                                         </Button>
                                                     </DialogFooter>
                                                 </DialogContent>
