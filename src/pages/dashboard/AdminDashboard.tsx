@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { ProductType, TransactionStatus, TRANSACTION_STATUSES } from "@/lib/constants";
 import { AdminSettings } from "@/components/admin/AdminSettings";
+import { UsersTable } from "@/components/admin/UsersTable";
 
 interface Transaction {
   id: string;
@@ -62,7 +63,7 @@ interface Complaint {
   created_at: string;
 }
 
-type View = "list" | "detail" | "complaints" | "settings";
+type View = "list" | "detail" | "complaints" | "settings" | "users";
 
 export default function AdminDashboard() {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -238,7 +239,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Stats */}
-            <div className="grid gap-4 mb-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-5">
+            <div className="grid gap-4 mb-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
               <Card>
                 <CardContent className="flex items-center gap-4 p-6">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
@@ -385,6 +386,16 @@ export default function AdminDashboard() {
                 ))}
               </div>
             )}
+          </>
+        )}
+
+        {view === "users" && (
+          <>
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold md:text-3xl">User Management</h1>
+              <p className="text-muted-foreground">Manage authorized users, suspensions, and permissions.</p>
+            </div>
+            <UsersTable />
           </>
         )}
 

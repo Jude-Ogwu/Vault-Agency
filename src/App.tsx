@@ -19,6 +19,8 @@ import { SupportWidget } from "@/components/layout/SupportWidget";
 import TermsOfService from "./pages/legal/TermsOfService";
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import RefundPolicy from "./pages/legal/RefundPolicy";
+import SuspendedPage from "./pages/auth/SuspendedPage";
+import { SuspensionGuard } from "./components/auth/SuspensionGuard";
 
 const queryClient = new QueryClient();
 
@@ -29,8 +31,10 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <SuspensionGuard />
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/suspended" element={<SuspendedPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/auth/callback" element={<AuthCallback />} />

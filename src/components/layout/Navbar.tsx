@@ -13,6 +13,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { NotificationCenter } from "../notifications/NotificationCenter";
+
 export function Navbar() {
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
@@ -93,6 +95,7 @@ export function Navbar() {
             {user ? (
               <div className="flex items-center gap-4">
                 <ModeToggle />
+                <NotificationCenter />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
@@ -219,8 +222,9 @@ export function Navbar() {
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign Out
                   </Button>
-                  <div className="flex justify-center py-2 border-t mt-2">
+                  <div className="flex justify-center py-2 border-t mt-2 gap-4">
                     <ModeToggle />
+                    <NotificationCenter />
                   </div>
                 </>
               ) : (
