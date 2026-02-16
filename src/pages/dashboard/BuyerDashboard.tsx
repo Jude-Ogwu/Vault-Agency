@@ -11,6 +11,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, ShoppingBag, Loader2, Shield } from "lucide-react";
 import { ProductType, TransactionStatus } from "@/lib/constants";
+import { useToast } from "@/hooks/use-toast";
+
 
 interface Transaction {
   id: string;
@@ -42,6 +44,10 @@ export default function BuyerDashboard() {
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState<View>("list");
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+
+  const { toast } = useToast();
+
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -90,8 +96,26 @@ export default function BuyerDashboard() {
     setView("detail");
   };
 
+  const handleEdit = (transaction: Transaction) => {
+    setEditingTransaction(transaction);
+    setView("create");
+  };
+
+  const handleDelete = async (transactionId: string) => {
+    const { error } = await supabase.from("transactions").delete().eq("id", transactionId);
+    if (error) {
+      toast({ title: "Failed to delete", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Transaction deleted" });
+      setView("list");
+      setSelectedTransaction(null);
+      fetchTransactions();
+    }
+  };
+
   const handleCreateSuccess = () => {
     setView("list");
+    setEditingTransaction(null);
     fetchTransactions();
   };
 
@@ -177,12 +201,13 @@ export default function BuyerDashboard() {
                   <p className="text-muted-foreground mb-6">
                     Start your first secure transaction today
                   </p>
-                  <Button onClick={() => setView("create")} className="gradient-hero border-0">
+                  <Button onClick={() => { setEditingTransaction(null); setView("create"); }} className="gradient-hero border-0">
                     <Plus className="mr-2 h-4 w-4" />
                     New Transaction
                   </Button>
                 </CardContent>
               </Card>
+
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {transactions.map((transaction) => (
@@ -201,8 +226,12 @@ export default function BuyerDashboard() {
         {view === "create" && (
           <div className="max-w-2xl mx-auto">
             <CreateTransactionForm
+              initialData={editingTransaction}
               onSuccess={handleCreateSuccess}
-              onCancel={() => setView("list")}
+              onCancel={() => {
+                setEditingTransaction(null);
+                setView("list");
+              }}
             />
           </div>
         )}
@@ -226,6 +255,8 @@ export default function BuyerDashboard() {
                 if (data) setSelectedTransaction(data as Transaction);
               }}
               role="buyer"
+              onEdit={() => handleEdit(selectedTransaction)}
+              onDelete={() => handleDelete(selectedTransaction.id)}
             />
           </div>
         )}

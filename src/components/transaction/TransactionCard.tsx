@@ -79,7 +79,9 @@ export function TransactionCard({ transaction, onClick, role }: TransactionCardP
             <>
               <span className="truncate">Buyer: {transaction.buyer_email}</span>
               <span className="truncate">Seller: {transaction.seller_email}</span>
+              {(transaction as any).seller_phone && <span className="truncate">Phone: {(transaction as any).seller_phone}</span>}
             </>
+
           ) : (
             <span className="truncate">
               {role === "buyer" ? "Seller" : "Buyer"}: {role === "buyer" ? transaction.seller_email : transaction.buyer_email}

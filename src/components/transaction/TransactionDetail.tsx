@@ -82,6 +82,8 @@ interface TransactionDetailProps {
   onBack: () => void;
   onUpdate: () => void;
   role: "buyer" | "seller" | "admin";
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 const productIcons = {
@@ -90,7 +92,7 @@ const productIcons = {
   service: Briefcase,
 };
 
-export function TransactionDetail({ transaction, onBack, onUpdate, role }: TransactionDetailProps) {
+export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit, onDelete }: TransactionDetailProps) {
   const { user, isAdmin } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -531,6 +533,20 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
                 )}
               </div>
             )}
+
+            {/* Edit/Delete Actions */}
+            <div className="flex gap-3 pt-4 border-t">
+              {onEdit && (
+                <Button variant="outline" onClick={onEdit} className="flex-1" disabled={loading}>
+                  Edit Details
+                </Button>
+              )}
+              {onDelete && (
+                <Button variant="destructive" onClick={() => openConfirmDialog("delete")} className="flex-1" disabled={loading}>
+                  Delete Transaction
+                </Button>
+              )}
+            </div>
           </div>
         );
 
@@ -871,6 +887,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
               {confirmAction === "approve_refund" && "Approve refund and cancel the transaction?"}
               {confirmAction === "deny_refund" && "Deny refund and move transaction back to held?"}
               {confirmAction === "move_delivery" && "Move transaction to pending delivery status?"}
+              {confirmAction === "delete" && "Are you sure you want to delete this transaction? This action cannot be undone."}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -884,12 +901,16 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role }: Trans
                 if (confirmAction === "approve_refund") handleUpdateStatus("cancelled", "Refund approved by admin");
                 if (confirmAction === "deny_refund") handleUpdateStatus("held", "Refund denied by admin");
                 if (confirmAction === "move_delivery") handleUpdateStatus("pending_delivery" as TransactionStatus);
+                if (confirmAction === "delete" && onDelete) {
+                  onDelete();
+                  setShowConfirmDialog(false);
+                }
               }}
               disabled={loading}
-              className={confirmAction === "dispute" || confirmAction === "approve_refund" ? "bg-destructive hover:bg-destructive/90" : "gradient-hero border-0"}
+              className={confirmAction === "dispute" || confirmAction === "approve_refund" || confirmAction === "delete" ? "bg-destructive hover:bg-destructive/90" : "gradient-hero border-0"}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Confirm
+              {confirmAction === "delete" ? "Delete" : "Confirm"}
             </Button>
           </DialogFooter>
         </DialogContent>

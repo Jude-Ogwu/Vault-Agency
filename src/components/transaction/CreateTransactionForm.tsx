@@ -25,7 +25,7 @@ interface CreateTransactionFormProps {
   onCancel: () => void;
 }
 
-export function CreateTransactionForm({ onSuccess, onCancel }: CreateTransactionFormProps) {
+export function CreateTransactionForm({ onSuccess, onCancel, initialData }: CreateTransactionFormProps & { initialData?: any }) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -34,13 +34,37 @@ export function CreateTransactionForm({ onSuccess, onCancel }: CreateTransaction
   const [negotiateMessage, setNegotiateMessage] = useState("");
   const [negotiateSending, setNegotiateSending] = useState(false);
   const [formData, setFormData] = useState({
-    dealTitle: "",
-    dealDescription: "",
-    amount: "",
-    productType: "" as ProductType | "",
-    sellerEmail: "",
-    sellerPhone: "",
+    dealTitle: initialData?.deal_title || "",
+    dealDescription: initialData?.deal_description || "",
+    amount: initialData?.amount ? (initialData.amount / (1 + DEFAULT_FEE / 100)).toFixed(2) : "", // Reverse calc approximation or just use raw amount if stored differently. Actually amount stored is TOTAL.
+    // Wait, stored amount is TOTAL? 
+    // Line 113: amount: totalAmount
+    // So if editing, we need to reverse calculate base amount? 
+    // Or just store base amount separately? The DB schema only shows 'amount'.
+    // Let's check how it's calculated. 
+    // baseAmount = parseFloat(formData.amount)
+    // serviceFee = baseAmount * feePercent / 100
+    // totalAmount = baseAmount + serviceFee
+    // If we have totalAmount, baseAmount = totalAmount / (1 + feePercent/100)
+    productType: (initialData?.product_type as ProductType) || "" as ProductType | "",
+    sellerEmail: initialData?.seller_email || "",
+    sellerPhone: initialData?.seller_phone || "",
   });
+
+  // Calculate base amount for display if initialData exists
+  useEffect(() => {
+    if (initialData?.amount && feePercent) {
+      // Only update if formData.amount is still empty/initial to avoid overwriting user input
+      // Actually, we initialized it above, but feePercent might not be loaded yet.
+      // Let's refine the initialization.
+      const derivedBase = (initialData.amount / (1 + feePercent / 100)).toFixed(2);
+      setFormData(prev => ({
+        ...prev,
+        amount: prev.amount || derivedBase
+      }));
+    }
+  }, [initialData, feePercent]);
+
 
   // Load service fee from DB
   // Note: site_settings table exists in DB but is not in the generated Supabase types yet
@@ -107,34 +131,53 @@ export function CreateTransactionForm({ onSuccess, onCancel }: CreateTransaction
 
     setLoading(true);
 
-    const { error } = await supabase.from("transactions").insert({
+    const transactionData = {
       deal_title: formData.dealTitle.trim(),
       deal_description: formData.dealDescription.trim() || null,
       amount: totalAmount,
       product_type: formData.productType,
-      buyer_id: user.id,
-      buyer_email: user.email!,
       seller_email: formData.sellerEmail.trim().toLowerCase(),
       seller_phone: formData.sellerPhone.trim() || null,
-      status: "pending_payment",
-    });
+      // Status remains pending_payment on edit, or is set on create
+    };
+
+    let error;
+
+    if (initialData) {
+      const { error: updateError } = await supabase
+        .from("transactions")
+        .update(transactionData)
+        .eq("id", initialData.id);
+      error = updateError;
+    } else {
+      const { error: insertError } = await supabase.from("transactions").insert({
+        ...transactionData,
+        buyer_id: user.id,
+        buyer_email: user.email!,
+        status: "pending_payment",
+      });
+      error = insertError;
+    }
 
     if (error) {
-      toast({ title: "Failed to create transaction", description: error.message, variant: "destructive" });
+      toast({ title: initialData ? "Failed to update" : "Failed to create", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Transaction created!", description: "Proceed to make payment." });
-      // Fire-and-forget: don't block UI waiting for email notification
-      supabase.functions.invoke("notify-transaction", {
-        body: {
-          event_type: "transaction_created",
-          transaction: {
-            deal_title: formData.dealTitle.trim(),
-            amount: totalAmount,
-            buyer_email: user.email!,
-            seller_email: formData.sellerEmail.trim().toLowerCase(),
+      toast({ title: initialData ? "Transaction updated!" : "Transaction created!", description: "Proceed to make payment." });
+
+      if (!initialData) {
+        // Only notify on create
+        supabase.functions.invoke("notify-transaction", {
+          body: {
+            event_type: "transaction_created",
+            transaction: {
+              deal_title: formData.dealTitle.trim(),
+              amount: totalAmount,
+              buyer_email: user.email!,
+              seller_email: formData.sellerEmail.trim().toLowerCase(),
+            },
           },
-        },
-      }).catch((err) => console.warn("Email notification failed:", err));
+        }).catch((err) => console.warn("Email notification failed:", err));
+      }
       onSuccess();
     }
 
@@ -149,8 +192,8 @@ export function CreateTransactionForm({ onSuccess, onCancel }: CreateTransaction
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <CardTitle>New Transaction</CardTitle>
-            <CardDescription>Create a secure escrow transaction</CardDescription>
+            <CardTitle>{initialData ? "Edit Transaction" : "New Transaction"}</CardTitle>
+            <CardDescription>{initialData ? "Update transaction details" : "Create a secure escrow transaction"}</CardDescription>
           </div>
         </div>
       </CardHeader>
@@ -274,8 +317,8 @@ export function CreateTransactionForm({ onSuccess, onCancel }: CreateTransaction
                       <Button
                         type="button"
                         size="sm"
-                        onClick={handleNegotiate}
                         disabled={negotiateSending || !negotiateMessage.trim()}
+                        onClick={handleNegotiate}
                         className="w-full gradient-hero border-0"
                       >
                         {negotiateSending ? (
@@ -324,7 +367,7 @@ export function CreateTransactionForm({ onSuccess, onCancel }: CreateTransaction
             </Button>
             <Button type="submit" className="flex-1 gradient-hero border-0" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Transaction {baseAmount > 0 ? `(${formatNaira(totalAmount)})` : ""}
+              {initialData ? "Update Transaction" : "Create Transaction"} {baseAmount > 0 ? `(${formatNaira(totalAmount)})` : ""}
             </Button>
           </div>
         </form>

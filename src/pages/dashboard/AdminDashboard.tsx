@@ -163,7 +163,10 @@ export default function AdminDashboard() {
         (t) =>
           t.deal_title.toLowerCase().includes(search) ||
           t.buyer_email.toLowerCase().includes(search) ||
-          t.seller_email.toLowerCase().includes(search)
+          t.seller_email.toLowerCase().includes(search) ||
+          (t.seller_phone && t.seller_phone.toLowerCase().includes(search)) ||
+          (t.payment_reference && t.payment_reference.toLowerCase().includes(search)) ||
+          t.id.toLowerCase().includes(search)
       );
     }
 
