@@ -32,7 +32,7 @@ const roleColors: Record<string, string> = {
 const roleBadge: Record<string, string> = {
     buyer: "Buyer",
     seller: "Seller",
-    admin: "Admin",
+    admin: "VA",
 };
 
 export function ChatPanel({ transactionId, role }: ChatPanelProps) {
