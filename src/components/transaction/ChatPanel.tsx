@@ -65,9 +65,7 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
         return () => clearInterval(interval);
     }, [transactionId]);
 
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }, [messages]);
+    // Auto-scroll disabled per user request
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
