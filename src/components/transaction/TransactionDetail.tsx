@@ -722,11 +722,11 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
           )}
         </div>
 
-        {/* Admin Manual Override */}
+        {/* VA Manual Override */}
         <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-3">
           <div className="flex items-center gap-2 text-primary font-medium">
             <Settings className="h-4 w-4" />
-            <h3>Admin Override Zone</h3>
+            <h3>VA Override Zone</h3>
           </div>
           <p className="text-xs text-muted-foreground">Force update the transaction status (use with caution).</p>
 
@@ -747,7 +747,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
           </div>
 
           <div className="space-y-2">
-            <Label>Admin Note (Required for override)</Label>
+            <Label>VA Note (Required for override)</Label>
             <Input
               placeholder="Reason for manual update..."
               value={manualNote}
@@ -837,10 +837,10 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
             </div>
           )}
 
-          {/* Admin Notes */}
+          {/* VA Notes */}
           {transaction.admin_notes && (
             <div className="rounded-lg border border-warning/30 bg-warning/5 p-4">
-              <Label className="text-warning font-semibold">Admin Notes</Label>
+              <Label className="text-warning font-semibold">VA Notes</Label>
               <p className="mt-1 text-sm">{transaction.admin_notes}</p>
             </div>
           )}

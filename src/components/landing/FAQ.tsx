@@ -44,7 +44,7 @@ const faqs = [
   {
     question: "Are there any fees for using Vault Agency?",
     answer:
-      "Vault Agency charges a small service fee on each transaction to cover platform operations and security. The exact fee is displayed before you confirm your payment, so there are no hidden charges.",
+      "Vault Agency charges a standard service fee of 5% for transactions under ₦10,000. For transactions of ₦10,000 and above, the fee is reduced to 2%. The exact fee is displayed before you confirm your payment.",
   },
 ];
 

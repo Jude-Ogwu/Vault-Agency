@@ -29,23 +29,18 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [feePercent, setFeePercent] = useState(DEFAULT_FEE);
+  const [feeConfig, setFeeConfig] = useState({
+    defaultPercent: 5,
+    highValuePercent: 2,
+    threshold: 10000
+  });
   const [showNegotiate, setShowNegotiate] = useState(false);
   const [negotiateMessage, setNegotiateMessage] = useState("");
   const [negotiateSending, setNegotiateSending] = useState(false);
   const [formData, setFormData] = useState({
     dealTitle: initialData?.deal_title || "",
     dealDescription: initialData?.deal_description || "",
-    amount: initialData?.amount ? (initialData.amount / (1 + DEFAULT_FEE / 100)).toFixed(2) : "", // Reverse calc approximation or just use raw amount if stored differently. Actually amount stored is TOTAL.
-    // Wait, stored amount is TOTAL? 
-    // Line 113: amount: totalAmount
-    // So if editing, we need to reverse calculate base amount? 
-    // Or just store base amount separately? The DB schema only shows 'amount'.
-    // Let's check how it's calculated. 
-    // baseAmount = parseFloat(formData.amount)
-    // serviceFee = baseAmount * feePercent / 100
-    // totalAmount = baseAmount + serviceFee
-    // If we have totalAmount, baseAmount = totalAmount / (1 + feePercent/100)
+    amount: initialData?.amount ? initialData.amount.toString() : "",
     productType: (initialData?.product_type as ProductType) || "" as ProductType | "",
     sellerEmail: initialData?.seller_email || "",
     sellerPhone: initialData?.seller_phone || "",
@@ -53,34 +48,54 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
 
   // Calculate base amount for display if initialData exists
   useEffect(() => {
-    if (initialData?.amount && feePercent) {
-      // Only update if formData.amount is still empty/initial to avoid overwriting user input
-      // Actually, we initialized it above, but feePercent might not be loaded yet.
-      // Let's refine the initialization.
-      const derivedBase = (initialData.amount / (1 + feePercent / 100)).toFixed(2);
-      setFormData(prev => ({
-        ...prev,
-        amount: prev.amount || derivedBase
-      }));
-    }
-  }, [initialData, feePercent]);
+    if (initialData?.amount && feeConfig.defaultPercent) {
+      const total = initialData.amount;
+      // Reverse logic to guess base amount
+      // Try high value rate first
+      let derivedBase = total / (1 + feeConfig.highValuePercent / 100);
 
+      if (derivedBase < feeConfig.threshold) {
+        // If derived base is less than threshold, then it must have been the default rate
+        derivedBase = total / (1 + feeConfig.defaultPercent / 100);
+      }
 
-  // Load service fee from DB
-  // Note: site_settings table exists in DB but is not in the generated Supabase types yet
-  useEffect(() => {
-    (supabase as any)
-      .from("site_settings")
-      .select("value")
-      .eq("key", "service_fee_percent")
-      .single()
-      .then(({ data }: { data: { value: string } | null }) => {
-        if (data) setFeePercent(parseFloat(data.value) || DEFAULT_FEE);
+      // Update form if not already set by user interaction
+      setFormData(prev => {
+        // Only set if we haven't touched it (simplified check: if it matches initial string or empty)
+        if (prev.amount === "" || prev.amount === initialData.amount.toString()) {
+          return { ...prev, amount: derivedBase.toFixed(2) };
+        }
+        return prev;
       });
+    }
+  }, [initialData, feeConfig]);
+
+  // Load service fee settings from DB
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const { data } = await supabase
+        .from("site_settings")
+        .select("key, value")
+        .in("key", ["service_fee_percent", "high_value_fee_percent", "high_value_threshold"]);
+
+      if (data) {
+        const config = { ...feeConfig };
+        data.forEach((setting) => {
+          if (setting.key === "service_fee_percent") config.defaultPercent = parseFloat(setting.value) || 5;
+          if (setting.key === "high_value_fee_percent") config.highValuePercent = parseFloat(setting.value) || 2;
+          if (setting.key === "high_value_threshold") config.threshold = parseFloat(setting.value) || 10000;
+        });
+        setFeeConfig(config);
+      }
+    };
+    fetchSettings();
   }, []);
 
   const baseAmount = parseFloat(formData.amount) || 0;
-  const serviceFee = Math.round(baseAmount * feePercent) / 100;
+  // Tiered logic: if baseAmount >= threshold, use highValuePercent, else use defaultPercent
+  const activeFeePercent = baseAmount >= feeConfig.threshold ? feeConfig.highValuePercent : feeConfig.defaultPercent;
+
+  const serviceFee = Math.round(baseAmount * activeFeePercent) / 100;
   const totalAmount = baseAmount + serviceFee;
 
   const formatNaira = (n: number) =>
@@ -104,7 +119,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
           },
         },
       });
-      toast({ title: "Negotiation request sent!", description: "Admin will contact you soon." });
+      toast({ title: "Negotiation request sent!", description: "VA will contact you soon." });
       setShowNegotiate(false);
       setNegotiateMessage("");
     } catch {
@@ -282,7 +297,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground flex items-center gap-1">
                     <Info className="h-3 w-3" />
-                    Service fee ({feePercent}%)
+                    Service fee ({activeFeePercent}%)
                   </span>
                   <span>{formatNaira(serviceFee)}</span>
                 </div>
@@ -305,7 +320,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
                   {showNegotiate && (
                     <div className="mt-2 space-y-2 rounded-lg border p-3 bg-card">
                       <p className="text-xs text-muted-foreground">
-                        For large transactions, you can negotiate the service fee with our admin.
+                        For large transactions, you can negotiate the service fee with our VA.
                       </p>
                       <Textarea
                         placeholder="Explain your transaction and preferred fee..."
@@ -326,7 +341,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
                         ) : (
                           <MessageSquare className="mr-1 h-3 w-3" />
                         )}
-                        Send to Admin
+                        Send to VA
                       </Button>
                     </div>
                   )}

@@ -61,9 +61,9 @@ export function Footer() {
           <div className="flex flex-col items-center">
             <h4 className="mb-4 text-sm font-semibold">Legal</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-foreground">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-foreground">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-foreground">Refund Policy</a></li>
+              <li><Link to="/legal/terms" className="hover:text-foreground">Terms of Service</Link></li>
+              <li><Link to="/legal/privacy" className="hover:text-foreground">Privacy Policy</Link></li>
+              <li><Link to="/legal/refund" className="hover:text-foreground">Refund Policy</Link></li>
             </ul>
           </div>
         </div>

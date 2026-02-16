@@ -3,7 +3,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
-import { Shield, LogOut, User, Menu, X, Store, HelpCircle } from "lucide-react";
+import { Shield, LogOut, User, Menu, X, Store, HelpCircle, LayoutDashboard } from "lucide-react";
 import { useState, useCallback } from "react";
 import {
   DropdownMenu,
@@ -197,13 +197,15 @@ export function Navbar() {
                   >
                     Seller Dashboard
                   </Link>
+                  {/* Mobile Menu - VA Link */}
                   {isAdmin && (
                     <Link
                       to="/admin"
-                      className="px-2 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                      className="flex items-center gap-2 px-2 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      Admin Dashboard
+                      <LayoutDashboard className="h-4 w-4" />
+                      VA Dashboard
                     </Link>
                   )}
                   <Button
