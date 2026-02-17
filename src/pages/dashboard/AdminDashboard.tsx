@@ -25,6 +25,7 @@ import {
   RotateCcw,
   Settings,
   User,
+  ArrowLeft,
 } from "lucide-react";
 import { ProductType, TransactionStatus, TRANSACTION_STATUSES } from "@/lib/constants";
 import { AdminSettings } from "@/components/admin/AdminSettings";
@@ -437,14 +438,14 @@ export default function AdminDashboard() {
 
         {view === "history" && (
           <>
-            <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="mb-6 flex items-center gap-4">
+              <Button variant="outline" size="icon" onClick={() => setView("list")}>
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
               <div>
                 <h1 className="text-2xl font-bold md:text-3xl">System History</h1>
                 <p className="text-muted-foreground">Audit log of all transaction activities.</p>
               </div>
-              <Button variant="outline" size="sm" onClick={() => setView("list")}>
-                <LayoutGrid className="mr-2 h-4 w-4" /> Back to Dashboard
-              </Button>
             </div>
             <HistoryTable limit={100} />
           </>

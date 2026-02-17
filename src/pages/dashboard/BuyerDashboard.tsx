@@ -9,7 +9,7 @@ import { CreateTransactionForm } from "@/components/transaction/CreateTransactio
 import { TransactionDetail } from "@/components/transaction/TransactionDetail";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, ShoppingBag, Loader2, Shield, History, LayoutGrid } from "lucide-react";
+import { Plus, ShoppingBag, Loader2, Shield, History, LayoutGrid, ArrowLeft } from "lucide-react";
 import { ProductType, TransactionStatus } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 import { HistoryTable } from "@/components/history/HistoryTable";
@@ -258,14 +258,14 @@ export default function BuyerDashboard() {
 
         {(view as any) === "history" && (
           <>
-            <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="mb-6 flex items-center gap-4">
+              <Button variant="outline" size="icon" onClick={() => setView("list")}>
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
               <div>
                 <h1 className="text-2xl font-bold md:text-3xl">Transaction History</h1>
                 <p className="text-muted-foreground">View your comprehensive transaction log.</p>
               </div>
-              <Button variant="outline" size="sm" onClick={() => setView("list")}>
-                <LayoutGrid className="mr-2 h-4 w-4" /> Back to Dashboard
-              </Button>
             </div>
             <div className="flex gap-2 mb-6">
               <Button
