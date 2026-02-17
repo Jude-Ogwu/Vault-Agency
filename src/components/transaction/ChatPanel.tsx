@@ -146,12 +146,18 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
             return;
         }
 
+        // Optimistic update
+        setMessages((prev) => prev.map((m) => (m.id === messageId ? { ...m, is_deleted: true } : m)));
+
         const { error } = await supabase
             .from("messages")
+            // @ts-ignore
             .update({ is_deleted: true } as any)
             .eq("id", messageId);
 
         if (error) {
+            // Revert on error
+            setMessages((prev) => prev.map((m) => (m.id === messageId ? { ...m, is_deleted: false } : m)));
             toast({
                 title: "Error deleting message",
                 description: error.message,
@@ -177,6 +183,7 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
 
         const { error } = await supabase
             .from("transactions")
+            // @ts-ignore
             .update({ muted_ids: newMutedIds } as any)
             .eq("id", transactionId);
 
@@ -310,21 +317,7 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
                         const isDeleted = msg.is_deleted;
 
                         if (isDeleted) {
-                            if (!isAdmin && !isMe) return null; // Hide deleted messages from others if not admin
-                            return (
-                                <div key={msg.id} className={`flex flex-col ${isMe ? "items-end" : "items-start"} opacity-50`}>
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <span className="text-[10px] text-muted-foreground italic flex items-center gap-1">
-                                            <Trash2 className="h-3 w-3" /> Message deleted
-                                        </span>
-                                    </div>
-                                    {isAdmin && (
-                                        <div className={`max-w-[80%] rounded-lg px-3 py-2 text-sm border border-dashed border-destructive/50 bg-destructive/5 text-muted-foreground`}>
-                                            {msg.content}
-                                        </div>
-                                    )}
-                                </div>
-                            );
+                            return null; // Completely hide deleted messages
                         }
 
                         return (
@@ -343,10 +336,10 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
                                         {format(new Date(msg.created_at), "MMM d, h:mm a")}
                                     </span>
                                     {isAdmin && (
-                                        <div className="hidden group-hover:flex items-center gap-1 ml-2">
+                                        <div className="flex items-center gap-1 ml-2">
                                             <button
                                                 onClick={() => handleDeleteMessage(msg.id)}
-                                                className="text-destructive hover:text-destructive/80 transition-colors"
+                                                className="text-destructive hover:text-destructive/80 transition-colors p-1"
                                                 title="Delete Message"
                                             >
                                                 <Trash2 className="h-3 w-3" />
@@ -354,7 +347,7 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
                                             {!isMe && (
                                                 <button
                                                     onClick={() => handleMuteUser(msg.sender_id)}
-                                                    className={`${mutedIds.includes(msg.sender_id) ? "text-red-500" : "text-muted-foreground"} hover:text-red-500 transition-colors`}
+                                                    className={`${mutedIds.includes(msg.sender_id) ? "text-red-500" : "text-muted-foreground"} hover:text-red-500 transition-colors p-1`}
                                                     title={mutedIds.includes(msg.sender_id) ? "Unmute User" : "Mute User"}
                                                 >
                                                     {mutedIds.includes(msg.sender_id) ? (

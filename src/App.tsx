@@ -21,6 +21,7 @@ import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import RefundPolicy from "./pages/legal/RefundPolicy";
 import SuspendedPage from "./pages/auth/SuspendedPage";
 import { SuspensionGuard } from "./components/auth/SuspensionGuard";
+import { TransactionRedirect } from "./components/TransactionRedirect";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/legal/terms" element={<TermsOfService />} />
             <Route path="/legal/privacy" element={<PrivacyPolicy />} />
             <Route path="/legal/refund" element={<RefundPolicy />} />
+            <Route path="/dashboard/transaction/:id" element={<TransactionRedirect />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
