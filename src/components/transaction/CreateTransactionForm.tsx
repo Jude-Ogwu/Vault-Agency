@@ -157,21 +157,28 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
     };
 
     let error;
+    let transactionId = initialData?.id;
 
     if (initialData) {
-      const { error: updateError } = await supabase
+      const { data, error: updateError } = await supabase
         .from("transactions")
         .update(transactionData)
-        .eq("id", initialData.id);
+        .eq("id", initialData.id)
+        .select()
+        .single();
+
       error = updateError;
+      if (data) transactionId = data.id;
     } else {
-      const { error: insertError } = await supabase.from("transactions").insert({
+      const { data, error: insertError } = await supabase.from("transactions").insert({
         ...transactionData,
         buyer_id: user.id,
         buyer_email: user.email!,
         status: "pending_payment",
-      });
+      }).select().single();
+
       error = insertError;
+      if (data) transactionId = data.id;
     }
 
     if (error) {
@@ -179,7 +186,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
     } else {
       toast({ title: initialData ? "Transaction updated!" : "Transaction created!", description: "Proceed to make payment." });
 
-      if (!initialData) {
+      if (!initialData && transactionId) {
         // Notify via Email (Function)
         supabase.functions.invoke("notify-transaction", {
           body: {
@@ -207,10 +214,26 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
               title: "New Transaction Request",
               message: `You have a new transaction offer: ${formData.dealTitle.trim()}`,
               type: "info",
-              // We don't have the new ID here easily unless we fetch it or return it from insert. 
-              // Since we don't return data from insert above (default), we might miss the link.
-              // But typically standard flow enables returning data.
-              // Let's rely on dashboard list for now or try to get it.
+              link: `/seller?transaction=${transactionId}`
+            } as any);
+          }
+        })();
+      } else if (transactionId) {
+        // Notify Seller of Update
+        (async () => {
+          const { data: sellerProfile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('email', formData.sellerEmail.trim().toLowerCase())
+            .single();
+
+          if (sellerProfile) {
+            await supabase.from("notifications").insert({
+              user_id: sellerProfile.id,
+              title: "Transaction Updated",
+              message: `The transaction "${formData.dealTitle.trim()}" has been updated by the buyer.`,
+              type: "info",
+              link: `/seller?transaction=${transactionId}`
             } as any);
           }
         })();

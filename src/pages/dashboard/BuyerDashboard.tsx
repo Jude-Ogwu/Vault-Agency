@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -86,11 +86,25 @@ export default function BuyerDashboard() {
     }
   };
 
+  const [searchParams] = useSearchParams();
+
   useEffect(() => {
     if (user) {
       fetchTransactions();
     }
   }, [user]);
+
+  // Handle deep linking from notifications
+  useEffect(() => {
+    const transactionId = searchParams.get('transaction');
+    if (transactionId && transactions.length > 0) {
+      const target = transactions.find(t => t.id === transactionId);
+      if (target) {
+        setSelectedTransaction(target);
+        setView("detail");
+      }
+    }
+  }, [searchParams, transactions]);
 
   const handleTransactionClick = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
@@ -244,9 +258,14 @@ export default function BuyerDashboard() {
 
         {(view as any) === "history" && (
           <>
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold md:text-3xl">Transaction History</h1>
-              <p className="text-muted-foreground">View your comprehensive transaction log.</p>
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold md:text-3xl">Transaction History</h1>
+                <p className="text-muted-foreground">View your comprehensive transaction log.</p>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => setView("list")}>
+                <LayoutGrid className="mr-2 h-4 w-4" /> Back to Dashboard
+              </Button>
             </div>
             <div className="flex gap-2 mb-6">
               <Button

@@ -136,6 +136,16 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
     }, [messages]);
 
     const handleDeleteMessage = async (messageId: string) => {
+        const msg = messages.find((m) => m.id === messageId);
+        if (!isAdmin && msg?.sender_id !== user?.id) {
+            toast({
+                title: "Permission denied",
+                description: "You can only delete your own messages.",
+                variant: "destructive",
+            });
+            return;
+        }
+
         const { error } = await supabase
             .from("messages")
             .update({ is_deleted: true } as any)
@@ -151,6 +161,15 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
     };
 
     const handleMuteUser = async (userId: string) => {
+        if (!isAdmin) {
+            toast({
+                title: "Permission denied",
+                description: "Only administrators can mute users.",
+                variant: "destructive",
+            });
+            return;
+        }
+
         const isMuted = mutedIds.includes(userId);
         const newMutedIds = isMuted
             ? mutedIds.filter((id) => id !== userId)
@@ -174,14 +193,25 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
                     ? "User can now send messages."
                     : "User has been muted in this chat.",
             });
+
+            // Notify the user
+            await supabase.from("notifications").insert({
+                user_id: userId,
+                title: isMuted ? "Reference: Chat Access Restored" : "Reference: Chat Access Suspended",
+                message: isMuted
+                    ? "Your chat privileges for this transaction have been restored by the VA."
+                    : "You have been muted in this transaction chat by the VA.",
+                type: isMuted ? "success" : "warning",
+                link: `/dashboard/transaction/${transactionId}`
+            } as any);
         }
     };
 
     const notifyRecipient = async (content: string) => {
         if (!transactionDetails || !user) return;
 
-        // Determine recipient(s)
-        const recipients: string[] = [];
+        // Determine recipient(s) with their specific dashboard links
+        const recipientsArray: { id: string, link: string }[] = [];
 
         // Find seller ID if possible
         const { data: sellerProfile } = await supabase
@@ -190,28 +220,42 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
             .eq('email', transactionDetails.seller_email)
             .single();
 
-        // Find buyer ID (we usually have it in transactionDetails.buyer_id but verifying)
         const buyerId = transactionDetails.buyer_id;
+        const sellerId = sellerProfile ? (sellerProfile as any).id : null;
+
+        // Define logic for who gets notified
+        const notifyBuyer = () => {
+            if (buyerId && buyerId !== user.id) {
+                recipientsArray.push({ id: buyerId, link: `/dashboard?transaction=${transactionId}` });
+            }
+        };
+        const notifySeller = () => {
+            if (sellerId && sellerId !== user.id) {
+                recipientsArray.push({ id: sellerId, link: `/seller?transaction=${transactionId}` });
+            }
+        };
+
+        // Admin notifications usually go to a generic admin, but here we might not have a specific admin ID to target unless we have a list.
+        // The previous code seemed to target buyer/seller based on sender role.
+        // If sender is admin, notify both.
 
         if (role === 'buyer') {
-            if (sellerProfile) recipients.push((sellerProfile as any).id);
+            notifySeller();
         } else if (role === 'seller') {
-            if (buyerId) recipients.push(buyerId);
+            notifyBuyer();
         } else if (role === 'admin') {
-            if (buyerId) recipients.push(buyerId);
-            if (sellerProfile) recipients.push((sellerProfile as any).id);
+            notifyBuyer();
+            notifySeller();
         }
 
         // Send notifications
-        for (const userId of recipients) {
-            if (userId === user.id) continue; // Don't notify self
-
+        for (const recipient of recipientsArray) {
             await supabase.from("notifications").insert({
-                user_id: userId,
+                user_id: recipient.id,
                 title: `New Message from ${role === 'admin' ? 'VA' : role}`,
                 message: content.substring(0, 50) + (content.length > 50 ? "..." : ""),
                 type: "info",
-                link: `/dashboard/transaction/${transactionId}`
+                link: recipient.link
             } as any);
         }
     };

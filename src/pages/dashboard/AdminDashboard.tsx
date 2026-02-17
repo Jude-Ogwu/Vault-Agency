@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -71,6 +71,7 @@ type View = "list" | "detail" | "complaints" | "settings" | "users" | "history";
 export default function AdminDashboard() {
   const { user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
@@ -95,6 +96,18 @@ export default function AdminDashboard() {
       }
     }
   }, [user, isAdmin, authLoading, navigate]);
+
+  // Handle deep linking from notifications
+  useEffect(() => {
+    const transactionId = searchParams.get('transaction');
+    if (transactionId && transactions.length > 0) {
+      const target = transactions.find(t => t.id === transactionId);
+      if (target) {
+        setSelectedTransaction(target);
+        setView("detail");
+      }
+    }
+  }, [searchParams, transactions]);
 
   const fetchTransactions = async () => {
     setLoading(true);
