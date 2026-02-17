@@ -246,6 +246,57 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
   };
 
   // --- Status Updates ---
+  const logHistory = async (actionType: string, description: string) => {
+    if (!user) return;
+    try {
+      await supabase.from("transaction_history").insert({
+        transaction_id: transaction.id,
+        actor_id: user.id,
+        action_type: actionType,
+        description: description
+      } as any);
+    } catch (error) {
+      console.error("Failed to log history:", error);
+    }
+  };
+
+  const notifyParties = async (title: string, message: string) => {
+    // Fetch IDs
+    const { data: transactionData } = await supabase
+      .from("transactions")
+      .select("buyer_id, seller_email")
+      .eq("id", transaction.id)
+      .single();
+
+    if (!transactionData) return;
+
+    const recipientIds = new Set<string>();
+
+    // 1. Buyer
+    if (transactionData.buyer_id) recipientIds.add(transactionData.buyer_id);
+
+    // 2. Seller
+    const { data: sellerProfile } = await supabase.from('profiles').select('id').eq('email', transactionData.seller_email).single();
+    if (sellerProfile) recipientIds.add(sellerProfile.id);
+
+    // 3. Admins
+    const { data: adminProfiles } = await supabase.from('profiles').select('id').eq('role', 'admin');
+    if (adminProfiles) {
+      adminProfiles.forEach(admin => recipientIds.add(admin.id));
+    }
+
+    // Send to ALL recipients
+    for (const uid of recipientIds) {
+      await supabase.from("notifications").insert({
+        user_id: uid,
+        title,
+        message,
+        type: "info",
+        link: `/dashboard/transaction/${transaction.id}`
+      } as any);
+    }
+  };
+
   const handleUpdateStatus = async (newStatus: TransactionStatus, adminNotes?: string) => {
     setLoading(true);
     const updates: Record<string, unknown> = { status: newStatus };
@@ -261,6 +312,14 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
     } else {
       toast({ title: "Status updated", description: `Status: ${TRANSACTION_STATUSES[newStatus]?.label || newStatus}` });
       notifyAdmin(newStatus === "pending_confirmation" ? "delivery_marked" : newStatus === "pending_release" ? "buyer_confirmed" : newStatus === "released" ? "funds_released" : newStatus, { status: newStatus });
+
+      // Log History
+      const statusLabel = TRANSACTION_STATUSES[newStatus]?.label || newStatus;
+      await logHistory("status_change", `Status updated to ${statusLabel}`);
+
+      // Notify Counterparty & Admin
+      await notifyParties("Transaction Updated", `Status changed to: ${statusLabel}`);
+
       onUpdate();
     }
     setLoading(false);

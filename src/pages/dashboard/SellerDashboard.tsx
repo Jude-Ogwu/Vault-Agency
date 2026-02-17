@@ -2,13 +2,15 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TransactionCard } from "@/components/transaction/TransactionCard";
 import { TransactionDetail } from "@/components/transaction/TransactionDetail";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, Loader2, Wallet, TrendingUp } from "lucide-react";
+import { Package, Loader2, Wallet, TrendingUp, History, LayoutGrid } from "lucide-react";
 import { ProductType, TransactionStatus } from "@/lib/constants";
+import { HistoryTable } from "@/components/history/HistoryTable";
 
 interface Transaction {
   id: string;
@@ -31,7 +33,7 @@ interface Transaction {
   released_at?: string | null;
 }
 
-type View = "list" | "detail";
+type View = "list" | "detail" | "history";
 
 export default function SellerDashboard() {
   const { user, loading: authLoading } = useAuth();
@@ -161,6 +163,24 @@ export default function SellerDashboard() {
               </Card>
             </div>
 
+            {/* Tabs */}
+            <div className="flex gap-2 mb-6">
+              <Button
+                variant={view === "list" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setView("list")}
+              >
+                <LayoutGrid className="mr-2 h-4 w-4" /> Transactions
+              </Button>
+              <Button
+                variant={(view as any) === "history" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setView("history" as any)}
+              >
+                <History className="mr-2 h-4 w-4" /> History
+              </Button>
+            </div>
+
             {loading ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
@@ -192,6 +212,32 @@ export default function SellerDashboard() {
           </>
         )}
 
+        {(view as any) === "history" && (
+          <>
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold md:text-3xl">Transaction History</h1>
+              <p className="text-muted-foreground">View your comprehensive transaction log.</p>
+            </div>
+            <div className="flex gap-2 mb-6">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setView("list")}
+              >
+                <LayoutGrid className="mr-2 h-4 w-4" /> Transactions
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => setView("history")}
+              >
+                <History className="mr-2 h-4 w-4" /> History
+              </Button>
+            </div>
+            <HistoryTable />
+          </>
+        )}
+
         {view === "detail" && selectedTransaction && (
           <div className="max-w-2xl mx-auto">
             <TransactionDetail
@@ -217,6 +263,6 @@ export default function SellerDashboard() {
       </main>
 
       <Footer />
-    </div>
+    </div >
   );
 }

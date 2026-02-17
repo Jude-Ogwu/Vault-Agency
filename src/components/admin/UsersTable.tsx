@@ -20,7 +20,7 @@ import {
     DialogDescription
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Search, Ban, Undo, Trash2 } from "lucide-react";
+import { Search, Ban, Undo, Trash2, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface UserProfile {
@@ -34,7 +34,11 @@ interface UserProfile {
     can_chat: boolean;
 }
 
-export function UsersTable() {
+interface UsersTableProps {
+    onBack?: () => void;
+}
+
+export function UsersTable({ onBack }: UsersTableProps) {
     const [users, setUsers] = useState<UserProfile[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
@@ -66,6 +70,19 @@ export function UsersTable() {
         fetchUsers();
     }, [fetchUsers]);
 
+    const createNotification = async (userId: string, title: string, message: string, type: "info" | "success" | "warning" | "error") => {
+        try {
+            await supabase.from("notifications").insert({
+                user_id: userId,
+                title,
+                message,
+                type
+            } as any);
+        } catch (error) {
+            console.error("Failed to create notification", error);
+        }
+    };
+
     const handleSuspendUser = async () => {
         if (!selectedUser) return;
 
@@ -88,6 +105,10 @@ export function UsersTable() {
                 title: "User suspended",
                 description: `${selectedUser.email} has been suspended.`,
             });
+            // Notify the user (they will see it if they ever get access back or via other means if we had email)
+            // But also, admins might want a record. For now, we persist it for the user.
+            createNotification(selectedUser.id, "Account Suspended", `Your account was suspended: ${suspensionReason}`, "error");
+
             fetchUsers();
             setSuspensionDialogOpen(false);
             setSuspensionReason("");
@@ -114,6 +135,7 @@ export function UsersTable() {
                 title: "User reactivated",
                 description: `${user.email} is now active.`,
             });
+            createNotification(user.id, "Account Reactivated", "Your account has been reactivated. Welcome back!", "success");
             fetchUsers();
         }
     };
@@ -198,13 +220,20 @@ export function UsersTable() {
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center gap-2 max-w-sm">
-                <Search className="h-4 w-4 text-muted-foreground" />
-                <Input
-                    placeholder="Search users..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
+            <div className="flex items-center gap-4">
+                {onBack && (
+                    <Button variant="outline" size="icon" onClick={onBack}>
+                        <ArrowLeft className="h-4 w-4" />
+                    </Button>
+                )}
+                <div className="flex items-center gap-2 max-w-sm flex-1">
+                    <Search className="h-4 w-4 text-muted-foreground" />
+                    <Input
+                        placeholder="Search users..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
             </div>
 
             <div className="rounded-md border">

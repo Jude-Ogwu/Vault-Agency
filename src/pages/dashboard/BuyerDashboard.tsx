@@ -9,9 +9,10 @@ import { CreateTransactionForm } from "@/components/transaction/CreateTransactio
 import { TransactionDetail } from "@/components/transaction/TransactionDetail";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, ShoppingBag, Loader2, Shield } from "lucide-react";
+import { Plus, ShoppingBag, Loader2, Shield, History, LayoutGrid } from "lucide-react";
 import { ProductType, TransactionStatus } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
+import { HistoryTable } from "@/components/history/HistoryTable";
 
 
 interface Transaction {
@@ -35,7 +36,7 @@ interface Transaction {
   released_at?: string | null;
 }
 
-type View = "list" | "create" | "detail";
+type View = "list" | "create" | "detail" | "history";
 
 export default function BuyerDashboard() {
   const { user, loading: authLoading } = useAuth();
@@ -187,6 +188,24 @@ export default function BuyerDashboard() {
               </Card>
             </div>
 
+            {/* Tabs */}
+            <div className="flex gap-2 mb-6">
+              <Button
+                variant={view === "list" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setView("list")}
+              >
+                <LayoutGrid className="mr-2 h-4 w-4" /> Transactions
+              </Button>
+              <Button
+                variant={(view as any) === "history" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setView("history" as any)}
+              >
+                <History className="mr-2 h-4 w-4" /> History
+              </Button>
+            </div>
+
             {loading ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
@@ -220,6 +239,32 @@ export default function BuyerDashboard() {
                 ))}
               </div>
             )}
+          </>
+        )}
+
+        {(view as any) === "history" && (
+          <>
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold md:text-3xl">Transaction History</h1>
+              <p className="text-muted-foreground">View your comprehensive transaction log.</p>
+            </div>
+            <div className="flex gap-2 mb-6">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setView("list")}
+              >
+                <LayoutGrid className="mr-2 h-4 w-4" /> Transactions
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => setView("history")}
+              >
+                <History className="mr-2 h-4 w-4" /> History
+              </Button>
+            </div>
+            <HistoryTable />
           </>
         )}
 
@@ -263,6 +308,6 @@ export default function BuyerDashboard() {
       </main>
 
       <Footer />
-    </div>
+    </div >
   );
 }

@@ -61,23 +61,25 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
         setLoading(false);
     };
 
+    const [transactionDetails, setTransactionDetails] = useState<{ buyer_id: string; seller_email: string; buyer_email: string } | null>(null);
+
     const fetchTransactionDetails = async () => {
         const { data } = await supabase
             .from("transactions")
-            .select("muted_ids")
+            .select("muted_ids, buyer_id, seller_email, buyer_email")
             .eq("id", transactionId)
             .single();
 
         if (data) {
-            setMutedIds(data.muted_ids || []);
+            setMutedIds((data.muted_ids as string[]) || []);
+            setTransactionDetails(data as any);
         }
-    }
+    };
 
     useEffect(() => {
         fetchMessages();
         fetchTransactionDetails();
 
-        // Realtime subscription for messages
         const channel = supabase
             .channel(`chat_${transactionId}`)
             .on(
@@ -102,7 +104,7 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
                 },
                 (payload) => {
                     setMessages((curr) =>
-                        curr.map(msg => msg.id === payload.new.id ? payload.new as Message : msg)
+                        curr.map((msg) => (msg.id === payload.new.id ? (payload.new as Message) : msg))
                     );
                 }
             )
@@ -115,7 +117,7 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
                     filter: `id=eq.${transactionId}`,
                 },
                 (payload) => {
-                    setMutedIds(payload.new.muted_ids || []);
+                    setMutedIds((payload.new.muted_ids as string[]) || []);
                 }
             )
             .subscribe();
@@ -136,7 +138,7 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
     const handleDeleteMessage = async (messageId: string) => {
         const { error } = await supabase
             .from("messages")
-            .update({ is_deleted: true })
+            .update({ is_deleted: true } as any)
             .eq("id", messageId);
 
         if (error) {
@@ -151,12 +153,12 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
     const handleMuteUser = async (userId: string) => {
         const isMuted = mutedIds.includes(userId);
         const newMutedIds = isMuted
-            ? mutedIds.filter(id => id !== userId)
+            ? mutedIds.filter((id) => id !== userId)
             : [...mutedIds, userId];
 
         const { error } = await supabase
             .from("transactions")
-            .update({ muted_ids: newMutedIds })
+            .update({ muted_ids: newMutedIds } as any)
             .eq("id", transactionId);
 
         if (error) {
@@ -168,12 +170,51 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
         } else {
             toast({
                 title: isMuted ? "User unmuted" : "User muted",
-                description: isMuted ? "User can now send messages." : "User has been muted in this chat.",
+                description: isMuted
+                    ? "User can now send messages."
+                    : "User has been muted in this chat.",
             });
         }
     };
 
-    // Auto-scroll disabled per user request
+    const notifyRecipient = async (content: string) => {
+        if (!transactionDetails || !user) return;
+
+        // Determine recipient(s)
+        const recipients: string[] = [];
+
+        // Find seller ID if possible
+        const { data: sellerProfile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('email', transactionDetails.seller_email)
+            .single();
+
+        // Find buyer ID (we usually have it in transactionDetails.buyer_id but verifying)
+        const buyerId = transactionDetails.buyer_id;
+
+        if (role === 'buyer') {
+            if (sellerProfile) recipients.push((sellerProfile as any).id);
+        } else if (role === 'seller') {
+            if (buyerId) recipients.push(buyerId);
+        } else if (role === 'admin') {
+            if (buyerId) recipients.push(buyerId);
+            if (sellerProfile) recipients.push((sellerProfile as any).id);
+        }
+
+        // Send notifications
+        for (const userId of recipients) {
+            if (userId === user.id) continue; // Don't notify self
+
+            await supabase.from("notifications").insert({
+                user_id: userId,
+                title: `New Message from ${role === 'admin' ? 'VA' : role}`,
+                message: content.substring(0, 50) + (content.length > 50 ? "..." : ""),
+                type: "info",
+                link: `/dashboard/transaction/${transactionId}`
+            } as any);
+        }
+    };
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -186,7 +227,7 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
             sender_email: user.email!,
             sender_role: role,
             content: newMessage.trim(),
-        });
+        } as any);
 
         if (error) {
             toast({
@@ -195,6 +236,7 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
                 variant: "destructive",
             });
         } else {
+            notifyRecipient(newMessage.trim());
             setNewMessage("");
             await fetchMessages();
         }
@@ -265,17 +307,19 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
                                             >
                                                 <Trash2 className="h-3 w-3" />
                                             </button>
-                                            <button
-                                                onClick={() => handleMuteUser(msg.sender_id)}
-                                                className={`${mutedIds.includes(msg.sender_id) ? "text-red-500" : "text-muted-foreground"} hover:text-red-500 transition-colors`}
-                                                title={mutedIds.includes(msg.sender_id) ? "Unmute User" : "Mute User"}
-                                            >
-                                                {mutedIds.includes(msg.sender_id) ? (
-                                                    <Undo className="h-3 w-3" />
-                                                ) : (
-                                                    <Ban className="h-3 w-3" />
-                                                )}
-                                            </button>
+                                            {!isMe && (
+                                                <button
+                                                    onClick={() => handleMuteUser(msg.sender_id)}
+                                                    className={`${mutedIds.includes(msg.sender_id) ? "text-red-500" : "text-muted-foreground"} hover:text-red-500 transition-colors`}
+                                                    title={mutedIds.includes(msg.sender_id) ? "Unmute User" : "Mute User"}
+                                                >
+                                                    {mutedIds.includes(msg.sender_id) ? (
+                                                        <Undo className="h-3 w-3" />
+                                                    ) : (
+                                                        <Ban className="h-3 w-3" />
+                                                    )}
+                                                </button>
+                                            )}
                                         </div>
                                     )}
                                 </div>

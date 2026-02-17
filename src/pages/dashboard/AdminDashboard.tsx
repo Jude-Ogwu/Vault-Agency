@@ -29,6 +29,8 @@ import {
 import { ProductType, TransactionStatus, TRANSACTION_STATUSES } from "@/lib/constants";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { UsersTable } from "@/components/admin/UsersTable";
+import { HistoryTable } from "@/components/history/HistoryTable";
+import { History as HistoryIcon } from "lucide-react";
 
 interface Transaction {
   id: string;
@@ -64,7 +66,7 @@ interface Complaint {
   created_at: string;
 }
 
-type View = "list" | "detail" | "complaints" | "settings" | "users";
+type View = "list" | "detail" | "complaints" | "settings" | "users" | "history";
 
 export default function AdminDashboard() {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -329,6 +331,13 @@ export default function AdminDashboard() {
                 <User className="mr-2 h-4 w-4" /> Users
               </Button>
               <Button
+                variant={view === "history" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setView("history")}
+              >
+                <HistoryIcon className="mr-2 h-4 w-4" /> History
+              </Button>
+              <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setView("settings")}
@@ -403,7 +412,17 @@ export default function AdminDashboard() {
               <h1 className="text-2xl font-bold md:text-3xl">User Management</h1>
               <p className="text-muted-foreground">Manage authorized users, suspensions, and permissions.</p>
             </div>
-            <UsersTable />
+            <UsersTable onBack={() => setView("list")} />
+          </>
+        )}
+
+        {view === "history" && (
+          <>
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold md:text-3xl">System History</h1>
+              <p className="text-muted-foreground">Audit log of all transaction activities.</p>
+            </div>
+            <HistoryTable limit={100} />
           </>
         )}
 
