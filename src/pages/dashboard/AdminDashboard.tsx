@@ -66,7 +66,7 @@ interface Complaint {
   created_at: string;
 }
 
-type View = "list" | "detail" | "complaints" | "settings" | "users" | "history";
+type View = "list" | "detail" | "create" | "complaints" | "settings" | "users" | "history";
 
 export default function AdminDashboard() {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -255,108 +255,114 @@ export default function AdminDashboard() {
             </div>
 
             {/* Stats */}
-            <div className="grid gap-4 mb-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-              <Card>
-                <CardContent className="flex items-center gap-4 p-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-                    <LayoutGrid className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total</p>
-                    <p className="text-2xl font-bold">{transactions.length}</p>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="flex items-center gap-4 p-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-warning/10">
-                    <Shield className="h-6 w-6 text-warning" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Held</p>
-                    <p className="text-2xl font-bold">{formatAmount(totalHeld)}</p>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className={pendingRelease > 0 ? "border-success/50" : ""}>
-                <CardContent className="flex items-center gap-4 p-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-success/10">
-                    <CheckCircle2 className="h-6 w-6 text-success" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Pending Release</p>
-                    <p className="text-2xl font-bold">{pendingRelease}</p>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className={disputed > 0 ? "border-destructive/50" : ""}>
-                <CardContent className="flex items-center gap-4 p-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-destructive/10">
-                    <AlertTriangle className="h-6 w-6 text-destructive" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Disputed/Refunds</p>
-                    <p className="text-2xl font-bold">{disputed}</p>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card
-                className={unresolvedComplaints > 0 ? "border-orange-400/50 cursor-pointer hover:shadow-md transition-all" : "cursor-pointer hover:shadow-md transition-all"}
-                onClick={() => setView("complaints")}
-              >
-                <CardContent className="flex items-center gap-4 p-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-500/10">
-                    <MessageSquareWarning className="h-6 w-6 text-orange-500" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Complaints</p>
-                    <p className="text-2xl font-bold">{unresolvedComplaints}</p>
-                  </div>
-                </CardContent>
-              </Card>
+            <div className="overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
+              <div className="min-w-[1000px] md:min-w-0">
+                <div className="grid gap-4 mb-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                  <Card>
+                    <CardContent className="flex items-center gap-4 p-6">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+                        <LayoutGrid className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Total</p>
+                        <p className="text-2xl font-bold">{transactions.length}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="flex items-center gap-4 p-6">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-warning/10">
+                        <Shield className="h-6 w-6 text-warning" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Held</p>
+                        <p className="text-2xl font-bold">{formatAmount(totalHeld)}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className={pendingRelease > 0 ? "border-success/50" : ""}>
+                    <CardContent className="flex items-center gap-4 p-6">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-success/10">
+                        <CheckCircle2 className="h-6 w-6 text-success" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Pending Release</p>
+                        <p className="text-2xl font-bold">{pendingRelease}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className={disputed > 0 ? "border-destructive/50" : ""}>
+                    <CardContent className="flex items-center gap-4 p-6">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-destructive/10">
+                        <AlertTriangle className="h-6 w-6 text-destructive" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Disputed/Refunds</p>
+                        <p className="text-2xl font-bold">{disputed}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card
+                    className={unresolvedComplaints > 0 ? "border-orange-400/50 cursor-pointer hover:shadow-md transition-all" : "cursor-pointer hover:shadow-md transition-all"}
+                    onClick={() => setView("complaints")}
+                  >
+                    <CardContent className="flex items-center gap-4 p-6">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-500/10">
+                        <MessageSquareWarning className="h-6 w-6 text-orange-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Complaints</p>
+                        <p className="text-2xl font-bold">{unresolvedComplaints}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-2 mb-6">
-              <Button
-                variant={view === "list" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setView("list")}
-              >
-                <LayoutGrid className="mr-2 h-4 w-4" /> Transactions
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setView("complaints")}
-                className="relative"
-              >
-                <MessageSquareWarning className="mr-2 h-4 w-4" /> Complaints
-                {unresolvedComplaints > 0 && (
-                  <Badge className="ml-2 bg-orange-500 text-white text-[10px] px-1.5">{unresolvedComplaints}</Badge>
-                )}
-              </Button>
-              <Button
-                variant={view === "users" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setView("users")}
-              >
-                <User className="mr-2 h-4 w-4" /> Users
-              </Button>
-              <Button
-                variant={view === "history" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setView("history")}
-              >
-                <HistoryIcon className="mr-2 h-4 w-4" /> History
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setView("settings")}
-              >
-                <Settings className="mr-2 h-4 w-4" /> Settings
-              </Button>
+            <div className="flex gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide md:overflow-visible md:pb-0 md:mx-0 md:px-0">
+              <div className="flex gap-2 min-w-max">
+                <Button
+                  variant={view === "list" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setView("list")}
+                >
+                  <LayoutGrid className="mr-2 h-4 w-4" /> Transactions
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setView("complaints")}
+                  className="relative"
+                >
+                  <MessageSquareWarning className="mr-2 h-4 w-4" /> Complaints
+                  {unresolvedComplaints > 0 && (
+                    <Badge className="ml-2 bg-orange-500 text-white text-[10px] px-1.5">{unresolvedComplaints}</Badge>
+                  )}
+                </Button>
+                <Button
+                  variant={(view as any) === "users" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setView("users")}
+                >
+                  <User className="mr-2 h-4 w-4" /> Users
+                </Button>
+                <Button
+                  variant={(view as any) === "history" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setView("history")}
+                >
+                  <HistoryIcon className="mr-2 h-4 w-4" /> History
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setView("settings")}
+                >
+                  <Settings className="mr-2 h-4 w-4" /> Settings
+                </Button>
+              </div>
             </div>
 
             {/* Filters */}
@@ -431,9 +437,14 @@ export default function AdminDashboard() {
 
         {view === "history" && (
           <>
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold md:text-3xl">System History</h1>
-              <p className="text-muted-foreground">Audit log of all transaction activities.</p>
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-bold md:text-3xl">System History</h1>
+                <p className="text-muted-foreground">Audit log of all transaction activities.</p>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => setView("list")}>
+                <LayoutGrid className="mr-2 h-4 w-4" /> Back to Dashboard
+              </Button>
             </div>
             <HistoryTable limit={100} />
           </>

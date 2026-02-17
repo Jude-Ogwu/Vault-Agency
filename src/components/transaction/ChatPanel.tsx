@@ -242,27 +242,47 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
             }
         };
 
-        // Admin notifications usually go to a generic admin, but here we might not have a specific admin ID to target unless we have a list.
-        // The previous code seemed to target buyer/seller based on sender role.
-        // If sender is admin, notify both.
+        // Notify Admins
+        const notifyAdmins = async () => {
+            const { data: admins } = await supabase
+                .from('profiles')
+                .select('id')
+                .eq('role', 'admin');
+
+            if (admins) {
+                admins.forEach(admin => {
+                    if (admin.id !== user.id) { // Don't notify self if I am admin
+                        recipientsArray.push({ id: admin.id, link: `/admin?transaction=${transactionId}` });
+                    }
+                });
+            }
+        };
 
         if (role === 'buyer') {
             notifySeller();
+            await notifyAdmins(); // Buyers notify sellers AND admins
         } else if (role === 'seller') {
             notifyBuyer();
+            await notifyAdmins(); // Sellers notify buyers AND admins
         } else if (role === 'admin') {
             notifyBuyer();
             notifySeller();
+            // Admins notify both parties, but not other admins necessarily (optional, but good to avoid spam)
         }
 
         // Send notifications
-        for (const recipient of recipientsArray) {
+        // Filter duplicates just in case
+        const uniqueRecipients = Array.from(new Set(recipientsArray.map(a => a.id)))
+            .map(id => recipientsArray.find(a => a.id === id)!);
+
+        for (const recipient of uniqueRecipients) {
             await supabase.from("notifications").insert({
                 user_id: recipient.id,
                 title: `New Message from ${role === 'admin' ? 'VA' : role}`,
                 message: content.substring(0, 50) + (content.length > 50 ? "..." : ""),
                 type: "info",
-                link: recipient.link
+                link: recipient.link,
+                read: false // Explicitly set read to false
             } as any);
         }
     };

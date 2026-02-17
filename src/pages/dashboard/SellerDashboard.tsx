@@ -228,7 +228,7 @@ export default function SellerDashboard() {
 
         {(view as any) === "history" && (
           <>
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h1 className="text-2xl font-bold md:text-3xl">Transaction History</h1>
                 <p className="text-muted-foreground">View your comprehensive transaction log.</p>

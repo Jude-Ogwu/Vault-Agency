@@ -44,15 +44,14 @@ export function NotificationCenter() {
 
     const fetchNotifications = async () => {
         if (!user) return;
-        const { data } = await supabase
-            .from("notifications")
+        const { data } = await (supabase.from("notifications") as any)
             .select("*")
             .eq("user_id", user.id)
             .order("created_at", { ascending: false });
 
         if (data) {
             setNotifications(data as Notification[]);
-            setUnreadCount(data.filter(n => !n.read).length);
+            setUnreadCount((data as any[]).filter(n => !n.read).length);
         }
     };
 
@@ -89,8 +88,7 @@ export function NotificationCenter() {
     }, [user, toast]);
 
     const markAsRead = async (id: string) => {
-        await supabase
-            .from("notifications")
+        await (supabase.from("notifications") as any)
             .update({ read: true })
             .eq("id", id);
 
@@ -101,20 +99,29 @@ export function NotificationCenter() {
     const markAllAsRead = async () => {
         if (!user || unreadCount === 0) return;
 
-        await supabase
-            .from("notifications")
+        // Optimistic update
+        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+        setUnreadCount(0);
+
+        const { error } = await (supabase.from("notifications") as any)
             .update({ read: true })
             .eq("user_id", user.id)
             .eq("read", false);
 
-        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-        setUnreadCount(0);
+        if (error) {
+            console.error("Failed to mark all as read:", error);
+            // Revert if error (optional, but good practice)
+            // For now, simpler to just re-fetch to ensure sync
+            fetchNotifications();
+        } else {
+            // Ensure we are in sync
+            fetchNotifications();
+        }
     };
 
     const deleteNotification = async (id: string, e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent triggering item click
-        const { error } = await supabase
-            .from("notifications")
+        const { error } = await (supabase.from("notifications") as any)
             .delete()
             .eq("id", id);
 
@@ -128,8 +135,7 @@ export function NotificationCenter() {
 
     const clearAllNotifications = async () => {
         if (!user) return;
-        const { error } = await supabase
-            .from("notifications")
+        const { error } = await (supabase.from("notifications") as any)
             .delete()
             .eq("user_id", user.id);
 
