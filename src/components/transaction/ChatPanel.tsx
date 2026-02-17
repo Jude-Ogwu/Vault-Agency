@@ -256,7 +256,7 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
                                     <span className="text-[10px] text-muted-foreground">
                                         {format(new Date(msg.created_at), "MMM d, h:mm a")}
                                     </span>
-                                    {isAdmin && !isMe && (
+                                    {isAdmin && (
                                         <div className="hidden group-hover:flex items-center gap-1 ml-2">
                                             <button
                                                 onClick={() => handleDeleteMessage(msg.id)}

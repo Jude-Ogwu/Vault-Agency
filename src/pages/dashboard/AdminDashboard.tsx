@@ -24,6 +24,7 @@ import {
   MessageSquareWarning,
   RotateCcw,
   Settings,
+  User,
 } from "lucide-react";
 import { ProductType, TransactionStatus, TRANSACTION_STATUSES } from "@/lib/constants";
 import { AdminSettings } from "@/components/admin/AdminSettings";
@@ -319,6 +320,13 @@ export default function AdminDashboard() {
                 {unresolvedComplaints > 0 && (
                   <Badge className="ml-2 bg-orange-500 text-white text-[10px] px-1.5">{unresolvedComplaints}</Badge>
                 )}
+              </Button>
+              <Button
+                variant={view === "users" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setView("users")}
+              >
+                <User className="mr-2 h-4 w-4" /> Users
               </Button>
               <Button
                 variant="outline"
