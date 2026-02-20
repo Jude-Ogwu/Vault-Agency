@@ -1,0 +1,137 @@
+﻿
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\account\PayoutAccountForm.tsx
+  35:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  59:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\account\PayoutAccountsList.tsx
+  45:43  warning  React Hook useEffect has a missing dependency: 'fetchAccounts'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\admin\UsersTable.tsx
+   81:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   95:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  125:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  184:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  198:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\history\HistoryTable.tsx
+  55:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\notifications\NotificationCenter.tsx
+   47:67  error    Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+   54:37  error    Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+   88:8   warning  React Hook useEffect has a missing dependency: 'fetchNotifications'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+   91:50  error    Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+  106:68  error    Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+  124:68  error    Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+  138:68  error    Unexpected any. Specify a different type                                                                               @typescript-eslint/no-explicit-any
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\theme-provider.tsx
+  65:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\transaction\ChatPanel.tsx
+   69:38  error    Unexpected any. Specify a different type                                                                                                          @typescript-eslint/no-explicit-any
+   75:31  error    Unexpected any. Specify a different type                                                                                                          @typescript-eslint/no-explicit-any
+  130:8   warning  React Hook useEffect has missing dependencies: 'fetchMessages' and 'fetchTransactionDetails'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  156:13  error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free                               @typescript-eslint/ban-ts-comment
+  157:45  error    Unexpected any. Specify a different type                                                                                                          @typescript-eslint/no-explicit-any
+  188:13  error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free                               @typescript-eslint/ban-ts-comment
+  189:51  error    Unexpected any. Specify a different type                                                                                                          @typescript-eslint/no-explicit-any
+  215:18  error    Unexpected any. Specify a different type                                                                                                          @typescript-eslint/no-explicit-any
+  233:60  error    Unexpected any. Specify a different type                                                                                                          @typescript-eslint/no-explicit-any
+  250:38  error    Unexpected any. Specify a different type                                                                                                          @typescript-eslint/no-explicit-any
+  285:18  error    Unexpected any. Specify a different type                                                                                                          @typescript-eslint/no-explicit-any
+  300:14  error    Unexpected any. Specify a different type                                                                                                          @typescript-eslint/no-explicit-any
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\transaction\CreateTransactionForm.tsx
+   77:122  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+  131:6    warning  React Hook useEffect has a missing dependency: 'feeConfig'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  230:14   error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+  231:79   error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\transaction\TransactionCard.tsx
+  82:32   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  82:104  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\transaction\TransactionDetail.tsx
+  165:12  error    Unexpected any. Specify a different type                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+  176:6   warning  React Hook useCallback has missing dependencies: 'notifyAdmin', 'onUpdate', and 'toast'. Either include them or remove the dependency array. If 'onUpdate' changes too often, find the parent component that defines it and wrap that definition in useCallback  react-hooks/exhaustive-deps
+  180:6   warning  React Hook useCallback has a missing dependency: 'toast'. Either include it or remove the dependency array                                                                                                                                                       react-hooks/exhaustive-deps
+  225:12  error    Unexpected any. Specify a different type                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+  257:12  error    Unexpected any. Specify a different type                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+  296:12  error    Unexpected any. Specify a different type                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+  335:24  error    Unexpected any. Specify a different type                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+  344:52  error    Unexpected any. Specify a different type                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+  355:42  error    Unexpected any. Specify a different type                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\ui\badge.tsx
+  29:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\ui\button.tsx
+  47:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\ui\command.tsx
+  24:11  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\ui\form.tsx
+  129:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\ui\navigation-menu.tsx
+  111:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\ui\sidebar.tsx
+  636:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\ui\sonner.tsx
+  27:19  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\ui\textarea.tsx
+  5:18  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\components\ui\toggle.tsx
+  37:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\hooks\useAuth.tsx
+  153:6   warning  React Hook useEffect has a missing dependency: 'loading'. Either include it or remove the dependency array                      react-hooks/exhaustive-deps
+  196:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\pages\InviteLink.tsx
+   34:52  error    Unexpected any. Specify a different type                                                                            @typescript-eslint/no-explicit-any
+   35:50  error    Unexpected any. Specify a different type                                                                            @typescript-eslint/no-explicit-any
+   40:8   warning  React Hook useEffect has a missing dependency: 'fetchInviteData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  106:48  error    Unexpected any. Specify a different type                                                                            @typescript-eslint/no-explicit-any
+  118:18  error    Unexpected any. Specify a different type                                                                            @typescript-eslint/no-explicit-any
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\pages\auth\AuthCallback.tsx
+  59:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\pages\auth\SuspendedPage.tsx
+  29:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  32:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\pages\dashboard\AdminDashboard.tsx
+  154:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  208:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  346:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  353:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\pages\dashboard\BuyerDashboard.tsx
+   96:6   warning  React Hook useEffect has a missing dependency: 'fetchTransactions'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  216:35  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  218:53  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  223:35  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  225:52  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  267:19  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  298:19  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+
+C:\Users\JOSHUA\Downloads\secure-deal-nigeria-main\secure-deal-nigeria-main\src\pages\dashboard\SellerDashboard.tsx
+   74:57  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+   90:6   warning  React Hook useEffect has a missing dependency: 'fetchTransactions'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  192:35  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  194:53  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  199:35  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  201:52  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  238:19  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+  269:19  error    Unexpected any. Specify a different type                                                                              @typescript-eslint/no-explicit-any
+
+Γ£û 82 problems (63 errors, 19 warnings)
+
