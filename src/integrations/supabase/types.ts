@@ -11,147 +11,168 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
-          created_at: string
+          id: string
           email: string
           full_name: string | null
-          id: string
           phone: string | null
+          created_at: string
           updated_at: string
           status: "active" | "suspended"
           suspension_reason: string | null
           can_chat: boolean
         }
         Insert: {
-          created_at?: string
+          id: string
           email: string
           full_name?: string | null
-          id: string
           phone?: string | null
+          created_at?: string
           updated_at?: string
           status?: "active" | "suspended"
           suspension_reason?: string | null
           can_chat?: boolean
         }
         Update: {
-          created_at?: string
+          id?: string
           email?: string
           full_name?: string | null
-          id?: string
           phone?: string | null
+          created_at?: string
           updated_at?: string
           status?: "active" | "suspended"
           suspension_reason?: string | null
           can_chat?: boolean
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          user_id: string
+          role: Database["public"]["Enums"]["app_role"]
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          role: Database["public"]["Enums"]["app_role"]
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          created_at?: string
         }
         Relationships: []
       }
       transactions: {
         Row: {
-          admin_notes: string | null
-          amount: number
-          buyer_email: string
-          buyer_id: string | null
-          confirmed_at: string | null
-          created_at: string
-          deal_description: string | null
-          deal_title: string
-          delivered_at: string | null
           id: string
-          paid_at: string | null
-          payment_reference: string | null
+          deal_title: string
+          deal_description: string | null
+          amount: number
           product_type: Database["public"]["Enums"]["product_type"]
-          proof_description: string | null
-          proof_url: string | null
-          released_at: string | null
-          seller_email: string
-          seller_phone: string | null
           status: Database["public"]["Enums"]["transaction_status"]
+          buyer_id: string | null
+          buyer_email: string
+          seller_email: string | null
+          seller_phone: string | null
+          seller_id: string | null
+          payment_reference: string | null
+          proof_url: string | null
+          proof_description: string | null
+          admin_notes: string | null
+          created_at: string
           updated_at: string
+          paid_at: string | null
+          delivered_at: string | null
+          confirmed_at: string | null
+          released_at: string | null
           muted_ids: string[] | null
           invite_token: string | null
-          seller_id: string | null
         }
         Insert: {
-          admin_notes?: string | null
-          amount: number
-          buyer_email: string
-          buyer_id?: string | null
-          confirmed_at?: string | null
-          created_at?: string
-          deal_description?: string | null
-          deal_title: string
-          delivered_at?: string | null
           id?: string
-          paid_at?: string | null
-          payment_reference?: string | null
+          deal_title: string
+          deal_description?: string | null
+          amount: number
           product_type: Database["public"]["Enums"]["product_type"]
-          proof_description?: string | null
-          proof_url?: string | null
-          released_at?: string | null
-          seller_email: string
-          seller_phone?: string | null
           status?: Database["public"]["Enums"]["transaction_status"]
+          buyer_id?: string | null
+          buyer_email: string
+          seller_email?: string | null
+          seller_phone?: string | null
+          seller_id?: string | null
+          payment_reference?: string | null
+          proof_url?: string | null
+          proof_description?: string | null
+          admin_notes?: string | null
+          created_at?: string
           updated_at?: string
+          paid_at?: string | null
+          delivered_at?: string | null
+          confirmed_at?: string | null
+          released_at?: string | null
           muted_ids?: string[] | null
           invite_token?: string | null
-          seller_id?: string | null
         }
         Update: {
-          admin_notes?: string | null
-          amount?: number
-          buyer_email?: string
-          buyer_id?: string | null
-          confirmed_at?: string | null
-          created_at?: string
-          deal_description?: string | null
-          deal_title?: string
-          delivered_at?: string | null
           id?: string
-          paid_at?: string | null
-          payment_reference?: string | null
+          deal_title?: string
+          deal_description?: string | null
+          amount?: number
           product_type?: Database["public"]["Enums"]["product_type"]
-          proof_description?: string | null
-          proof_url?: string | null
-          released_at?: string | null
-          seller_email?: string
-          seller_phone?: string | null
           status?: Database["public"]["Enums"]["transaction_status"]
+          buyer_id?: string | null
+          buyer_email?: string
+          seller_email?: string | null
+          seller_phone?: string | null
+          seller_id?: string | null
+          payment_reference?: string | null
+          proof_url?: string | null
+          proof_description?: string | null
+          admin_notes?: string | null
+          created_at?: string
           updated_at?: string
+          paid_at?: string | null
+          delivered_at?: string | null
+          confirmed_at?: string | null
+          released_at?: string | null
           muted_ids?: string[] | null
           invite_token?: string | null
-          seller_id?: string | null
         }
         Relationships: []
       }
       messages: {
         Row: {
+          id: string
+          transaction_id: string
+          sender_id: string
+          sender_email: string
+          sender_role: string
           content: string
           created_at: string
-          id: string
-          sender_email: string
-          sender_id: string
-          sender_role: string
-          transaction_id: string
           is_deleted: boolean
         }
         Insert: {
+          id?: string
+          transaction_id: string
+          sender_id: string
+          sender_email: string
+          sender_role: string
           content: string
           created_at?: string
-          id?: string
-          sender_email: string
-          sender_id: string
-          sender_role: string
-          transaction_id: string
           is_deleted?: boolean
         }
         Update: {
+          id?: string
+          transaction_id?: string
+          sender_id?: string
+          sender_email?: string
+          sender_role?: string
           content?: string
           created_at?: string
-          id?: string
-          sender_email?: string
-          sender_id?: string
-          sender_role?: string
-          transaction_id?: string
           is_deleted?: boolean
         }
         Relationships: [
@@ -171,8 +192,8 @@ export type Database = {
           title: string
           message: string
           type: "info" | "success" | "warning" | "error"
-          read: boolean
           link: string | null
+          read: boolean
           created_at: string
         }
         Insert: {
@@ -181,8 +202,8 @@ export type Database = {
           title: string
           message: string
           type?: "info" | "success" | "warning" | "error"
-          read?: boolean
           link?: string | null
+          read?: boolean
           created_at?: string
         }
         Update: {
@@ -191,40 +212,9 @@ export type Database = {
           title?: string
           message?: string
           type?: "info" | "success" | "warning" | "error"
-          read?: boolean
           link?: string | null
+          read?: boolean
           created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "notifications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users" // This is typically 'auth.users' but for types generation usually points to public tables or ignored. Supabase types gen often puts 'users' here if there is a wrapper. I will assume 'users' is the intended relation name for foreign keys if it exists in public schema, or it might be a dangling reference. Given the previous code, I'll keep it as is or change to 'profiles' if 'users' doesn't exist in public. Wait, previous code had referencedRelation: "users". I'll keep it to avoid breaking changes, but usually it should be profiles if it's a public table.
-            // Actually, `notifications.user_id` probably references `auth.users`. In generated types, relationships to auth schema are often included.
-            // However, to be safe and consistent with previous file, I will keep it matching what I saw.
-            // The previous file had referencedRelation: "users".
-          }
-        ]
-      }
-      user_roles: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
         }
         Relationships: []
       }
@@ -272,6 +262,154 @@ export type Database = {
           }
         ]
       }
+      site_settings: {
+        Row: {
+          key: string
+          value: string
+          updated_at: string | null
+        }
+        Insert: {
+          key: string
+          value: string
+          updated_at?: string | null
+        }
+        Update: {
+          key?: string
+          value?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      payout_accounts: {
+        Row: {
+          id: string
+          user_id: string
+          payout_type: string
+          bank_name: string | null
+          account_number: string | null
+          account_name: string | null
+          crypto_currency: string | null
+          wallet_address: string | null
+          network: string | null
+          is_default: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          payout_type: string
+          bank_name?: string | null
+          account_number?: string | null
+          account_name?: string | null
+          crypto_currency?: string | null
+          wallet_address?: string | null
+          network?: string | null
+          is_default?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          payout_type?: string
+          bank_name?: string | null
+          account_number?: string | null
+          account_name?: string | null
+          crypto_currency?: string | null
+          wallet_address?: string | null
+          network?: string | null
+          is_default?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      complaints: {
+        Row: {
+          id: string
+          transaction_id: string
+          user_id: string
+          user_email: string
+          role: string
+          message: string
+          attachment_url: string | null
+          resolved: boolean
+          admin_response: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          transaction_id: string
+          user_id: string
+          user_email: string
+          role: string
+          message: string
+          attachment_url?: string | null
+          resolved?: boolean
+          admin_response?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          transaction_id?: string
+          user_id?: string
+          user_email?: string
+          role?: string
+          message?: string
+          attachment_url?: string | null
+          resolved?: boolean
+          admin_response?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "complaints_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      transaction_history: {
+        Row: {
+          id: string
+          transaction_id: string
+          actor_id: string | null
+          action_type: string
+          description: string | null
+          metadata: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          transaction_id: string
+          actor_id?: string | null
+          action_type: string
+          description?: string | null
+          metadata?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          transaction_id?: string
+          actor_id?: string | null
+          action_type?: string
+          description?: string | null
+          metadata?: Json | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transaction_history_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -300,6 +438,7 @@ export type Database = {
       | "refund_requested"
       | "cancelled"
       | "expired"
+      notification_type: "info" | "success" | "warning" | "error"
     }
     CompositeTypes: {
       [_ in never]: never

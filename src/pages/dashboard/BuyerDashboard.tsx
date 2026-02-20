@@ -148,6 +148,34 @@ export default function BuyerDashboard() {
       <Navbar />
 
       <main className="flex-1 container mx-auto px-4 py-8">
+
+        {/* Tab Nav — shown on list, history and payout views */}
+        {(view === "list" || view === "history" || view === "payout") && (
+          <div className="flex gap-2 mb-6">
+            <Button
+              variant={view === "list" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setView("list")}
+            >
+              <LayoutGrid className="mr-2 h-4 w-4" /> Transactions
+            </Button>
+            <Button
+              variant={view === "history" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setView("history")}
+            >
+              <History className="mr-2 h-4 w-4" /> History
+            </Button>
+            <Button
+              variant={view === "payout" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setView("payout")}
+            >
+              <Wallet className="mr-2 h-4 w-4" /> Payout Accounts
+            </Button>
+          </div>
+        )}
+
         {view === "list" && (
           <>
             {/* Header */}
@@ -203,31 +231,6 @@ export default function BuyerDashboard() {
               </Card>
             </div>
 
-            {/* Tabs */}
-            <div className="flex gap-2 mb-6">
-              <Button
-                variant={view === "list" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setView("list")}
-              >
-                <LayoutGrid className="mr-2 h-4 w-4" /> Transactions
-              </Button>
-              <Button
-                variant={(view as any) === "history" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setView("history" as any)}
-              >
-                <History className="mr-2 h-4 w-4" /> History
-              </Button>
-              <Button
-                variant={(view as any) === "payout" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setView("payout" as any)}
-              >
-                <Wallet className="mr-2 h-4 w-4" /> Payout Accounts
-              </Button>
-            </div>
-
             {loading ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
@@ -264,7 +267,7 @@ export default function BuyerDashboard() {
           </>
         )}
 
-        {(view as any) === "history" && (
+        {view === "history" && (
           <>
             <div className="mb-6 flex items-center gap-4">
               <Button variant="outline" size="icon" onClick={() => setView("list")}>
@@ -295,7 +298,7 @@ export default function BuyerDashboard() {
           </>
         )}
 
-        {(view as any) === "payout" && (
+        {view === "payout" && (
           <div className="max-w-2xl mx-auto">
             <div className="mb-6 flex items-center gap-4">
               <Button variant="outline" size="icon" onClick={() => setView("list")}>

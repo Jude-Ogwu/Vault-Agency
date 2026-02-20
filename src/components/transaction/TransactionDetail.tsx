@@ -162,7 +162,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
         status: "held",
         paid_at: new Date().toISOString(),
         payment_reference: response.reference,
-      } as any)
+      })
       .eq("id", transaction.id);
 
     if (error) {
@@ -222,7 +222,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
         payment_reference: paymentRef,
         proof_url: proofUrl || null,
         proof_description: `Crypto payment via ${CRYPTO_WALLETS[selectedCrypto].label}. Sender: ${cryptoForm.senderAddress}. Amount: ${cryptoForm.amountSent}. TX Hash: ${cryptoForm.txHash}`,
-      } as any)
+      })
       .eq("id", transaction.id);
 
     if (error) {
@@ -254,7 +254,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
         actor_id: user.id,
         action_type: actionType,
         description: description
-      } as any);
+      });
     } catch (error) {
       console.error("Failed to log history:", error);
     }
@@ -279,10 +279,10 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
     const { data: sellerProfile } = await supabase.from('profiles').select('id').eq('email', transactionData.seller_email).single();
     if (sellerProfile) recipientIds.add(sellerProfile.id);
 
-    // 3. Admins
-    const { data: adminProfiles } = await supabase.from('profiles').select('id').eq('role', 'admin');
-    if (adminProfiles) {
-      adminProfiles.forEach(admin => recipientIds.add(admin.id));
+    // 3. Admins — roles live in user_roles, not profiles
+    const { data: adminRoles } = await supabase.from('user_roles').select('user_id').eq('role', 'admin');
+    if (adminRoles) {
+      adminRoles.forEach(r => recipientIds.add(r.user_id));
     }
 
     // Send to ALL recipients
@@ -291,15 +291,24 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
         user_id: uid,
         title,
         message,
-        type: "info",
+        type: "info" as const,
         link: `/dashboard/transaction/${transaction.id}`
-      } as any);
+      });
     }
   };
 
   const handleUpdateStatus = async (newStatus: TransactionStatus, adminNotes?: string) => {
     setLoading(true);
-    const updates: Record<string, unknown> = { status: newStatus };
+
+    // Build typed update object
+    type TxUpdate = {
+      status: TransactionStatus;
+      admin_notes?: string;
+      delivered_at?: string;
+      confirmed_at?: string;
+      released_at?: string;
+    };
+    const updates: TxUpdate = { status: newStatus };
     if (adminNotes) updates.admin_notes = adminNotes;
     if (newStatus === "pending_confirmation") updates.delivered_at = new Date().toISOString();
     if (newStatus === "pending_release") updates.confirmed_at = new Date().toISOString();
@@ -332,7 +341,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
     setLoading(true);
 
     // File complaint
-    await (supabase as any).from("complaints").insert({
+    await supabase.from("complaints").insert({
       transaction_id: transaction.id,
       user_id: user!.id,
       user_email: user!.email!,
@@ -341,7 +350,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
     });
 
     // Update status
-    await handleUpdateStatus("refund_requested" as any, `Buyer requests refund: ${refundReason.trim()}`);
+    await handleUpdateStatus("refund_requested", `Buyer requests refund: ${refundReason.trim()}`);
     notifyAdmin("refund_requested", { reason: refundReason.trim() });
     setShowRefundForm(false);
     setRefundReason("");
@@ -352,7 +361,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
     if (!complaintMessage.trim()) return;
     setLoading(true);
 
-    const { error } = await (supabase as any).from("complaints").insert({
+    const { error } = await supabase.from("complaints").insert({
       transaction_id: transaction.id,
       user_id: user!.id,
       user_email: user!.email!,

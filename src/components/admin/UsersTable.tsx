@@ -92,7 +92,7 @@ export function UsersTable({ onBack }: UsersTableProps) {
             .update({
                 status: "suspended",
                 suspension_reason: suspensionReason
-            } as any)
+            })
             .eq("id", selectedUser.id);
 
         if (error) {
@@ -122,7 +122,7 @@ export function UsersTable({ onBack }: UsersTableProps) {
             .update({
                 status: "active",
                 suspension_reason: null
-            } as any)
+            })
             .eq("id", user.id);
 
         if (error) {
@@ -195,7 +195,7 @@ export function UsersTable({ onBack }: UsersTableProps) {
     const toggleChatPermission = async (user: UserProfile) => {
         const { error } = await supabase
             .from("profiles")
-            .update({ can_chat: !user.can_chat } as any)
+            .update({ can_chat: !user.can_chat })
             .eq("id", user.id);
 
         if (error) {

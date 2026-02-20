@@ -227,8 +227,8 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
           token,
           created_by: user.id,
           expires_at: expiresAt,
-        } as any);
-        await supabase.from("transactions").update({ invite_token: token } as any).eq("id", transactionId);
+        });
+        await supabase.from("transactions").update({ invite_token: token }).eq("id", transactionId);
         const inviteUrl = `${window.location.origin}/invite/${token}`;
         setGeneratedInviteUrl(inviteUrl);
         setDealTitle(formData.dealTitle.trim());

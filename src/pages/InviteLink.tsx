@@ -103,7 +103,7 @@ export default function InviteLink() {
                 .from("transactions")
                 .update({
                     seller_id: user.id,
-                    status: "seller_joined" as any,
+                    status: "seller_joined" as "seller_joined",
                     updated_at: new Date().toISOString(),
                 })
                 .eq("id", transaction.id);
@@ -113,9 +113,9 @@ export default function InviteLink() {
                 user_id: transaction.buyer_id,
                 title: "Seller Has Joined!",
                 message: `${user.email} has joined your transaction: "${transaction.deal_title}". You can now proceed to payment.`,
-                type: "success",
+                type: "success" as const,
                 link: `/dashboard/transaction/${transaction.id}`,
-            } as any);
+            });
 
             setState("joined");
             toast({ title: "You've joined the transaction!", description: "The buyer has been notified." });

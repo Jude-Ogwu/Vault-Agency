@@ -56,7 +56,7 @@ export function PayoutAccountForm({ onSuccess, onCancel, editAccount }: PayoutAc
         if (!user) return;
         setLoading(true);
 
-        const payload: any = {
+        const basePayload = {
             user_id: user.id,
             payout_type: tab,
             updated_at: new Date().toISOString(),
@@ -68,7 +68,7 @@ export function PayoutAccountForm({ onSuccess, onCancel, editAccount }: PayoutAc
                 setLoading(false);
                 return;
             }
-            Object.assign(payload, bank);
+            Object.assign(basePayload, bank);
         } else {
             if (!crypto.crypto_currency || !crypto.wallet_address) {
                 toast({ title: "Please fill all crypto fields", variant: "destructive" });
@@ -76,8 +76,11 @@ export function PayoutAccountForm({ onSuccess, onCancel, editAccount }: PayoutAc
                 return;
             }
             const selected = CRYPTO_OPTIONS.find(c => c.value === crypto.crypto_currency);
-            Object.assign(payload, { ...crypto, network: selected?.network || "" });
+            Object.assign(basePayload, { ...crypto, network: selected?.network || "" });
         }
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const payload = basePayload as any;
 
         let error;
         if (editAccount) {
