@@ -68,6 +68,8 @@ export type Database = {
           status: Database["public"]["Enums"]["transaction_status"]
           updated_at: string
           muted_ids: string[] | null
+          invite_token: string | null
+          seller_id: string | null
         }
         Insert: {
           admin_notes?: string | null
@@ -91,6 +93,8 @@ export type Database = {
           status?: Database["public"]["Enums"]["transaction_status"]
           updated_at?: string
           muted_ids?: string[] | null
+          invite_token?: string | null
+          seller_id?: string | null
         }
         Update: {
           admin_notes?: string | null
@@ -114,6 +118,8 @@ export type Database = {
           status?: Database["public"]["Enums"]["transaction_status"]
           updated_at?: string
           muted_ids?: string[] | null
+          invite_token?: string | null
+          seller_id?: string | null
         }
         Relationships: []
       }
@@ -222,6 +228,50 @@ export type Database = {
         }
         Relationships: []
       }
+      invite_links: {
+        Row: {
+          id: string
+          transaction_id: string
+          token: string
+          created_by: string
+          expires_at: string
+          used_by: string | null
+          used_at: string | null
+          is_active: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          transaction_id: string
+          token: string
+          created_by: string
+          expires_at?: string
+          used_by?: string | null
+          used_at?: string | null
+          is_active?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          transaction_id?: string
+          token?: string
+          created_by?: string
+          expires_at?: string
+          used_by?: string | null
+          used_at?: string | null
+          is_active?: boolean
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invite_links_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -240,13 +290,16 @@ export type Database = {
       product_type: "physical_product" | "digital_product" | "service"
       transaction_status:
       | "pending_payment"
+      | "seller_joined"
       | "held"
       | "pending_delivery"
       | "pending_confirmation"
       | "pending_release"
       | "released"
       | "disputed"
+      | "refund_requested"
       | "cancelled"
+      | "expired"
     }
     CompositeTypes: {
       [_ in never]: never

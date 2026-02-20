@@ -6,6 +6,7 @@ export const PRODUCT_TYPES = {
 
 export const TRANSACTION_STATUSES = {
   pending_payment: { label: "Pending Payment", color: "warning", description: "Awaiting buyer payment" },
+  seller_joined: { label: "Seller Joined", color: "primary", description: "Seller has joined via invite link" },
   held: { label: "Funds Held", color: "primary", description: "Payment received and secured" },
   pending_delivery: { label: "Pending Delivery", color: "secondary", description: "Seller to deliver product/service" },
   pending_confirmation: { label: "Pending Confirmation", color: "accent", description: "Buyer to confirm receipt" },
@@ -14,6 +15,7 @@ export const TRANSACTION_STATUSES = {
   disputed: { label: "Disputed", color: "destructive", description: "Under dispute resolution" },
   refund_requested: { label: "Refund Requested", color: "destructive", description: "Buyer has requested a refund" },
   cancelled: { label: "Cancelled", color: "muted", description: "Transaction cancelled" },
+  expired: { label: "Expired", color: "muted", description: "Invite link expired" },
 } as const;
 
 export type ProductType = keyof typeof PRODUCT_TYPES;

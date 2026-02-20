@@ -10,7 +10,7 @@ import { PRODUCT_TYPES, ADMIN_EMAIL, ProductType } from "@/lib/constants";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Package, Download, Briefcase, ArrowLeft, Info, MessageSquare } from "lucide-react";
+import { Loader2, Package, Download, Briefcase, ArrowLeft, Info, MessageSquare, Link2, Copy, Share2, CheckCheck } from "lucide-react";
 
 const DEFAULT_FEE = 5;
 
@@ -37,13 +37,14 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
   const [showNegotiate, setShowNegotiate] = useState(false);
   const [negotiateMessage, setNegotiateMessage] = useState("");
   const [negotiateSending, setNegotiateSending] = useState(false);
+  const [useInviteLink, setUseInviteLink] = useState(false);
+  const [generatedInviteUrl, setGeneratedInviteUrl] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const [formData, setFormData] = useState({
     dealTitle: initialData?.deal_title || "",
     dealDescription: initialData?.deal_description || "",
     amount: initialData?.amount ? initialData.amount.toString() : "",
     productType: (initialData?.product_type as ProductType) || "" as ProductType | "",
-    sellerEmail: initialData?.seller_email || "",
-    sellerPhone: initialData?.seller_phone || "",
   });
 
   // Calculate base amount for display if initialData exists
@@ -112,14 +113,13 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
             deal_title: formData.dealTitle.trim() || "New Deal",
             amount: baseAmount,
             buyer_email: user.email!,
-            seller_email: formData.sellerEmail.trim() || "N/A",
             negotiation_message: negotiateMessage.trim(),
             service_fee: formatNaira(serviceFee),
             total_amount: formatNaira(totalAmount),
           },
         },
       });
-      toast({ title: "Negotiation request sent!", description: "VA will contact you soon." });
+      toast({ title: "Negotiation request sent!", description: "EA will contact you soon." });
       setShowNegotiate(false);
       setNegotiateMessage("");
     } catch {
@@ -151,9 +151,6 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
       deal_description: formData.dealDescription.trim() || null,
       amount: totalAmount,
       product_type: formData.productType,
-      seller_email: formData.sellerEmail.trim().toLowerCase(),
-      seller_phone: formData.sellerPhone.trim() || null,
-      // Status remains pending_payment on edit, or is set on create
     };
 
     let error;
@@ -179,15 +176,31 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
 
       error = insertError;
       if (data) transactionId = data.id;
+
+      // Generate invite link if toggled
+      if (!error && transactionId && useInviteLink) {
+        const token = crypto.randomUUID().replace(/-/g, "");
+        const expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString();
+        await supabase.from("invite_links").insert({
+          transaction_id: transactionId,
+          token,
+          created_by: user.id,
+          expires_at: expiresAt,
+        } as any);
+        // Store token on transaction for easy lookup
+        await supabase.from("transactions").update({ invite_token: token } as any).eq("id", transactionId);
+        const inviteUrl = `${window.location.origin}/invite/${token}`;
+        setGeneratedInviteUrl(inviteUrl);
+      }
     }
 
     if (error) {
       toast({ title: initialData ? "Failed to update" : "Failed to create", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: initialData ? "Transaction updated!" : "Transaction created!", description: "Proceed to make payment." });
+      toast({ title: initialData ? "Transaction updated!" : "Transaction created!", description: useInviteLink ? "Share the invite link with your seller." : "Proceed to make payment." });
 
       if (!initialData && transactionId) {
-        // Notify via Email (Function)
+        // Notify EA via email that a new transaction was created
         supabase.functions.invoke("notify-transaction", {
           body: {
             event_type: "transaction_created",
@@ -195,50 +208,12 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
               deal_title: formData.dealTitle.trim(),
               amount: totalAmount,
               buyer_email: user.email!,
-              seller_email: formData.sellerEmail.trim().toLowerCase(),
             },
           },
         }).catch((err) => console.warn("Email notification failed:", err));
-
-        // Notify via In-App Notification (if seller exists)
-        (async () => {
-          const { data: sellerProfile } = await supabase
-            .from('profiles')
-            .select('id')
-            .eq('email', formData.sellerEmail.trim().toLowerCase())
-            .single();
-
-          if (sellerProfile) {
-            await supabase.from("notifications").insert({
-              user_id: sellerProfile.id,
-              title: "New Transaction Request",
-              message: `You have a new transaction offer: ${formData.dealTitle.trim()}`,
-              type: "info",
-              link: `/seller?transaction=${transactionId}`
-            } as any);
-          }
-        })();
-      } else if (transactionId) {
-        // Notify Seller of Update
-        (async () => {
-          const { data: sellerProfile } = await supabase
-            .from('profiles')
-            .select('id')
-            .eq('email', formData.sellerEmail.trim().toLowerCase())
-            .single();
-
-          if (sellerProfile) {
-            await supabase.from("notifications").insert({
-              user_id: sellerProfile.id,
-              title: "Transaction Updated",
-              message: `The transaction "${formData.dealTitle.trim()}" has been updated by the buyer.`,
-              type: "info",
-              link: `/seller?transaction=${transactionId}`
-            } as any);
-          }
-        })();
       }
-      onSuccess();
+      // Only call onSuccess if NOT showing invite link (so user can share first)
+      if (!useInviteLink || initialData) onSuccess();
     }
 
     setLoading(false);
@@ -365,7 +340,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
                   {showNegotiate && (
                     <div className="mt-2 space-y-2 rounded-lg border p-3 bg-card">
                       <p className="text-xs text-muted-foreground">
-                        For large transactions, you can negotiate the service fee with our VA.
+                        For large transactions, you can negotiate the service fee with our EA.
                       </p>
                       <Textarea
                         placeholder="Explain your transaction and preferred fee..."
@@ -386,7 +361,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
                         ) : (
                           <MessageSquare className="mr-1 h-3 w-3" />
                         )}
-                        Send to VA
+                        Send to EA
                       </Button>
                     </div>
                   )}
@@ -395,37 +370,87 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
             )}
           </div>
 
-          {/* Seller Email */}
-          <div className="space-y-2">
-            <Label htmlFor="sellerEmail">Seller Email</Label>
-            <Input
-              id="sellerEmail"
-              type="email"
-              placeholder="seller@example.com"
-              value={formData.sellerEmail}
-              onChange={(e) => setFormData({ ...formData, sellerEmail: e.target.value })}
-              required
-            />
-          </div>
+          {/* Invite via Link toggle (only on new transactions) */}
+          {!initialData && (
+            <div className="rounded-lg border bg-muted/30 p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex-1">
+                  <Label className="text-sm font-semibold flex items-center gap-2">
+                    <Link2 className="h-4 w-4 text-primary" />
+                    Invite Seller via Link
+                  </Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Generate a shareable invite link to send to your seller after creating the transaction.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={useInviteLink}
+                  onClick={() => setUseInviteLink(!useInviteLink)}
+                  className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${useInviteLink ? "bg-primary" : "bg-muted-foreground/30"
+                    }`}
+                >
+                  <span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${useInviteLink ? "translate-x-5" : "translate-x-0"
+                    }`} />
+                </button>
+              </div>
+              <p className="text-xs text-primary mt-2 font-medium">
+                {useInviteLink
+                  ? "✓ A unique invite link will be generated after you create the transaction."
+                  : "Toggle on to generate an invite link for your seller."}
+              </p>
+            </div>
+          )}
 
-          {/* Seller Phone */}
-          <div className="space-y-2">
-            <Label htmlFor="sellerPhone">Seller Phone</Label>
-            <Input
-              id="sellerPhone"
-              type="tel"
-              placeholder="+234..."
-              value={formData.sellerPhone}
-              onChange={(e) => setFormData({ ...formData, sellerPhone: e.target.value })}
-              required
-            />
-          </div>
+          {/* Invite Link Share UI (after creation) */}
+          {generatedInviteUrl && (
+            <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-3">
+              <div className="flex items-center gap-2 text-primary font-semibold text-sm">
+                <CheckCheck className="h-4 w-4" />
+                Transaction created! Share this invite link with your seller:
+              </div>
+              <div className="flex gap-2">
+                <Input value={generatedInviteUrl} readOnly className="text-xs" />
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="outline"
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(generatedInviteUrl);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                >
+                  {copied ? <CheckCheck className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => {
+                    const text = `You've been invited as a seller on Escrow Africa!\n\nTransaction: ${formData.dealTitle}\nAmount: ₦${baseAmount.toLocaleString()}\n\nClick to accept:\n${generatedInviteUrl}`;
+                    const wa = `https://wa.me/?text=${encodeURIComponent(text)}`;
+                    window.open(wa, "_blank");
+                  }}
+                >
+                  <Share2 className="h-4 w-4 mr-1" /> Share via WhatsApp
+                </Button>
+                <Button type="button" size="sm" className="flex-1" onClick={onSuccess}>
+                  Done
+                </Button>
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
               Cancel
             </Button>
-            <Button type="submit" className="flex-1 gradient-hero border-0" disabled={loading}>
+            <Button type="submit" className="flex-1 gradient-hero border-0" disabled={loading || !!generatedInviteUrl}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {initialData ? "Update Transaction" : "Create Transaction"} {baseAmount > 0 ? `(${formatNaira(totalAmount)})` : ""}
             </Button>

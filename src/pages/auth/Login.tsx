@@ -59,7 +59,7 @@ export default function Login() {
             </div>
             <CardTitle className="text-2xl">Welcome Back</CardTitle>
             <CardDescription>
-              Log in to your Vault Agency account
+              Log in to your Escrow Africa account
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">

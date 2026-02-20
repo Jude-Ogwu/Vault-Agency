@@ -15,7 +15,7 @@ export default function RefundPolicy() {
                     <section>
                         <h2 className="text-2xl font-semibold mb-4">1. Overview</h2>
                         <p>
-                            At Vault Agency ("VA"), we prioritize the safety of your funds. Our Refund Policy implies that funds are held securely until the transaction is successfully completed. Refunds are issued in specific scenarios as outlined below.
+                            At Escrow Africa ("EA"), we prioritize the safety of your funds. Our Refund Policy implies that funds are held securely until the transaction is successfully completed. Refunds are issued in specific scenarios as outlined below.
                         </p>
                     </section>
 
@@ -33,7 +33,7 @@ export default function RefundPolicy() {
                         <h2 className="text-2xl font-semibold mb-4">3. Refund Process</h2>
                         <ol className="list-decimal pl-6 mt-2 space-y-2">
                             <li><strong>Request:</strong> The buyer must initiate a dispute/refund request through their dashboard.</li>
-                            <li><strong>Review:</strong> VA Admin reviews the request and may ask for evidence from both parties (photos, tracking, chat history).</li>
+                            <li><strong>Review:</strong> EA Admin reviews the request and may ask for evidence from both parties (photos, tracking, chat history).</li>
                             <li><strong>Decision:</strong> If the claim is valid, the transaction is cancelled, and funds are returned to the buyer.</li>
                         </ol>
                     </section>
@@ -41,7 +41,7 @@ export default function RefundPolicy() {
                     <section>
                         <h2 className="text-2xl font-semibold mb-4">4. Non-Refundable Fees</h2>
                         <p>
-                            Vault Agency service fees (2% or 5%) are generally non-refundable if the transaction is cancelled due to reasons beyond our control (e.g., buyer remorse), as these cover the cost of payment processing and platform maintenance. However, if a cancellation is due to seller fraud or platform error, the full amount including fees may be refunded at our discretion.
+                            Escrow Africa service fees (2% or 5%) are generally non-refundable if the transaction is cancelled due to reasons beyond our control (e.g., buyer remorse), as these cover the cost of payment processing and platform maintenance. However, if a cancellation is due to seller fraud or platform error, the full amount including fees may be refunded at our discretion.
                         </p>
                     </section>
 
@@ -55,7 +55,7 @@ export default function RefundPolicy() {
                     <section>
                         <h2 className="text-2xl font-semibold mb-4">6. Chargebacks</h2>
                         <p>
-                            Initiating a chargeback with your bank without first contacting Vault Agency to resolve the issue is a violation of our Terms of Service. This may result in the permanent suspension of your account and legal action to recover disputed funds.
+                            Initiating a chargeback with your bank without first contacting Escrow Africa to resolve the issue is a violation of our Terms of Service. This may result in the permanent suspension of your account and legal action to recover disputed funds.
                         </p>
                     </section>
                 </div>

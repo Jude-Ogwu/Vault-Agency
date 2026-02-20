@@ -17,7 +17,8 @@ import {
     DialogTitle,
     DialogTrigger,
     DialogFooter,
-    DialogDescription
+    DialogDescription,
+    DialogClose,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Search, Ban, Undo, Trash2, ArrowLeft } from "lucide-react";
@@ -366,7 +367,9 @@ export function UsersTable({ onBack }: UsersTableProps) {
                                                         </div>
                                                     </div>
                                                     <DialogFooter className="flex-col sm:flex-row gap-2">
-                                                        <Button variant="outline" className="w-full sm:w-auto">Cancel</Button>
+                                                        <DialogClose asChild>
+                                                            <Button variant="outline" className="w-full sm:w-auto">Cancel</Button>
+                                                        </DialogClose>
                                                         <Button
                                                             variant="default"
                                                             className="bg-red-600 hover:bg-red-700 w-full sm:w-auto"

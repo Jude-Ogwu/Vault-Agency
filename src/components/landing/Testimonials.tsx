@@ -6,21 +6,21 @@ const testimonials = [
     name: "Adebayo Johnson",
     role: "Online Seller",
     content:
-      "Vault Agency has transformed how I do business online. My customers trust me more because they know their money is protected. Sales have increased by 40%!",
+      "Escrow Africa has transformed how I do business online. My customers trust me more because they know their money is protected. Sales have increased by 40%!",
     rating: 5,
   },
   {
     name: "Chidinma Okafor",
     role: "Buyer",
     content:
-      "I was scammed twice before I found Vault Agency. Now I only buy through escrow. It's the peace of mind I needed for online shopping.",
+      "I was scammed twice before I found Escrow Africa. Now I only buy through escrow. It's the peace of mind I needed for online shopping.",
     rating: 5,
   },
   {
     name: "Emmanuel Nwachukwu",
     role: "Freelancer",
     content:
-      "As a freelancer, getting paid was always stressful. With Vault Agency, clients pay upfront and I know the money is secured. No more chasing payments!",
+      "As a freelancer, getting paid was always stressful. With Escrow Africa, clients pay upfront and I know the money is secured. No more chasing payments!",
     rating: 5,
   },
 ];
@@ -34,7 +34,7 @@ export function Testimonials() {
             What Our Users Say
           </h2>
           <p className="text-muted-foreground">
-            Join thousands of users worldwide who trust Vault Agency for secure
+            Join thousands of users across Africa who trust Escrow Africa for secure
             transactions.
           </p>
         </div>

@@ -62,7 +62,7 @@ export function Navbar() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-hero">
               <Shield className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-primary">Vault Agency</span>
+            <span className="text-xl font-bold text-primary">Escrow Africa</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -200,7 +200,7 @@ export function Navbar() {
                   >
                     Seller Dashboard
                   </Link>
-                  {/* Mobile Menu - VA Link */}
+                  {/* Mobile Menu - EA Link */}
                   {isAdmin && (
                     <Link
                       to="/admin"
@@ -208,7 +208,7 @@ export function Navbar() {
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <LayoutDashboard className="h-4 w-4" />
-                      VA Dashboard
+                      EA Dashboard
                     </Link>
                   )}
                   <Button

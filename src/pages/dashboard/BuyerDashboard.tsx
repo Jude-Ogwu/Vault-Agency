@@ -9,10 +9,11 @@ import { CreateTransactionForm } from "@/components/transaction/CreateTransactio
 import { TransactionDetail } from "@/components/transaction/TransactionDetail";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, ShoppingBag, Loader2, Shield, History, LayoutGrid, ArrowLeft } from "lucide-react";
+import { Plus, ShoppingBag, Loader2, Shield, History, LayoutGrid, ArrowLeft, Wallet } from "lucide-react";
 import { ProductType, TransactionStatus } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 import { HistoryTable } from "@/components/history/HistoryTable";
+import { PayoutAccountsList } from "@/components/account/PayoutAccountsList";
 
 
 interface Transaction {
@@ -36,7 +37,7 @@ interface Transaction {
   released_at?: string | null;
 }
 
-type View = "list" | "create" | "detail" | "history";
+type View = "list" | "create" | "detail" | "history" | "payout";
 
 export default function BuyerDashboard() {
   const { user, loading: authLoading } = useAuth();
@@ -218,6 +219,13 @@ export default function BuyerDashboard() {
               >
                 <History className="mr-2 h-4 w-4" /> History
               </Button>
+              <Button
+                variant={(view as any) === "payout" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setView("payout" as any)}
+              >
+                <Wallet className="mr-2 h-4 w-4" /> Payout Accounts
+              </Button>
             </div>
 
             {loading ? (
@@ -285,6 +293,21 @@ export default function BuyerDashboard() {
             </div>
             <HistoryTable />
           </>
+        )}
+
+        {(view as any) === "payout" && (
+          <div className="max-w-2xl mx-auto">
+            <div className="mb-6 flex items-center gap-4">
+              <Button variant="outline" size="icon" onClick={() => setView("list")}>
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold md:text-3xl">Payout Accounts</h1>
+                <p className="text-muted-foreground">Manage your bank and crypto accounts</p>
+              </div>
+            </div>
+            <PayoutAccountsList />
+          </div>
         )}
 
         {view === "create" && (

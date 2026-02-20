@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Package, Loader2, Wallet, TrendingUp, History, LayoutGrid, ArrowLeft } from "lucide-react";
 import { ProductType, TransactionStatus } from "@/lib/constants";
 import { HistoryTable } from "@/components/history/HistoryTable";
+import { PayoutAccountsList } from "@/components/account/PayoutAccountsList";
 
 interface Transaction {
   id: string;
@@ -33,7 +34,7 @@ interface Transaction {
   released_at?: string | null;
 }
 
-type View = "list" | "detail" | "history";
+type View = "list" | "detail" | "history" | "payout";
 
 export default function SellerDashboard() {
   const { user, loading: authLoading } = useAuth();
@@ -60,17 +61,18 @@ export default function SellerDashboard() {
     }, 10000);
 
     try {
-      const { data, error } = await supabase
-        .from("transactions")
-        .select("*")
-        .eq("seller_email", user.email)
-        .order("created_at", { ascending: false });
+      // Fetch by seller_email (traditional) OR seller_id (invite link join)
+      const [{ data: byEmail, error: emailError }, { data: byId }] = await Promise.all([
+        supabase.from("transactions").select("*").eq("seller_email", user.email).order("created_at", { ascending: false }),
+        supabase.from("transactions").select("*").eq("seller_id", user.id).order("created_at", { ascending: false }),
+      ]);
 
-      if (error) throw error;
+      if (emailError) throw emailError;
 
-      if (data) {
-        setTransactions(data as Transaction[]);
-      }
+      // Merge and deduplicate by id
+      const allData = [...(byEmail || []), ...(byId || [])];
+      const unique = Array.from(new Map(allData.map((t: any) => [t.id, t])).values());
+      setTransactions(unique as Transaction[]);
     } catch (err) {
       console.error("Failed to fetch transactions:", err);
     } finally {
@@ -193,6 +195,13 @@ export default function SellerDashboard() {
               >
                 <History className="mr-2 h-4 w-4" /> History
               </Button>
+              <Button
+                variant={(view as any) === "payout" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setView("payout" as any)}
+              >
+                <Wallet className="mr-2 h-4 w-4" /> Payout Accounts
+              </Button>
             </div>
 
             {loading ? (
@@ -255,6 +264,21 @@ export default function SellerDashboard() {
             </div>
             <HistoryTable />
           </>
+        )}
+
+        {(view as any) === "payout" && (
+          <div className="max-w-2xl mx-auto">
+            <div className="mb-6 flex items-center gap-4">
+              <Button variant="outline" size="icon" onClick={() => setView("list")}>
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold md:text-3xl">Payout Accounts</h1>
+                <p className="text-muted-foreground">Manage your bank and crypto accounts</p>
+              </div>
+            </div>
+            <PayoutAccountsList />
+          </div>
         )}
 
         {view === "detail" && selectedTransaction && (

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 const ADMIN_PHONE = "+2348144919893";
 const ADMIN_EMAIL = "ogwujude872@gmail.com";
-const WHATSAPP_LINK = `https://wa.me/2348144919893?text=${encodeURIComponent("Hi Vault Agency, I need assistance with...")}`;
+const WHATSAPP_LINK = `https://wa.me/2348144919893?text=${encodeURIComponent("Hi Escrow Africa, I need assistance with...")}`;
 
 export function SupportWidget() {
     const [open, setOpen] = useState(false);
@@ -52,7 +52,7 @@ export function SupportWidget() {
 
                         {/* Email */}
                         <a
-                            href={`mailto:${ADMIN_EMAIL}?subject=Vault Agency Support Request`}
+                            href={`mailto:${ADMIN_EMAIL}?subject=Escrow Africa Support Request`}
                             className="flex items-center gap-3 rounded-xl p-3 bg-secondary/5 hover:bg-secondary/10 transition-colors group"
                         >
                             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/10 text-secondary shrink-0">

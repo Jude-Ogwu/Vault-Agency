@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Send, Loader2, MessageSquare, Trash2, Ban, Undo, Shield, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
+import { ADMIN_EMAIL } from "@/lib/constants";
 
 interface Message {
     id: string;
@@ -33,7 +34,7 @@ const roleColors: Record<string, string> = {
 const roleBadge: Record<string, string> = {
     buyer: "Buyer",
     seller: "Seller",
-    admin: "VA",
+    admin: "EA",
 };
 
 export function ChatPanel({ transactionId, role }: ChatPanelProps) {
@@ -64,15 +65,16 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
     const [transactionDetails, setTransactionDetails] = useState<{ buyer_id: string; seller_email: string; buyer_email: string } | null>(null);
 
     const fetchTransactionDetails = async () => {
-        const { data } = await supabase
-            .from("transactions")
+        const { data } = await (supabase
+            .from("transactions") as any)
             .select("muted_ids, buyer_id, seller_email, buyer_email")
             .eq("id", transactionId)
             .single();
 
         if (data) {
-            setMutedIds((data.muted_ids as string[]) || []);
-            setTransactionDetails(data as any);
+            const d = data as any;
+            setMutedIds((d.muted_ids as string[]) || []);
+            setTransactionDetails(d);
         }
     };
 
@@ -206,8 +208,8 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
                 user_id: userId,
                 title: isMuted ? "Reference: Chat Access Restored" : "Reference: Chat Access Suspended",
                 message: isMuted
-                    ? "Your chat privileges for this transaction have been restored by the VA."
-                    : "You have been muted in this transaction chat by the VA.",
+                    ? "Your chat privileges for this transaction have been restored by EA."
+                    : "You have been muted in this transaction chat by EA.",
                 type: isMuted ? "success" : "warning",
                 link: `/dashboard/transaction/${transactionId}`
             } as any);
@@ -242,19 +244,16 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
             }
         };
 
-        // Notify Admins
+        // Notify Admin via ADMIN_EMAIL
         const notifyAdmins = async () => {
-            const { data: admins } = await supabase
-                .from('profiles')
+            const { data: adminProfile } = await (supabase
+                .from('profiles') as any)
                 .select('id')
-                .eq('role', 'admin');
+                .eq('email', ADMIN_EMAIL)
+                .single();
 
-            if (admins) {
-                admins.forEach(admin => {
-                    if (admin.id !== user.id) { // Don't notify self if I am admin
-                        recipientsArray.push({ id: admin.id, link: `/admin?transaction=${transactionId}` });
-                    }
-                });
+            if (adminProfile && adminProfile.id !== user.id) {
+                recipientsArray.push({ id: adminProfile.id, link: `/admin?transaction=${transactionId}` });
             }
         };
 
@@ -278,7 +277,7 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
         for (const recipient of uniqueRecipients) {
             await supabase.from("notifications").insert({
                 user_id: recipient.id,
-                title: `New Message from ${role === 'admin' ? 'VA' : role}`,
+                title: `New Message from ${role === 'admin' ? 'EA' : role}`,
                 message: content.substring(0, 50) + (content.length > 50 ? "..." : ""),
                 type: "info",
                 link: recipient.link,

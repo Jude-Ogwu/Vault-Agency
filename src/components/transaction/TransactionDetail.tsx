@@ -50,7 +50,7 @@ interface PaymentOption {
 }
 
 const paymentMethods: PaymentOption[] = [
-  { id: "paystack", name: "Paystack", icon: CreditCard, active: true, description: "Cards, Bank Transfer, USSD" },
+  { id: "paystack", name: "Paystack", icon: CreditCard, active: false, description: "Cards, Bank Transfer, USSD" },
   { id: "crypto", name: "Crypto", icon: Bitcoin, active: true, description: "BTC, USDT, ETH" },
   { id: "stripe", name: "Stripe", icon: Wallet, active: false, description: "International Cards" },
   { id: "paypal", name: "PayPal", icon: Globe, active: false, description: "PayPal Balance, Cards" },
@@ -103,7 +103,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cryptoProofRef = useRef<HTMLInputElement>(null);
 
-  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>("paystack");
+  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>("crypto");
   const [selectedCrypto, setSelectedCrypto] = useState<CryptoWalletKey | null>(null);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [showCryptoPaymentForm, setShowCryptoPaymentForm] = useState(false);
@@ -438,9 +438,18 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
   // =============================================
   const renderBuyerActions = () => {
     switch (transaction.status) {
-      case "pending_payment":
+      case "seller_joined":
         return (
           <div className="space-y-4">
+            <div className="rounded-lg border border-success/30 bg-success/5 p-4">
+              <div className="flex items-center gap-2 text-success font-semibold mb-2">
+                <CheckCircle2 className="h-5 w-5" />
+                Seller Has Accepted Your Invite!
+              </div>
+              <p className="text-sm text-muted-foreground">
+                The seller has joined your transaction. You can now proceed to make payment to hold the funds securely in escrow.
+              </p>
+            </div>
             <Label>Select Payment Method</Label>
             <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
               {paymentMethods.map((method) => {
@@ -781,11 +790,11 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
           )}
         </div>
 
-        {/* VA Manual Override */}
+        {/* EA Manual Override */}
         <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-3">
           <div className="flex items-center gap-2 text-primary font-medium">
             <Settings className="h-4 w-4" />
-            <h3>VA Override Zone</h3>
+            <h3>EA Override Zone</h3>
           </div>
           <p className="text-xs text-muted-foreground">Force update the transaction status (use with caution).</p>
 
@@ -806,7 +815,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
           </div>
 
           <div className="space-y-2">
-            <Label>VA Note (Required for override)</Label>
+            <Label>EA Note (Required for override)</Label>
             <Input
               placeholder="Reason for manual update..."
               value={manualNote}
@@ -896,10 +905,10 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
             </div>
           )}
 
-          {/* VA Notes */}
+          {/* EA Notes */}
           {transaction.admin_notes && (
             <div className="rounded-lg border border-warning/30 bg-warning/5 p-4">
-              <Label className="text-warning font-semibold">VA Notes</Label>
+              <Label className="text-warning font-semibold">EA Notes</Label>
               <p className="mt-1 text-sm">{transaction.admin_notes}</p>
             </div>
           )}
