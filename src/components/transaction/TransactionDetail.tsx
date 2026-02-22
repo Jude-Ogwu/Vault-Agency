@@ -1050,10 +1050,12 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
                 <>
                   <p className="mt-1 font-medium">{transaction.seller_email}</p>
                   {transaction.seller_phone && <p className="text-sm text-muted-foreground">{transaction.seller_phone}</p>}
-                  {transaction.seller_id && (
+                  {transaction.seller_id ? (
                     <p className="text-xs font-mono text-muted-foreground mt-0.5">
                       ID: {transaction.seller_id.slice(0, 8).toUpperCase()}
                     </p>
+                  ) : (
+                    <p className="text-xs italic text-muted-foreground mt-0.5">Not joined yet</p>
                   )}
                 </>
               ) : (

@@ -60,19 +60,26 @@ export default function InviteLink() {
     async function fetchInviteData() {
         if (!token) { setState("invalid"); return; }
 
-        const { data: link, error } = await supabase
+        // Step 1: Fetch the invite link by token (no embedded join)
+        const { data: link, error: linkError } = await supabase
             .from("invite_links")
-            .select("*, transactions(*)")
+            .select("id, token, transaction_id, created_by, expires_at, is_active, used_by, used_at")
             .eq("token", token)
             .single();
 
-        if (error || !link) { setState("invalid"); return; }
+        if (linkError || !link) { setState("invalid"); return; }
 
-        // Guard: if transaction relation not loaded, treat as invalid
-        if (!link.transactions) { setState("invalid"); return; }
+        // Step 2: Fetch the transaction separately using transaction_id
+        const { data: txn, error: txnError } = await supabase
+            .from("transactions")
+            .select("*")
+            .eq("id", link.transaction_id)
+            .single();
+
+        if (txnError || !txn) { setState("invalid"); return; }
 
         setInviteLink(link);
-        setTransaction(link.transactions);
+        setTransaction(txn);
 
         // Check expired
         if (new Date(link.expires_at) < new Date() || !link.is_active) {
