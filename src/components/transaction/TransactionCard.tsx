@@ -12,6 +12,8 @@ interface TransactionCardProps {
     amount: number;
     product_type: ProductType;
     status: TransactionStatus;
+    buyer_id?: string | null;
+    seller_id?: string | null;
     buyer_email: string;
     seller_email: string;
     created_at: string;
@@ -81,11 +83,23 @@ export function TransactionCard({ transaction, onClick, role }: TransactionCardP
               <span className="truncate">Seller: {transaction.seller_email}</span>
               {(transaction as any).seller_phone && <span className="truncate">Phone: {(transaction as any).seller_phone}</span>}
             </>
-
           ) : (
-            <span className="truncate font-mono">
-              {role === "buyer" ? "Seller" : "Buyer"} ID: #{transaction.id.slice(0, 8).toUpperCase()}
-            </span>
+            <>
+              {role === "buyer" && (
+                <span className="truncate font-mono text-xs">
+                  Seller ID: {transaction.seller_id
+                    ? transaction.seller_id.slice(0, 8).toUpperCase()
+                    : <span className="italic text-muted-foreground">Pending join</span>}
+                </span>
+              )}
+              {role === "seller" && (
+                <span className="truncate font-mono text-xs">
+                  Buyer ID: {transaction.buyer_id
+                    ? transaction.buyer_id.slice(0, 8).toUpperCase()
+                    : <span className="italic text-muted-foreground">Unknown</span>}
+                </span>
+              )}
+            </>
           )}
         </div>
       </CardContent>

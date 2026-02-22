@@ -20,6 +20,8 @@ interface Transaction {
   amount: number;
   product_type: ProductType;
   status: TransactionStatus;
+  buyer_id?: string | null;
+  seller_id?: string | null;
   buyer_email: string;
   seller_email: string;
   seller_phone?: string | null;

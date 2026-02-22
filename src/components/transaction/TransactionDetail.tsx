@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -37,6 +37,8 @@ import {
   RotateCcw,
   Store,
   Settings,
+  Link,
+  Share2,
 } from "lucide-react";
 
 type PaymentMethod = "paystack" | "crypto" | "stripe" | "paypal";
@@ -63,6 +65,8 @@ interface Transaction {
   amount: number;
   product_type: ProductType;
   status: TransactionStatus;
+  buyer_id?: string | null;
+  seller_id?: string | null;
   buyer_email: string;
   seller_email: string;
   seller_phone?: string | null;
@@ -120,6 +124,26 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
   // Admin Manual Update
   const [manualStatus, setManualStatus] = useState<TransactionStatus | "">("");
   const [manualNote, setManualNote] = useState("");
+
+  // Invite link (for buyer in pending_payment state)
+  const [inviteLink, setInviteLink] = useState<string | null>(null);
+  const [copiedInvite, setCopiedInvite] = useState(false);
+
+  useEffect(() => {
+    if (role !== "buyer" || transaction.status !== "pending_payment") return;
+    supabase
+      .from("invite_links")
+      .select("token")
+      .eq("transaction_id", transaction.id)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setInviteLink(`${window.location.origin}/invite/${data[0].token}`);
+        }
+      });
+  }, [transaction.id, transaction.status, role]);
 
   const ProductIcon = productIcons[transaction.product_type] || Package;
   const productLabel = PRODUCT_TYPES[transaction.product_type]?.label || "Unknown";
@@ -458,6 +482,61 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
                 Share the invite link with your seller. Once they accept, you can proceed to payment.
               </p>
             </div>
+
+            {/* Invite Link Box */}
+            {inviteLink && (
+              <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-3">
+                <div className="flex items-center gap-2 text-primary font-semibold text-sm">
+                  <Link className="h-4 w-4" />
+                  Your Seller Invite Link
+                </div>
+                <div className="flex items-center gap-2">
+                  <code className="flex-1 rounded bg-muted px-3 py-2 text-xs font-mono break-all">
+                    {inviteLink}
+                  </code>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="shrink-0"
+                    onClick={() => {
+                      navigator.clipboard.writeText(inviteLink);
+                      setCopiedInvite(true);
+                      setTimeout(() => setCopiedInvite(false), 2000);
+                    }}
+                  >
+                    {copiedInvite ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
+                  </Button>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => {
+                      const msg = encodeURIComponent(`Hi! You've been invited as a seller on a secure escrow transaction. Click to view and accept:\n${inviteLink}`);
+                      window.open(`https://wa.me/?text=${msg}`, "_blank");
+                    }}
+                  >
+                    <Share2 className="mr-2 h-4 w-4 text-green-600" />
+                    Share via WhatsApp
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => {
+                      navigator.clipboard.writeText(inviteLink);
+                      setCopiedInvite(true);
+                      setTimeout(() => setCopiedInvite(false), 2000);
+                    }}
+                  >
+                    {copiedInvite ? <Check className="h-4 w-4 mr-2 text-success" /> : <Copy className="h-4 w-4 mr-2" />}
+                    Copy Link
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {/* Edit/Delete — allowed before payment & seller join */}
             {(onEdit || onDelete) && (
               <div className="flex gap-3 pt-2 border-t">
@@ -929,7 +1008,11 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
               {role === "admin" ? (
                 <p className="mt-1 font-medium">{transaction.buyer_email}</p>
               ) : (
-                <p className="mt-1 font-mono text-sm"># {transaction.id.slice(0, 8).toUpperCase()}</p>
+                <p className="mt-1 font-mono font-semibold tracking-wider">
+                  {transaction.buyer_id
+                    ? transaction.buyer_id.slice(0, 8).toUpperCase()
+                    : "Unknown"}
+                </p>
               )}
             </div>
             <div className="rounded-lg border p-4">
@@ -940,7 +1023,11 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
                   {transaction.seller_phone && <p className="text-sm text-muted-foreground">{transaction.seller_phone}</p>}
                 </>
               ) : (
-                <p className="mt-1 font-mono text-sm"># {transaction.id.slice(0, 8).toUpperCase()}</p>
+                <p className="mt-1 font-mono font-semibold tracking-wider">
+                  {transaction.seller_id
+                    ? transaction.seller_id.slice(0, 8).toUpperCase()
+                    : <span className="text-muted-foreground font-normal italic text-sm">Not joined yet</span>}
+                </p>
               )}
             </div>
           </div>
