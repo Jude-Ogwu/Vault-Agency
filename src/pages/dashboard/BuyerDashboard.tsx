@@ -151,28 +151,30 @@ export default function BuyerDashboard() {
 
         {/* Tab Nav — shown on list, history and payout views */}
         {(view === "list" || view === "history" || view === "payout") && (
-          <div className="flex gap-2 mb-6">
-            <Button
-              variant={view === "list" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setView("list")}
-            >
-              <LayoutGrid className="mr-2 h-4 w-4" /> Transactions
-            </Button>
-            <Button
-              variant={view === "history" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setView("history")}
-            >
-              <History className="mr-2 h-4 w-4" /> History
-            </Button>
-            <Button
-              variant={view === "payout" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setView("payout")}
-            >
-              <Wallet className="mr-2 h-4 w-4" /> Payout Accounts
-            </Button>
+          <div className="flex gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide md:overflow-visible md:pb-0 md:mx-0 md:px-0">
+            <div className="flex gap-2 min-w-max">
+              <Button
+                variant={view === "list" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setView("list")}
+              >
+                <LayoutGrid className="mr-2 h-4 w-4" /> Transactions
+              </Button>
+              <Button
+                variant={view === "history" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setView("history")}
+              >
+                <History className="mr-2 h-4 w-4" /> History
+              </Button>
+              <Button
+                variant={view === "payout" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setView("payout")}
+              >
+                <Wallet className="mr-2 h-4 w-4" /> Payout Accounts
+              </Button>
+            </div>
           </div>
         )}
 

@@ -83,8 +83,8 @@ export function TransactionCard({ transaction, onClick, role }: TransactionCardP
             </>
 
           ) : (
-            <span className="truncate">
-              {role === "buyer" ? "Seller" : "Buyer"}: {role === "buyer" ? transaction.seller_email : transaction.buyer_email}
+            <span className="truncate font-mono">
+              {role === "buyer" ? "Seller" : "Buyer"} ID: #{transaction.id.slice(0, 8).toUpperCase()}
             </span>
           )}
         </div>

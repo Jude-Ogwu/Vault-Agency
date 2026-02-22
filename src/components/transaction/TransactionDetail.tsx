@@ -98,6 +98,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
   const [loading, setLoading] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [confirmAction, setConfirmAction] = useState<string>("");
+  const [showChat, setShowChat] = useState(false);
   const [proofDescription, setProofDescription] = useState("");
   const [uploadingProof, setUploadingProof] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -447,6 +448,34 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
   // =============================================
   const renderBuyerActions = () => {
     switch (transaction.status) {
+      case "pending_payment":
+        return (
+          <div className="space-y-4">
+            <div className="rounded-lg border bg-muted/30 p-4 text-center">
+              <CreditCard className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+              <p className="text-sm font-medium mb-1">Waiting for Seller to Join</p>
+              <p className="text-sm text-muted-foreground">
+                Share the invite link with your seller. Once they accept, you can proceed to payment.
+              </p>
+            </div>
+            {/* Edit/Delete — allowed before payment & seller join */}
+            {(onEdit || onDelete) && (
+              <div className="flex gap-3 pt-2 border-t">
+                {onEdit && (
+                  <Button variant="outline" onClick={onEdit} className="flex-1" disabled={loading}>
+                    Edit Details
+                  </Button>
+                )}
+                {onDelete && (
+                  <Button variant="destructive" onClick={() => openConfirmDialog("delete")} className="flex-1" disabled={loading}>
+                    Delete Transaction
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+        );
+
       case "seller_joined":
         return (
           <div className="space-y-4">
@@ -897,12 +926,22 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
             <div className="rounded-lg border p-4">
               <Label className="text-muted-foreground">Buyer</Label>
-              <p className="mt-1 font-medium">{transaction.buyer_email}</p>
+              {role === "admin" ? (
+                <p className="mt-1 font-medium">{transaction.buyer_email}</p>
+              ) : (
+                <p className="mt-1 font-mono text-sm"># {transaction.id.slice(0, 8).toUpperCase()}</p>
+              )}
             </div>
             <div className="rounded-lg border p-4">
               <Label className="text-muted-foreground">Seller</Label>
-              <p className="mt-1 font-medium">{transaction.seller_email}</p>
-              {transaction.seller_phone && <p className="text-sm text-muted-foreground">{transaction.seller_phone}</p>}
+              {role === "admin" ? (
+                <>
+                  <p className="mt-1 font-medium">{transaction.seller_email}</p>
+                  {transaction.seller_phone && <p className="text-sm text-muted-foreground">{transaction.seller_phone}</p>}
+                </>
+              ) : (
+                <p className="mt-1 font-mono text-sm"># {transaction.id.slice(0, 8).toUpperCase()}</p>
+              )}
             </div>
           </div>
 
@@ -946,7 +985,14 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
 
           {/* Chat */}
           <div className="pt-4 border-t">
-            <ChatPanel transactionId={transaction.id} role={role} />
+            <button
+              className="w-full flex items-center justify-between text-sm font-medium text-muted-foreground hover:text-foreground mb-3 transition-colors"
+              onClick={() => setShowChat((prev) => !prev)}
+            >
+              <span>💬 Transaction Chat</span>
+              <span className="text-xs">{showChat ? "▲ Hide" : "▼ Show"}</span>
+            </button>
+            {showChat && <ChatPanel transactionId={transaction.id} role={role} />}
           </div>
         </CardContent>
       </Card>
