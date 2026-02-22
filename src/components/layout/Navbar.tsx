@@ -23,8 +23,8 @@ export function Navbar() {
 
   const handleSignOut = async () => {
     await signOut();
-    // Hard redirect to fully clear all React state and start fresh
-    window.location.href = "/";
+    // Hard redirect to fully clear all React state and start fresh on login page
+    window.location.href = "/login";
   };
 
   // Smooth-scroll to a section on the landing page

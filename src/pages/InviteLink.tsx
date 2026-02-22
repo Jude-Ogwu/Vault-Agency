@@ -68,6 +68,9 @@ export default function InviteLink() {
 
         if (error || !link) { setState("invalid"); return; }
 
+        // Guard: if transaction relation not loaded, treat as invalid
+        if (!link.transactions) { setState("invalid"); return; }
+
         setInviteLink(link);
         setTransaction(link.transactions);
 
@@ -176,6 +179,12 @@ export default function InviteLink() {
                 <Footer />
             </div>
         );
+    }
+
+    // Extra safety — should never reach here, but prevents crash
+    if (!transaction) {
+        return <StatusPage icon={<XCircle className="h-12 w-12 text-destructive" />}
+            title="Transaction Not Found" description="Unable to load the transaction for this invite. Please ask the buyer to generate a new link." />;
     }
 
     // ─── Valid State ──────────────────────────────────────────────────────────────

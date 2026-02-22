@@ -1028,7 +1028,14 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
             <div className="rounded-lg border p-4">
               <Label className="text-muted-foreground">Buyer</Label>
               {role === "admin" ? (
-                <p className="mt-1 font-medium">{transaction.buyer_email}</p>
+                <>
+                  <p className="mt-1 font-medium">{transaction.buyer_email}</p>
+                  {transaction.buyer_id && (
+                    <p className="text-xs font-mono text-muted-foreground mt-0.5">
+                      ID: {transaction.buyer_id.slice(0, 8).toUpperCase()}
+                    </p>
+                  )}
+                </>
               ) : (
                 <p className="mt-1 font-mono font-semibold tracking-wider">
                   {transaction.buyer_id
@@ -1043,6 +1050,11 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
                 <>
                   <p className="mt-1 font-medium">{transaction.seller_email}</p>
                   {transaction.seller_phone && <p className="text-sm text-muted-foreground">{transaction.seller_phone}</p>}
+                  {transaction.seller_id && (
+                    <p className="text-xs font-mono text-muted-foreground mt-0.5">
+                      ID: {transaction.seller_id.slice(0, 8).toUpperCase()}
+                    </p>
+                  )}
                 </>
               ) : (
                 <p className="mt-1 font-mono font-semibold tracking-wider">
