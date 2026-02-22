@@ -39,9 +39,47 @@ import {
   Settings,
   Link,
   Share2,
+  ExternalLink,
 } from "lucide-react";
 
 type PaymentMethod = "paystack" | "crypto" | "stripe" | "paypal";
+
+const SOCIAL_PLATFORMS = [
+  {
+    name: "WhatsApp",
+    color: "bg-[#25D366] hover:bg-[#20b858] text-white",
+    icon: "💬",
+    getUrl: (text: string) => `https://wa.me/?text=${encodeURIComponent(text)}`,
+  },
+  {
+    name: "Telegram",
+    color: "bg-[#0088cc] hover:bg-[#007ab8] text-white",
+    icon: "✈️",
+    getUrl: (text: string, url: string) =>
+      `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
+  },
+  {
+    name: "X (Twitter)",
+    color: "bg-black hover:bg-zinc-800 text-white",
+    icon: "𝕏",
+    getUrl: (text: string, url: string) =>
+      `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+  },
+  {
+    name: "Facebook",
+    color: "bg-[#1877F2] hover:bg-[#166ad8] text-white",
+    icon: "📘",
+    getUrl: (_: string, url: string) =>
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+  },
+  {
+    name: "Email",
+    color: "bg-slate-600 hover:bg-slate-700 text-white",
+    icon: "✉️",
+    getUrl: (text: string) =>
+      `mailto:?subject=You're invited as a seller on Escrow Africa&body=${encodeURIComponent(text)}`,
+  },
+] as const;
 
 interface PaymentOption {
   id: PaymentMethod;
@@ -103,6 +141,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [confirmAction, setConfirmAction] = useState<string>("");
   const [showChat, setShowChat] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
   const [proofDescription, setProofDescription] = useState("");
   const [uploadingProof, setUploadingProof] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -487,11 +526,12 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
             {inviteLink && (
               <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-3">
                 <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-                  <Link className="h-4 w-4" />
+                  <Link className="h-4 w-4 shrink-0" />
                   Your Seller Invite Link
                 </div>
-                <div className="flex items-center gap-2">
-                  <code className="flex-1 rounded bg-muted px-3 py-2 text-xs font-mono break-all">
+                {/* URL display — overflow hidden so it never widens page */}
+                <div className="flex items-center gap-2 min-w-0">
+                  <code className="flex-1 min-w-0 rounded bg-muted px-3 py-2 text-xs font-mono overflow-hidden text-ellipsis whitespace-nowrap block">
                     {inviteLink}
                   </code>
                   <Button
@@ -507,33 +547,15 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
                     {copiedInvite ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
                   </Button>
                 </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => {
-                      const msg = encodeURIComponent(`Hi! You've been invited as a seller on a secure escrow transaction. Click to view and accept:\n${inviteLink}`);
-                      window.open(`https://wa.me/?text=${msg}`, "_blank");
-                    }}
-                  >
-                    <Share2 className="mr-2 h-4 w-4 text-green-600" />
-                    Share via WhatsApp
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => {
-                      navigator.clipboard.writeText(inviteLink);
-                      setCopiedInvite(true);
-                      setTimeout(() => setCopiedInvite(false), 2000);
-                    }}
-                  >
-                    {copiedInvite ? <Check className="h-4 w-4 mr-2 text-success" /> : <Copy className="h-4 w-4 mr-2" />}
-                    Copy Link
-                  </Button>
-                </div>
+                {/* Single responsive Share button that opens Dialog */}
+                <Button
+                  variant="default"
+                  className="w-full gradient-hero border-0"
+                  onClick={() => setShowShareDialog(true)}
+                >
+                  <Share2 className="mr-2 h-4 w-4" />
+                  Share Invite Link
+                </Button>
               </div>
             )}
 
@@ -1171,6 +1193,66 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {/* Share Invite Link Dialog */}
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Share Invite Link</DialogTitle>
+            <DialogDescription>Choose a platform to share the invite link with your seller</DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center gap-2 min-w-0">
+            <code className="flex-1 min-w-0 rounded bg-muted px-3 py-2 text-xs font-mono overflow-hidden text-ellipsis whitespace-nowrap block">
+              {inviteLink}
+            </code>
+            <Button
+              variant="outline"
+              size="icon"
+              className="shrink-0"
+              onClick={() => {
+                if (inviteLink) navigator.clipboard.writeText(inviteLink);
+                setCopiedInvite(true);
+                setTimeout(() => setCopiedInvite(false), 2000);
+              }}
+            >
+              {copiedInvite ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
+            </Button>
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {SOCIAL_PLATFORMS.map((platform) => (
+              <button
+                key={platform.name}
+                type="button"
+                onClick={() => {
+                  const text = `Hi! You've been invited as a seller on a secure escrow deal on Escrow Africa. Click to view and accept:\n${inviteLink ?? ""}`;
+                  const url = platform.getUrl(text, inviteLink ?? "");
+                  window.open(url, "_blank");
+                }}
+                className={`flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-opacity hover:opacity-90 ${platform.color}`}
+              >
+                <span className="text-base">{platform.icon}</span>
+                <span className="truncate">{platform.name}</span>
+              </button>
+            ))}
+            {"share" in navigator && (
+              <button
+                type="button"
+                onClick={() =>
+                  inviteLink && navigator.share({
+                    title: "Escrow Africa Invite",
+                    text: `You've been invited as a seller on Escrow Africa. Click to view and accept.`,
+                    url: inviteLink,
+                  })
+                }
+                className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium bg-muted hover:bg-muted/80 transition-colors"
+              >
+                <ExternalLink className="h-4 w-4" />
+                <span>More</span>
+              </button>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
     </>
   );
 }

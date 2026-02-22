@@ -539,14 +539,16 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
             </div>
           )}
 
-          <div className="flex gap-3 pt-2">
-            <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+            <Button type="button" variant="outline" onClick={onCancel} className="w-full sm:flex-1">
               Cancel
             </Button>
-            <Button type="submit" className="flex-1 gradient-hero border-0" disabled={loading}>
+            <Button type="submit" className="w-full sm:flex-1 gradient-hero border-0 text-sm" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {initialData ? "Update Transaction" : "Create Transaction"}{" "}
-              {baseAmount > 0 ? `(${formatNaira(totalAmount)})` : ""}
+              <span className="truncate">
+                {initialData ? "Update Transaction" : "Create Transaction"}
+                {baseAmount > 0 ? ` (${formatNaira(totalAmount)})` : ""}
+              </span>
             </Button>
           </div>
         </form>
