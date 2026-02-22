@@ -23,6 +23,7 @@ import SuspendedPage from "./pages/auth/SuspendedPage";
 import { SuspensionGuard } from "./components/auth/SuspensionGuard";
 import { TransactionRedirect } from "./components/TransactionRedirect";
 import InviteLink from "./pages/InviteLink";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/legal/refund" element={<RefundPolicy />} />
             <Route path="/dashboard/transaction/:id" element={<TransactionRedirect />} />
             <Route path="/invite/:token" element={<InviteLink />} />
+            <Route path="/settings" element={<Settings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

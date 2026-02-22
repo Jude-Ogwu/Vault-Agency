@@ -10,7 +10,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import {
     Shield, Clock, Package, DollarSign, User,
-    Loader2, CheckCircle, XCircle, LogIn, AlertTriangle
+    Loader2, CheckCircle, XCircle, LogIn, AlertTriangle, ArrowLeft
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -60,7 +60,7 @@ export default function InviteLink() {
     async function fetchInviteData() {
         if (!token) { setState("invalid"); return; }
 
-        // Step 1: Fetch the invite link by token (no embedded join)
+        // Step 1: Fetch the invite link by token (two separate queries to avoid PostgREST FK issue)
         const { data: link, error: linkError } = await supabase
             .from("invite_links")
             .select("id, token, transaction_id, created_by, expires_at, is_active, used_by, used_at")
@@ -95,48 +95,39 @@ export default function InviteLink() {
 
     async function handleJoin() {
         if (!user) {
-            // Redirect to login with return URL
             navigate(`/login?redirect=/invite/${token}`);
             return;
         }
 
         setState("joining");
+
         try {
-            // Mark invite as used
-            await supabase
+            // Update transaction: set seller_id to current user
+            const { error: txnError } = await supabase
+                .from("transactions")
+                .update({ seller_id: user.id })
+                .eq("id", inviteLink.transaction_id);
+
+            if (txnError) throw txnError;
+
+            // Mark invite link as used
+            const { error: linkError } = await supabase
                 .from("invite_links")
                 .update({ used_by: user.id, used_at: new Date().toISOString(), is_active: false })
-                .eq("token", token!);
+                .eq("id", inviteLink.id);
 
-            // Update transaction with seller_id and status → seller_joined
-            await supabase
-                .from("transactions")
-                .update({
-                    seller_id: user.id,
-                    status: "seller_joined" as "seller_joined",
-                    updated_at: new Date().toISOString(),
-                })
-                .eq("id", transaction.id);
-
-            // Notify buyer
-            await supabase.from("notifications").insert({
-                user_id: transaction.buyer_id,
-                title: "Seller Has Joined!",
-                message: `${user.email} has joined your transaction: "${transaction.deal_title}". You can now proceed to payment.`,
-                type: "success" as const,
-                link: `/dashboard/transaction/${transaction.id}`,
-            });
+            if (linkError) throw linkError;
 
             setState("joined");
-            toast({ title: "You've joined the transaction!", description: "The buyer has been notified." });
-        } catch (err) {
+            toast({ title: "You've joined!", description: "You are now the seller on this transaction." });
+        } catch (err: any) {
+            console.error("Failed to join:", err);
+            toast({ title: "Failed to join", description: err?.message || "Please try again.", variant: "destructive" });
             setState("valid");
-            toast({ title: "Error", description: "Something went wrong. Please try again.", variant: "destructive" });
         }
     }
 
-    // ─── UI States ───────────────────────────────────────────────────────────────
-
+    // ─── Loading ──────────────────────────────────────────────────────────────────
     if (state === "loading" || authLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -145,24 +136,33 @@ export default function InviteLink() {
         );
     }
 
+    // ─── Status pages ──────────────────────────────────────────────────────────────
     if (state === "invalid") {
-        return <StatusPage icon={<XCircle className="h-12 w-12 text-destructive" />}
-            title="Invalid Link" description="This invite link does not exist or is malformed." />;
+        return <StatusPage
+            icon={<XCircle className="h-12 w-12 text-destructive" />}
+            title="Invalid Link"
+            description="This invite link does not exist or is malformed." />;
     }
 
     if (state === "expired") {
-        return <StatusPage icon={<Clock className="h-12 w-12 text-warning" />}
-            title="Link Expired" description="This invite link has expired. Please ask the buyer to generate a new one." />;
+        return <StatusPage
+            icon={<Clock className="h-12 w-12 text-warning" />}
+            title="Link Expired"
+            description="This invite link has expired. Please ask the buyer to generate a new one." />;
     }
 
     if (state === "already_used") {
-        return <StatusPage icon={<CheckCircle className="h-12 w-12 text-success" />}
-            title="Already Used" description="This invite link has already been used to join the transaction." />;
+        return <StatusPage
+            icon={<CheckCircle className="h-12 w-12 text-success" />}
+            title="Already Used"
+            description="This invite link has already been used to join the transaction." />;
     }
 
     if (state === "own_link") {
-        return <StatusPage icon={<AlertTriangle className="h-12 w-12 text-warning" />}
-            title="Your Own Link" description="You created this transaction. Share this link with the seller instead." />;
+        return <StatusPage
+            icon={<AlertTriangle className="h-12 w-12 text-warning" />}
+            title="Your Own Link"
+            description="You created this transaction. Share this link with the seller instead." />;
     }
 
     if (state === "joined") {
@@ -177,7 +177,7 @@ export default function InviteLink() {
                             <p className="text-muted-foreground mb-6">
                                 You're now the seller on this transaction. The buyer will be notified to proceed with payment.
                             </p>
-                            <Button onClick={() => navigate("/seller")} className="w-full">
+                            <Button onClick={() => navigate("/seller")} className="w-full gradient-hero border-0">
                                 Go to Seller Dashboard
                             </Button>
                         </CardContent>
@@ -188,23 +188,35 @@ export default function InviteLink() {
         );
     }
 
-    // Extra safety — should never reach here, but prevents crash
+    // Extra safety guard — prevents crash if transaction is somehow null
     if (!transaction) {
-        return <StatusPage icon={<XCircle className="h-12 w-12 text-destructive" />}
-            title="Transaction Not Found" description="Unable to load the transaction for this invite. Please ask the buyer to generate a new link." />;
+        return <StatusPage
+            icon={<XCircle className="h-12 w-12 text-destructive" />}
+            title="Transaction Not Found"
+            description="Unable to load the transaction for this invite. Please ask the buyer to generate a new link." />;
     }
 
-    // ─── Valid State ──────────────────────────────────────────────────────────────
-    const fee = transaction.amount < 10000
-        ? transaction.amount * 0.05
-        : transaction.amount * 0.02;
-    const sellerReceives = transaction.amount - fee;
+    // ─── Valid State ───────────────────────────────────────────────────────────────
+    // Fee is charged TO THE BUYER (added on top). Seller receives the FULL deal amount.
+    const feeRate = transaction.amount < 10000 ? 0.05 : 0.02;
+    const fee = Math.round(transaction.amount * feeRate);
+    const buyerPays = transaction.amount + fee;
+    const sellerReceives = transaction.amount; // seller always gets the full amount
 
     return (
         <div className="min-h-screen flex flex-col bg-background">
             <Navbar />
             <main className="flex-1 flex items-center justify-center px-4 py-12">
                 <div className="max-w-lg w-full space-y-4">
+
+                    {/* Back to Home */}
+                    <button
+                        onClick={() => navigate("/")}
+                        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                        <ArrowLeft className="h-4 w-4" />
+                        Back to Home
+                    </button>
 
                     {/* Header */}
                     <div className="text-center">
@@ -237,9 +249,10 @@ export default function InviteLink() {
                             )}
                         </CardHeader>
                         <CardContent className="space-y-4">
+                            {/* Amount grid */}
                             <div className="grid grid-cols-2 gap-3 text-sm">
                                 <div className="rounded-lg bg-muted/50 p-3">
-                                    <div className="text-muted-foreground text-xs mb-1">Transaction Amount</div>
+                                    <div className="text-muted-foreground text-xs mb-1">Deal Amount</div>
                                     <div className="font-semibold text-lg">₦{transaction.amount.toLocaleString()}</div>
                                 </div>
                                 <div className="rounded-lg bg-success/10 p-3">
@@ -248,41 +261,57 @@ export default function InviteLink() {
                                 </div>
                             </div>
 
-                            <div className="text-xs text-muted-foreground text-center">
-                                EA service fee: ₦{fee.toLocaleString()} ({transaction.amount < 10000 ? "5" : "2"}%)
+                            {/* Fee breakdown */}
+                            <div className="rounded-lg bg-muted/30 px-3 py-2 text-xs text-muted-foreground space-y-1">
+                                <div className="flex justify-between">
+                                    <span>EA service fee ({feeRate * 100}%)</span>
+                                    <span>₦{fee.toLocaleString()}</span>
+                                </div>
+                                <div className="flex justify-between font-medium text-foreground border-t border-border pt-1">
+                                    <span>Buyer total payment</span>
+                                    <span>₦{buyerPays.toLocaleString()}</span>
+                                </div>
+                                <p className="text-[11px] text-muted-foreground pt-0.5">
+                                    EA fee is paid by the buyer — you receive the full deal amount.
+                                </p>
                             </div>
 
+                            {/* Details */}
                             <div className="space-y-2 text-sm">
                                 <div className="flex items-center gap-2">
-                                    <User className="h-4 w-4 text-muted-foreground" />
-                                    <span className="text-muted-foreground">Buyer:</span>
-                                    <span className="font-medium">{transaction.buyer_email}</span>
+                                    <User className="h-4 w-4 text-muted-foreground shrink-0" />
+                                    <span className="text-muted-foreground">Buyer ID:</span>
+                                    <span className="font-mono font-semibold tracking-wider">
+                                        {transaction.buyer_id
+                                            ? transaction.buyer_id.slice(0, 8).toUpperCase()
+                                            : "Unknown"}
+                                    </span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Package className="h-4 w-4 text-muted-foreground" />
+                                    <Package className="h-4 w-4 text-muted-foreground shrink-0" />
                                     <span className="text-muted-foreground">Type:</span>
                                     <Badge variant="secondary" className="capitalize">
                                         {transaction.product_type?.replace(/_/g, " ")}
                                     </Badge>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                                    <DollarSign className="h-4 w-4 text-muted-foreground shrink-0" />
                                     <span className="text-muted-foreground">Created:</span>
                                     <span>{format(new Date(transaction.created_at), "MMM d, yyyy")}</span>
                                 </div>
                             </div>
 
                             <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs text-muted-foreground">
-                                <strong className="text-foreground">How it works:</strong> After you accept, the buyer will pay into
-                                Escrow Africa's secure escrow. Funds are only released to you once the buyer confirms delivery.
+                                <strong className="text-foreground">How it works:</strong> After you accept, the buyer will pay
+                                into Escrow Africa's secure escrow. Funds are only released to you once the buyer confirms delivery.
                             </div>
                         </CardContent>
                     </Card>
 
-                    {/* Action */}
+                    {/* Action buttons */}
                     {user ? (
                         <Button
-                            className="w-full h-12 text-base"
+                            className="w-full h-12 text-base gradient-hero border-0"
                             onClick={handleJoin}
                             disabled={state === "joining"}
                         >
@@ -294,10 +323,17 @@ export default function InviteLink() {
                         </Button>
                     ) : (
                         <div className="space-y-3">
-                            <Button className="w-full h-12" onClick={() => navigate(`/login?redirect=/invite/${token}`)}>
+                            <Button
+                                className="w-full h-12 gradient-hero border-0"
+                                onClick={() => navigate(`/login?redirect=/invite/${token}`)}
+                            >
                                 <LogIn className="mr-2 h-5 w-5" /> Log In to Accept
                             </Button>
-                            <Button variant="outline" className="w-full" onClick={() => navigate(`/signup?redirect=/invite/${token}`)}>
+                            <Button
+                                variant="outline"
+                                className="w-full"
+                                onClick={() => navigate(`/signup?redirect=/invite/${token}`)}
+                            >
                                 Create Account & Accept
                             </Button>
                             <p className="text-center text-xs text-muted-foreground">
@@ -324,7 +360,9 @@ function StatusPage({ icon, title, description }: { icon: React.ReactNode; title
                         <div className="flex justify-center mb-4">{icon}</div>
                         <h2 className="text-2xl font-bold mb-2">{title}</h2>
                         <p className="text-muted-foreground mb-6">{description}</p>
-                        <Button variant="outline" onClick={() => navigate("/")}>Go to Home</Button>
+                        <Button variant="outline" onClick={() => navigate("/")}>
+                            <ArrowLeft className="mr-2 h-4 w-4" /> Go to Home
+                        </Button>
                     </CardContent>
                 </Card>
             </main>

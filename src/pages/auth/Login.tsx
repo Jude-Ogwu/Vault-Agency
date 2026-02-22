@@ -47,11 +47,11 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
       <div className="w-full max-w-md">
         <Link
-          to="/"
+          to={searchParams.get("redirect") || "/"}
           className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to Home
+          {searchParams.get("redirect") ? "Back to Invite" : "Back to Home"}
         </Link>
 
         <Card className="border-0 shadow-escrow-lg">

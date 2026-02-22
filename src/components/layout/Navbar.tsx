@@ -3,7 +3,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
-import { Shield, LogOut, User, Menu, X, Store, HelpCircle, LayoutDashboard } from "lucide-react";
+import { Shield, LogOut, User, Menu, X, Store, HelpCircle, LayoutDashboard, Copy, Check, Settings } from "lucide-react";
 import { useState, useCallback } from "react";
 import {
   DropdownMenu,
@@ -20,6 +20,17 @@ export function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [copiedId, setCopiedId] = useState(false);
+
+  const userShortId = user ? user.id.slice(0, 8).toUpperCase() : null;
+
+  const handleCopyId = () => {
+    if (userShortId) {
+      navigator.clipboard.writeText(userShortId);
+      setCopiedId(true);
+      setTimeout(() => setCopiedId(false), 2000);
+    }
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -104,6 +115,25 @@ export function Navbar() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
+                    {/* User's own ID — for identity verification */}
+                    {userShortId && (
+                      <>
+                        <div className="px-2 py-1.5">
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Your ID</p>
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-mono font-bold tracking-widest text-sm">{userShortId}</span>
+                            <button
+                              onClick={handleCopyId}
+                              className="text-muted-foreground hover:text-foreground transition-colors"
+                              title="Copy your ID"
+                            >
+                              {copiedId ? <Check className="h-3.5 w-3.5 text-success" /> : <Copy className="h-3.5 w-3.5" />}
+                            </button>
+                          </div>
+                        </div>
+                        <DropdownMenuSeparator />
+                      </>
+                    )}
                     <DropdownMenuItem onClick={() => navigate("/dashboard")}>
                       Buyer Dashboard
                     </DropdownMenuItem>
@@ -118,6 +148,11 @@ export function Navbar() {
                         </DropdownMenuItem>
                       </>
                     )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate("/settings")}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      Settings
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                       <LogOut className="mr-2 h-4 w-4" />
