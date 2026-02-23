@@ -194,6 +194,13 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
     }).format(amount);
   };
 
+  // ─── Fee calculation (single source of truth for this component) ──────────
+  // transaction.amount = BASE deal amount (what seller receives)
+  // EA fee is charged TO THE BUYER on top.
+  const feePercent = transaction.amount < 10000 ? 5 : 2;
+  const eaFee = Math.round(transaction.amount * feePercent) / 100;
+  const buyerTotal = transaction.amount + eaFee; // what buyer actually pays
+
   // --- Admin notification helper ---
   const notifyAdmin = async (eventType: string, extraData: Record<string, unknown> = {}) => {
     try {
@@ -248,7 +255,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
   const handlePaystackPayment = () => {
     if (!user?.email) return;
     const reference = `TL-${transaction.id.slice(0, 8)}-${Date.now()}`;
-    initializePayment(user.email, transaction.amount, reference);
+    initializePayment(user.email, buyerTotal, reference); // buyer pays base + EA fee
   };
 
   // --- Crypto Payment ---
@@ -624,7 +631,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
             {selectedPayment === "paystack" && (
               <Button onClick={handlePaystackPayment} className="w-full gradient-hero border-0" disabled={loading}>
                 {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CreditCard className="mr-2 h-4 w-4" />}
-                Pay {formatAmount(transaction.amount)}
+                Pay {formatAmount(buyerTotal)} <span className="ml-1 text-xs opacity-75">(incl. {feePercent}% EA fee)</span>
               </Button>
             )}
 
@@ -659,7 +666,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
                   <div className="space-y-3">
                     <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">
                       <Label className="text-xs text-muted-foreground mb-1 block">
-                        Send {formatAmount(transaction.amount)} worth of {CRYPTO_WALLETS[selectedCrypto].label} to:
+                        Send {formatAmount(buyerTotal)} worth of {CRYPTO_WALLETS[selectedCrypto].label} to:
                       </Label>
                       <div className="flex items-center gap-2 mt-2">
                         <code className="flex-1 rounded bg-muted px-3 py-2 text-xs font-mono break-all">

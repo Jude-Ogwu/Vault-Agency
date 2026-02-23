@@ -185,7 +185,12 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
     const transactionData = {
       deal_title: formData.dealTitle.trim(),
       deal_description: formData.dealDescription.trim() || null,
-      amount: totalAmount,
+      // IMPORTANT: Store baseAmount (what seller receives), NOT totalAmount.
+      // The EA fee is paid BY THE BUYER on top. This ensures:
+      //   - Seller gets exactly what they quoted
+      //   - Buyer pays = amount + fee at checkout
+      //   - No double-fee anywhere
+      amount: baseAmount,
       product_type: formData.productType,
       seller_email: "", // Will be updated when seller joins via invite link
     };
