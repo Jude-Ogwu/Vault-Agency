@@ -2,14 +2,30 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Store, ShoppingBag, Tag, TrendingUp, Shield } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Store, ShoppingBag, Tag, TrendingUp, Shield, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Marketplace() {
+    const navigate = useNavigate();
+
     return (
         <div className="min-h-screen flex flex-col bg-muted/30">
             <Navbar />
 
-            <main className="flex-1 container mx-auto px-4 py-16">
+            <main className="flex-1 container mx-auto px-4 py-8 md:py-16">
+                {/* Back button */}
+                <div className="mb-6">
+                    <Button
+                        variant="ghost"
+                        className="gap-2 text-muted-foreground hover:text-foreground"
+                        onClick={() => navigate(-1)}
+                    >
+                        <ArrowLeft className="h-4 w-4" />
+                        Back
+                    </Button>
+                </div>
+
                 <div className="max-w-2xl mx-auto text-center">
                     {/* Icon */}
                     <div className="flex justify-center mb-6">

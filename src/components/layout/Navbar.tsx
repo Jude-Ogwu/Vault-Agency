@@ -70,8 +70,19 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2" onClick={() => scrollToSection("top")}>
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-hero">
-              <Shield className="h-5 w-5 text-primary-foreground" />
+            {/* Africa map logo */}
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-hero shrink-0">
+              <svg
+                viewBox="0 0 100 120"
+                className="h-5 w-5"
+                fill="white"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-label="Africa map"
+              >
+                {/* Africa continent silhouette */}
+                <path d="M50 4 C38 4 28 8 22 16 C16 24 14 34 16 42 C14 46 10 50 10 56 C10 62 14 68 16 72 C18 80 16 88 20 96 C24 104 32 112 40 116 C44 118 48 120 50 120 C52 120 56 118 60 116 C68 112 76 104 80 96 C84 88 82 80 84 72 C86 68 90 62 90 56 C90 50 86 46 84 42 C86 34 84 24 78 16 C72 8 62 4 50 4 Z M50 8 C61 8 70 12 75 19 C80 26 80 35 78 42 L76 44 C79 48 83 52 83 56 C83 61 79 66 77 70 C75 78 77 86 73 93 C69 100 62 108 55 112 C53 114 51 115 50 115 C49 115 47 114 45 112 C38 108 31 100 27 93 C23 86 25 78 23 70 C21 66 17 61 17 56 C17 52 21 48 24 44 L22 42 C20 35 20 26 25 19 C30 12 39 8 50 8 Z" />
+                <ellipse cx="65" cy="28" rx="8" ry="6" opacity="0.6" />
+              </svg>
             </div>
             <span className="text-xl font-bold text-primary">Escrow Africa</span>
           </Link>
