@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,9 +9,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Building2, Bitcoin, ArrowLeft, Search, ChevronDown, X } from "lucide-react";
 
-// ─── All Banks in Africa (54 countries) ──────────────────────────────────────
+// â”€â”€â”€ All Banks in Africa (54 countries) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const AFRICAN_BANKS = [
-    // ── Nigeria ────────────────────────────────────────────────────────────────
+    // â”€â”€ Nigeria â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Access Bank (Nigeria)", "Citibank Nigeria", "Ecobank Nigeria", "Fidelity Bank (Nigeria)",
     "First Bank of Nigeria", "First City Monument Bank (FCMB)", "Globus Bank", "Guaranty Trust Bank (GTBank)",
     "Heritage Bank (Nigeria)", "Jaiz Bank", "Keystone Bank", "Kuda Bank", "Lotus Bank",
@@ -21,7 +21,7 @@ const AFRICAN_BANKS = [
     "Union Bank of Nigeria", "United Bank for Africa (UBA)", "Unity Bank (Nigeria)",
     "VFD Microfinance Bank", "Wema Bank", "Zenith Bank",
 
-    // ── Ghana ──────────────────────────────────────────────────────────────────
+    // â”€â”€ Ghana â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Absa Bank Ghana", "Access Bank Ghana", "Agricultural Development Bank (ADB) Ghana",
     "CalBank", "Consolidated Bank Ghana", "Ecobank Ghana", "FBNBank Ghana",
     "Fidelity Bank Ghana", "First Atlantic Bank Ghana", "First National Bank Ghana",
@@ -30,7 +30,7 @@ const AFRICAN_BANKS = [
     "Stanbic Bank Ghana", "Standard Chartered Bank Ghana", "Universal Merchant Bank Ghana",
     "Zenith Bank Ghana",
 
-    // ── Kenya ──────────────────────────────────────────────────────────────────
+    // â”€â”€ Kenya â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Absa Bank Kenya", "Bank of Africa Kenya", "Barclays Bank Kenya", "CFC Stanbic Bank Kenya",
     "Chase Bank Kenya", "Citibank Kenya", "Co-operative Bank of Kenya",
     "Commercial Bank of Africa (CBA)", "Consolidated Bank Kenya", "Credit Bank Kenya",
@@ -43,13 +43,13 @@ const AFRICAN_BANKS = [
     "Prime Bank Kenya", "Sidian Bank", "Spire Bank Kenya", "Standard Chartered Kenya",
     "Trans National Bank Kenya", "UBA Kenya", "Victoria Commercial Bank Kenya",
 
-    // ── South Africa ────────────────────────────────────────────────────────────
+    // â”€â”€ South Africa â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Absa Bank South Africa", "African Bank", "Bidvest Bank", "Capitec Bank",
     "Discovery Bank", "FNB (First National Bank) South Africa", "Grindrod Bank",
     "Investec Bank South Africa", "Mercantile Bank", "Nedbank", "Sasfin Bank",
     "Standard Bank South Africa", "TymeBank", "Ubank",
 
-    // ── Ethiopia ───────────────────────────────────────────────────────────────
+    // â”€â”€ Ethiopia â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Abyssinia Bank", "Addis International Bank", "Awash International Bank",
     "Bank of Abyssinia", "Berhan Bank", "Commercial Bank of Ethiopia",
     "Cooperative Bank of Oromia", "Dashen Bank", "Development Bank of Ethiopia",
@@ -57,7 +57,7 @@ const AFRICAN_BANKS = [
     "Nib International Bank", "Oromia Bank", "Shabelle Bank", "Tsedey Bank",
     "United Bank Ethiopia", "Wegagen Bank", "Zemen Bank",
 
-    // ── Tanzania ────────────────────────────────────────────────────────────────
+    // â”€â”€ Tanzania â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Absa Bank Tanzania", "Access Bank Tanzania", "Akiba Commercial Bank Tanzania",
     "Azania Bank", "Bancabc Tanzania", "Bank of Africa Tanzania", "Bank of Baroda Tanzania",
     "CRDB Bank", "DCB Commercial Bank", "Ecobank Tanzania", "Equity Bank Tanzania",
@@ -66,7 +66,7 @@ const AFRICAN_BANKS = [
     "Stanbic Bank Tanzania", "Standard Chartered Tanzania", "TIB Development Bank",
     "UBA Tanzania", "Uchumi Commercial Bank", "M-Pesa Tanzania",
 
-    // ── Uganda ─────────────────────────────────────────────────────────────────
+    // â”€â”€ Uganda â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Absa Bank Uganda", "Bank of Africa Uganda", "Bank of Baroda Uganda",
     "Cairo Bank Uganda", "DFCU Bank", "Diamond Trust Bank Uganda", "Ecobank Uganda",
     "Equity Bank Uganda", "Finance Trust Bank Uganda", "Guaranty Trust Bank Uganda",
@@ -75,127 +75,127 @@ const AFRICAN_BANKS = [
     "Solar Bank Uganda", "Stanbic Bank Uganda", "Standard Chartered Uganda",
     "Tropical Bank Uganda", "UBA Uganda",
 
-    // ── Rwanda ─────────────────────────────────────────────────────────────────
+    // â”€â”€ Rwanda â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Access Bank Rwanda", "Abyssinia Bank Rwanda", "Bank of Africa Rwanda",
     "Bank of Kigali", "BPR Atlas Mara Rwanda", "COGEBANQUE", "Ecobank Rwanda",
     "Equity Bank Rwanda", "Guaranty Trust Bank Rwanda", "I&M Bank Rwanda",
     "KCB Bank Rwanda", "Millennium Business Bank Rwanda", "Ncba Bank Rwanda",
     "SFB Rwanda", "UBA Rwanda", "Urwego Bank Rwanda",
 
-    // ── Cameroon ───────────────────────────────────────────────────────────────
+    // â”€â”€ Cameroon â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Afriland First Bank Cameroon", "BGFI Bank Cameroon", "BICEC Cameroon",
     "Commercial Bank of Cameroon (CBC)", "Ecobank Cameroon", "NFC Bank Cameroon",
-    "SCB Cameroon", "Société Générale Cameroon", "Standard Chartered Cameroon",
+    "SCB Cameroon", "SociÃ©tÃ© GÃ©nÃ©rale Cameroon", "Standard Chartered Cameroon",
     "UBA Cameroon", "Union Bank of Cameroon",
 
-    // ── Senegal / West Africa ───────────────────────────────────────────────────
-    "Banque de l'Habitat du Sénégal", "BICIS Senegal", "BIS Banque",
-    "BNDE Senegal", "Caisse d'Epargne Sénégal", "Coris Bank Senegal",
-    "Ecobank Senegal", "Orabank Senegal", "Société Générale Senegal", "UBA Senegal",
+    // â”€â”€ Senegal / West Africa â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    "Banque de l'Habitat du SÃ©nÃ©gal", "BICIS Senegal", "BIS Banque",
+    "BNDE Senegal", "Caisse d'Epargne SÃ©nÃ©gal", "Coris Bank Senegal",
+    "Ecobank Senegal", "Orabank Senegal", "SociÃ©tÃ© GÃ©nÃ©rale Senegal", "UBA Senegal",
 
-    // ── Côte d'Ivoire ───────────────────────────────────────────────────────────
-    "Banque Atlantique Côte d'Ivoire", "BIAO-CI", "BICICI Côte d'Ivoire",
-    "Bridge Bank Côte d'Ivoire", "Coris Bank Côte d'Ivoire", "Ecobank Côte d'Ivoire",
-    "Nsia Banque", "Orabank Côte d'Ivoire", "Société Générale Côte d'Ivoire",
-    "Standard Chartered Côte d'Ivoire", "UBA Côte d'Ivoire",
+    // â”€â”€ CÃ´te d'Ivoire â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    "Banque Atlantique CÃ´te d'Ivoire", "BIAO-CI", "BICICI CÃ´te d'Ivoire",
+    "Bridge Bank CÃ´te d'Ivoire", "Coris Bank CÃ´te d'Ivoire", "Ecobank CÃ´te d'Ivoire",
+    "Nsia Banque", "Orabank CÃ´te d'Ivoire", "SociÃ©tÃ© GÃ©nÃ©rale CÃ´te d'Ivoire",
+    "Standard Chartered CÃ´te d'Ivoire", "UBA CÃ´te d'Ivoire",
 
-    // ── Zambia ─────────────────────────────────────────────────────────────────
+    // â”€â”€ Zambia â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Absa Bank Zambia", "Access Bank Zambia", "Atlas Mara Bank Zambia",
     "Bank of China Zambia", "Citibank Zambia", "Direct Pay Online Zambia",
     "Ecobank Zambia", "FNB Zambia", "Indo Zambia Bank", "Investrust Bank",
     "Izwe Savings & Loans", "Standard Chartered Zambia", "Stanbic Bank Zambia",
     "UBA Zambia", "Zanaco Bank",
 
-    // ── Zimbabwe ────────────────────────────────────────────────────────────────
+    // â”€â”€ Zimbabwe â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Agribank Zimbabwe", "BancABC Zimbabwe", "CBZ Bank", "Ecobank Zimbabwe",
     "FBC Bank Zimbabwe", "First Capital Bank Zimbabwe", "Metbank Zimbabwe",
     "POSB Zimbabwe", "Stanbic Bank Zimbabwe", "Standard Chartered Zimbabwe",
     "Steward Bank Zimbabwe", "ZB Bank",
 
-    // ── Mozambique ─────────────────────────────────────────────────────────────
+    // â”€â”€ Mozambique â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Absa Bank Mozambique", "Access Bank Mozambique", "BCI Mozambique",
     "BIM Mozambique", "Ecobank Mozambique", "FNB Mozambique",
     "Moza Banco", "Standard Bank Mozambique", "Standard Chartered Mozambique",
     "Socremo Banco", "UBA Mozambique",
 
-    // ── Angola ─────────────────────────────────────────────────────────────────
+    // â”€â”€ Angola â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "BAI (Banco Angolano de Investimentos)", "Banco BIC Angola", "Banco de Fomento Angola",
-    "Banco Económico Angola", "Banco Sol Angola", "BDA Angola", "BFA Angola",
-    "Millennium Atlântico Angola", "Standard Bank Angola",
+    "Banco EconÃ³mico Angola", "Banco Sol Angola", "BDA Angola", "BFA Angola",
+    "Millennium AtlÃ¢ntico Angola", "Standard Bank Angola",
 
-    // ── DR Congo ───────────────────────────────────────────────────────────────
+    // â”€â”€ DR Congo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Advans Bank DRC", "Bank of Africa DRC", "BCDC Congo", "Equity BCDC",
     "Ecobank DRC", "FBNBank DRC", "Rawbank", "TMB Congo", "Trust Merchant Bank",
     "UBA Congo",
 
-    // ── Egypt ──────────────────────────────────────────────────────────────────
+    // â”€â”€ Egypt â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Arab African International Bank Egypt", "Arab Bank Egypt",
     "Banque du Caire", "Banque Misr", "Bank of Alexandria",
     "BLOM Bank Egypt", "CIB Egypt (Commercial International Bank)",
-    "Crédit Agricole Egypt", "Egyptian Arab Land Bank", "Faisal Islamic Bank Egypt",
+    "CrÃ©dit Agricole Egypt", "Egyptian Arab Land Bank", "Faisal Islamic Bank Egypt",
     "HSBC Egypt", "Mashreq Bank Egypt", "National Bank of Egypt",
-    "QNB Al Ahli", "Société Arabie Saoudite de Banque (SABB) Egypt",
+    "QNB Al Ahli", "SociÃ©tÃ© Arabie Saoudite de Banque (SABB) Egypt",
 
-    // ── Morocco ────────────────────────────────────────────────────────────────
+    // â”€â”€ Morocco â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Al Barid Bank Morocco", "Arab Bank Morocco", "BMCE Bank of Africa",
-    "BMCI Morocco", "Banque Centrale Populaire (BCP)", "Banque Marocaine du Commerce Extérieur",
-    "CFG Bank Morocco", "CIH Bank Morocco", "Crédit Agricole du Maroc",
-    "Crédit du Maroc", "Société Générale Morocco", "Wafabank",
+    "BMCI Morocco", "Banque Centrale Populaire (BCP)", "Banque Marocaine du Commerce ExtÃ©rieur",
+    "CFG Bank Morocco", "CIH Bank Morocco", "CrÃ©dit Agricole du Maroc",
+    "CrÃ©dit du Maroc", "SociÃ©tÃ© GÃ©nÃ©rale Morocco", "Wafabank",
 
-    // ── Tunisia ────────────────────────────────────────────────────────────────
+    // â”€â”€ Tunisia â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Amen Bank", "Arab Tunisian Bank", "Attijari Bank Tunisia",
     "BIAT Tunisia", "Banque de l'Habitat Tunisia", "BNA Tunisia",
     "BT Tunisia", "Ooredoo Tunisia Mobile Money", "STB Bank Tunisia", "UIB Tunisia",
 
-    // ── Botswana ───────────────────────────────────────────────────────────────
+    // â”€â”€ Botswana â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Absa Bank Botswana", "African Banking Corporation Botswana",
     "Bank Gaborone", "Bank of Baroda Botswana", "First National Bank Botswana",
     "Stanbic Bank Botswana", "Standard Chartered Botswana", "State Bank India Botswana",
 
-    // ── Namibia ────────────────────────────────────────────────────────────────
+    // â”€â”€ Namibia â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Absa Bank Namibia", "Bank Windhoek", "FNB Namibia",
     "Nedbank Namibia", "Standard Bank Namibia",
 
-    // ── Malawi ─────────────────────────────────────────────────────────────────
+    // â”€â”€ Malawi â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "CDH Investment Bank", "FDH Bank Malawi", "First Capital Bank Malawi",
     "Malawi Savings Bank", "National Bank of Malawi", "NBS Bank Malawi",
     "Opportunity International Bank Malawi", "Standard Bank Malawi",
 
-    // ── Mauritius ──────────────────────────────────────────────────────────────
+    // â”€â”€ Mauritius â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Absa Bank Mauritius", "Bank One Mauritius", "BCP Bank Mauritius",
     "Investec Bank Mauritius", "MCB Group Mauritius", "MauBank",
     "SBI Mauritius", "Standard Bank Mauritius", "Standard Chartered Mauritius",
 
-    // ── Madagascar ─────────────────────────────────────────────────────────────
-    "AccèsBanque Madagascar", "Bank of Africa Madagascar", "BFV-Société Générale Madagascar",
+    // â”€â”€ Madagascar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    "AccÃ¨sBanque Madagascar", "Bank of Africa Madagascar", "BFV-SociÃ©tÃ© GÃ©nÃ©rale Madagascar",
     "BNI Madagascar", "BOA Madagascar", "BM Madagascar", "MCB Madagascar",
 
-    // ── Sudan ──────────────────────────────────────────────────────────────────
+    // â”€â”€ Sudan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Agricultural Bank of Sudan", "Bank of Khartoum", "Blue Nile Mashriq Bank",
     "El Nilein Bank", "Faisal Islamic Bank Sudan", "Omdurman National Bank",
     "Sudan Commercial Bank",
 
-    // ── Somalia ────────────────────────────────────────────────────────────────
+    // â”€â”€ Somalia â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Dahabshiil Bank", "Hormuud Telecom (EVC Plus)", "Premier Bank Somalia",
     "Salaam Somali Bank",
 
-    // ── Eswatini ───────────────────────────────────────────────────────────────
+    // â”€â”€ Eswatini â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Eswatini Bank", "FNB Eswatini", "Nedbank Eswatini", "Standard Bank Eswatini",
 
-    // ── Lesotho ────────────────────────────────────────────────────────────────
+    // â”€â”€ Lesotho â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Absa Bank Lesotho", "FNB Lesotho", "Lesotho PostBank", "Nedbank Lesotho",
     "Standard Lesotho Bank",
 
-    // ── Other / Pan-African ────────────────────────────────────────────────────
+    // â”€â”€ Other / Pan-African â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     "Ecobank Pan-Africa", "UBA Pan-Africa", "Access Bank Pan-Africa",
-    "Stanbic / Standard Bank Pan-Africa", "Société Générale Pan-Africa",
+    "Stanbic / Standard Bank Pan-Africa", "SociÃ©tÃ© GÃ©nÃ©rale Pan-Africa",
     "Guaranty Trust Bank Pan-Africa",
 ].sort();
 
 
 const CRYPTO_OPTIONS = [
-    { value: "USDT_TRC20", label: "USDT (TRC20 — Tron)", network: "Tron Network" },
-    { value: "USDT_ERC20", label: "USDT (ERC20 — Ethereum)", network: "Ethereum Network" },
+    { value: "USDT_TRC20", label: "USDT (TRC20 â€” Tron)", network: "Tron Network" },
+    { value: "USDT_ERC20", label: "USDT (ERC20 â€” Ethereum)", network: "Ethereum Network" },
     { value: "BTC", label: "Bitcoin (BTC)", network: "Bitcoin Network" },
     { value: "ETH", label: "Ethereum (ETH)", network: "Ethereum Network" },
     { value: "BNB", label: "BNB (BEP20)", network: "BSC Network" },
@@ -208,7 +208,7 @@ interface PayoutAccountFormProps {
     editAccount?: any;
 }
 
-// ─── Searchable Bank Selector ─────────────────────────────────────────────────
+// â”€â”€â”€ Searchable Bank Selector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function BankSelector({ value, onChange }: { value: string; onChange: (v: string) => void }) {
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
@@ -394,206 +394,6 @@ export function PayoutAccountForm({ onSuccess, onCancel, editAccount }: PayoutAc
                             <Label>Account Number</Label>
                             <Input
                                 placeholder="0123456789"
-                                value={bank.account_number}
-                                onChange={(e) => setBank({ ...bank, account_number: e.target.value.replace(/\D/g, "") })}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Account Name</Label>
-                            <Input
-                                placeholder="JOHN DOE"
-                                value={bank.account_name}
-                                onChange={(e) => setBank({ ...bank, account_name: e.target.value.toUpperCase() })}
-                            />
-                            <p className="text-xs text-muted-foreground">As it appears on your bank statement</p>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <Label>Cryptocurrency</Label>
-                            <Select value={crypto.crypto_currency} onValueChange={(v) => setCrypto({ ...crypto, crypto_currency: v })}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select cryptocurrency" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {CRYPTO_OPTIONS.map((c) => (
-                                        <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Wallet Address</Label>
-                            <Input
-                                placeholder="Your wallet address..."
-                                value={crypto.wallet_address}
-                                onChange={(e) => setCrypto({ ...crypto, wallet_address: e.target.value })}
-                                className="font-mono text-sm"
-                            />
-                        </div>
-                        {crypto.crypto_currency && (
-                            <div className="rounded-md bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
-                                Network: <strong>{CRYPTO_OPTIONS.find(c => c.value === crypto.crypto_currency)?.network}</strong>
-                                <br />Make sure you send only {crypto.crypto_currency} on this network to avoid loss of funds.
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                <div className="flex gap-3 pt-2">
-                    <Button variant="outline" className="flex-1" onClick={onCancel}>Cancel</Button>
-                    <Button className="flex-1 gradient-hero border-0" onClick={handleSave} disabled={loading}>
-                        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        {editAccount ? "Update Account" : "Save Account"}
-                    </Button>
-                </div>
-            </CardContent>
-        </Card>
-    );
-}
-
-
-const NIGERIAN_BANKS = [
-    "Access Bank", "Citibank Nigeria", "Ecobank Nigeria", "Fidelity Bank",
-    "First Bank of Nigeria", "First City Monument Bank (FCMB)", "Globus Bank",
-    "Guaranty Trust Bank (GTBank)", "Heritage Bank", "Jaiz Bank", "Keystone Bank",
-    "Kuda Bank", "Lotus Bank", "Moniepoint MFB", "Opay", "PalmPay",
-    "Parallex Bank", "Polaris Bank", "Providus Bank", "Stanbic IBTC Bank",
-    "Standard Chartered Bank", "Sterling Bank", "SunTrust Bank", "TAJBank",
-    "Titan Trust Bank", "Union Bank of Nigeria", "United Bank for Africa (UBA)",
-    "Unity Bank", "VFD Microfinance Bank", "Wema Bank", "Zenith Bank",
-];
-
-const CRYPTO_OPTIONS = [
-    { value: "USDT_TRC20", label: "USDT (TRC20 — Tron)", network: "Tron Network" },
-    { value: "USDT_ERC20", label: "USDT (ERC20 — Ethereum)", network: "Ethereum Network" },
-    { value: "BTC", label: "Bitcoin (BTC)", network: "Bitcoin Network" },
-    { value: "ETH", label: "Ethereum (ETH)", network: "Ethereum Network" },
-    { value: "BNB", label: "BNB (BEP20)", network: "BSC Network" },
-    { value: "USDC_ERC20", label: "USDC (ERC20)", network: "Ethereum Network" },
-];
-
-interface PayoutAccountFormProps {
-    onSuccess: () => void;
-    onCancel: () => void;
-    editAccount?: any;
-}
-
-export function PayoutAccountForm({ onSuccess, onCancel, editAccount }: PayoutAccountFormProps) {
-    const { user } = useAuth();
-    const { toast } = useToast();
-    const [loading, setLoading] = useState(false);
-    const [tab, setTab] = useState<"bank" | "crypto">(editAccount?.payout_type || "bank");
-
-    const [bank, setBank] = useState({
-        bank_name: editAccount?.bank_name || "",
-        account_number: editAccount?.account_number || "",
-        account_name: editAccount?.account_name || "",
-    });
-    const [crypto, setCrypto] = useState({
-        crypto_currency: editAccount?.crypto_currency || "",
-        wallet_address: editAccount?.wallet_address || "",
-        network: editAccount?.network || "",
-    });
-
-    const handleSave = async () => {
-        if (!user) return;
-        setLoading(true);
-
-        const basePayload = {
-            user_id: user.id,
-            payout_type: tab,
-            updated_at: new Date().toISOString(),
-        };
-
-        if (tab === "bank") {
-            if (!bank.bank_name || !bank.account_number || !bank.account_name) {
-                toast({ title: "Please fill all bank fields", variant: "destructive" });
-                setLoading(false);
-                return;
-            }
-            Object.assign(basePayload, bank);
-        } else {
-            if (!crypto.crypto_currency || !crypto.wallet_address) {
-                toast({ title: "Please fill all crypto fields", variant: "destructive" });
-                setLoading(false);
-                return;
-            }
-            const selected = CRYPTO_OPTIONS.find(c => c.value === crypto.crypto_currency);
-            Object.assign(basePayload, { ...crypto, network: selected?.network || "" });
-        }
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const payload = basePayload as any;
-
-        let error;
-        if (editAccount) {
-            ({ error } = await supabase.from("payout_accounts").update(payload).eq("id", editAccount.id));
-        } else {
-            ({ error } = await supabase.from("payout_accounts").insert(payload));
-        }
-
-        if (error) {
-            toast({ title: "Failed to save", description: error.message, variant: "destructive" });
-        } else {
-            toast({ title: editAccount ? "Account updated!" : "Account added!" });
-            onSuccess();
-        }
-        setLoading(false);
-    };
-
-    return (
-        <Card>
-            <CardHeader>
-                <div className="flex items-center gap-3">
-                    <Button variant="ghost" size="icon" onClick={onCancel}>
-                        <ArrowLeft className="h-4 w-4" />
-                    </Button>
-                    <CardTitle>{editAccount ? "Edit Payout Account" : "Add Payout Account"}</CardTitle>
-                </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-                {/* Tab switcher */}
-                <div className="flex gap-2 rounded-lg border p-1 bg-muted/30">
-                    <button
-                        type="button"
-                        onClick={() => setTab("bank")}
-                        className={`flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all ${tab === "bank" ? "bg-background shadow text-primary" : "text-muted-foreground hover:text-foreground"
-                            }`}
-                    >
-                        <Building2 className="h-4 w-4" /> Bank Account
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setTab("crypto")}
-                        className={`flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all ${tab === "crypto" ? "bg-background shadow text-primary" : "text-muted-foreground hover:text-foreground"
-                            }`}
-                    >
-                        <Bitcoin className="h-4 w-4" /> Crypto Wallet
-                    </button>
-                </div>
-
-                {tab === "bank" ? (
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <Label>Bank Name</Label>
-                            <Select value={bank.bank_name} onValueChange={(v) => setBank({ ...bank, bank_name: v })}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select your bank" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {NIGERIAN_BANKS.map((b) => (
-                                        <SelectItem key={b} value={b}>{b}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Account Number</Label>
-                            <Input
-                                placeholder="0123456789"
-                                maxLength={10}
                                 value={bank.account_number}
                                 onChange={(e) => setBank({ ...bank, account_number: e.target.value.replace(/\D/g, "") })}
                             />
