@@ -6,6 +6,7 @@ interface UserProfile {
   status: "active" | "suspended";
   can_chat: boolean;
   full_name: string | null;
+  phone: string | null;
 }
 
 interface AuthContextType {
