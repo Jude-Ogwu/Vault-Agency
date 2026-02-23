@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import {
     ArrowLeft, ShieldCheck, UserPlus, PlusCircle, Link2, CreditCard, Truck,
     CheckCircle2, AlertTriangle, Lock, Bell, Settings, Headphones, Info,
     Users, BadgeCheck, DollarSign, Package, Download, Briefcase,
-    Eye, Copy, Star, Zap, HelpCircle, MessageSquare, FileText
+    Eye, Copy, Star, Zap, HelpCircle, MessageSquare, FileText, ChevronUp
 } from "lucide-react";
 
 interface Tip {
@@ -68,6 +69,13 @@ function Callout({ type, text }: { type: "info" | "tip" | "warning"; text: strin
 export default function HowItWorks() {
     const navigate = useNavigate();
 
+    const [showScrollTop, setShowScrollTop] = useState(false);
+    useEffect(() => {
+        const onScroll = () => setShowScrollTop(window.scrollY > 400);
+        window.addEventListener("scroll", onScroll);
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+
     return (
         <div className="min-h-screen flex flex-col bg-background">
             <Navbar />
@@ -98,14 +106,14 @@ export default function HowItWorks() {
                 <section className="space-y-4">
                     <SectionTitle icon={ShieldCheck} label="1. What is Escrow Africa?" />
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                        Escrow Africa (EA) is a secure middleman platform for online transactions in Nigeria. Whether you're buying or selling a physical product, digital file, or service — EA holds the buyer's money safely until the seller delivers, then releases it. <strong>Nobody loses money to scams.</strong>
+                        Escrow Africa (EA) is a secure middleman platform for online transactions across Africa. Whether you're buying or selling a physical product, digital file, or service — EA holds the buyer's money safely until the seller delivers, then releases it. <strong>Nobody loses money to scams.</strong>
                     </p>
                     <div className="grid sm:grid-cols-3 gap-3">
                         <TipCard icon={Package} title="Physical Products" body="Electronics, vehicles, clothing, furniture — anything shipped or handed over." />
                         <TipCard icon={Download} title="Digital Products" body="Software, courses, designs, files, accounts — anything delivered digitally." />
                         <TipCard icon={Briefcase} title="Services" body="Freelance work, repairs, consulting, design, coding — any skill-based work." />
                     </div>
-                    <Callout type="tip" text="EA is the safest way to transact with strangers online in Nigeria. Funds never reach the seller until you're satisfied." />
+                    <Callout type="tip" text="EA is the safest way to transact with strangers online across Africa. Funds never reach the seller until you're satisfied." />
                 </section>
 
                 {/* ─── 2. Registration ──────────────────────────────────── */}
@@ -363,6 +371,18 @@ export default function HowItWorks() {
                 </div>
 
             </main>
+
+            {/* Scroll to top */}
+            {showScrollTop && (
+                <button
+                    onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                    className="fixed bottom-6 left-6 z-50 flex h-11 w-11 items-center justify-center rounded-full border bg-card shadow-lg transition-all hover:shadow-xl hover:scale-105"
+                    aria-label="Scroll to top"
+                >
+                    <ChevronUp className="h-5 w-5 text-primary" />
+                </button>
+            )}
+
             <Footer />
         </div>
     );

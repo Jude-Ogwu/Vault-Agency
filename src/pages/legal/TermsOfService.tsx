@@ -67,7 +67,7 @@ export default function TermsOfService() {
                     <section>
                         <h2 className="text-2xl font-semibold mb-4">7. Prohibited Items and Activities</h2>
                         <p>
-                            You may not use Escrow Africa for illegal transactions, including but not limited to: drugs, weapons, stolen goods, fraud, money laundering, or any items prohibited by Nigerian law. Violation of this policy will result in immediate account suspension and reporting to relevant authorities.
+                            You may not use Escrow Africa for illegal transactions, including but not limited to: drugs, weapons, stolen goods, fraud, money laundering, or any items prohibited by applicable African and international law. Violation of this policy will result in immediate account suspension and reporting to relevant authorities.
                         </p>
                     </section>
 

@@ -202,6 +202,18 @@ export default function Landing() {
               </div>
             ))}
           </div>
+
+          {/* Full Guide button */}
+          <div className="flex justify-center mt-10">
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => navigate("/how-it-works")}
+            >
+              <ArrowRight className="h-4 w-4" />
+              Full Guide — How It Works
+            </Button>
+          </div>
         </div>
       </section>
 
