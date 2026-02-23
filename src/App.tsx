@@ -24,6 +24,7 @@ import { SuspensionGuard } from "./components/auth/SuspensionGuard";
 import { TransactionRedirect } from "./components/TransactionRedirect";
 import InviteLink from "./pages/InviteLink";
 import Settings from "./pages/Settings";
+import HowItWorks from "./pages/HowItWorks";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="/dashboard/transaction/:id" element={<TransactionRedirect />} />
             <Route path="/invite/:token" element={<InviteLink />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

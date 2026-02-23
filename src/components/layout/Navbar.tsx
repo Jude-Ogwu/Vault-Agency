@@ -85,7 +85,7 @@ export function Navbar() {
               Home
             </button>
             <button
-              onClick={() => scrollToSection("how-it-works")}
+              onClick={() => navigate("/how-it-works")}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               How It Works
@@ -199,7 +199,7 @@ export function Navbar() {
               </button>
               <button
                 className="px-2 py-2 text-left text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                onClick={() => scrollToSection("how-it-works")}
+                onClick={() => { navigate("/how-it-works"); setMobileMenuOpen(false); }}
               >
                 How It Works
               </button>
@@ -221,6 +221,22 @@ export function Navbar() {
               </Link>
               {user ? (
                 <>
+                  {/* Mobile: YOUR ID card */}
+                  {userShortId && (
+                    <div className="mx-2 rounded-lg border bg-muted/50 px-3 py-2.5">
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1.5">Your ID</p>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-mono font-bold tracking-widest text-sm">{userShortId}</span>
+                        <button
+                          onClick={handleCopyId}
+                          className="text-muted-foreground hover:text-foreground transition-colors"
+                          title="Copy your ID"
+                        >
+                          {copiedId ? <Check className="h-3.5 w-3.5 text-success" /> : <Copy className="h-3.5 w-3.5" />}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                   <Link
                     to="/dashboard"
                     className="px-2 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -246,6 +262,14 @@ export function Navbar() {
                       EA Dashboard
                     </Link>
                   )}
+                  <Link
+                    to="/settings"
+                    className="flex items-center gap-2 px-2 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Settings className="h-4 w-4" />
+                    Settings
+                  </Link>
                   <Button
                     variant="ghost"
                     className="justify-start text-destructive"

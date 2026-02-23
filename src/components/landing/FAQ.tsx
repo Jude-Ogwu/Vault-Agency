@@ -6,45 +6,132 @@ import {
 } from "@/components/ui/accordion";
 
 const faqs = [
+  // ── General ────────────────────────────────────────────────────────────────
   {
-    question: "How does Escrow Africa escrow work?",
+    question: "How does Escrow Africa work?",
     answer:
-      "Escrow Africa acts as a trusted middleman. When a buyer wants to purchase something, they pay into our secure escrow. We hold the funds while the seller delivers the product or service. Once the buyer confirms receipt and both parties provide proof, EA reviews and releases the payment to the seller.",
-  },
-  {
-    question: "Are there any fees for using Escrow Africa?",
-    answer:
-      "Escrow Africa charges a standard service fee of 5% for transactions under ₦10,000. For transactions of ₦10,000 and above, the fee is reduced to 2%. The exact fee is displayed before you confirm your payment.",
-  },
-  {
-    question: "Is my money safe with Escrow Africa?",
-    answer:
-      "Absolutely! Your funds are securely held and never released until you confirm successful delivery. Our manual verification process ensures every transaction is reviewed by our team before any money changes hands.",
+      "Escrow Africa is a secure middleman for online transactions. The buyer deposits funds into our escrow. We hold the money safely while the seller delivers. Once both parties upload proof and the buyer confirms delivery, our team verifies and releases the funds to the seller. Nobody loses money — we protect both sides.",
   },
   {
     question: "What types of transactions can I use Escrow Africa for?",
     answer:
-      "Escrow Africa supports three types of transactions: Physical Products (electronics, vehicles, clothing), Digital Products (software, files, online courses), and Services (freelance work, repairs, consulting). Essentially, any transaction where you want protection from scams.",
+      "Three categories: (1) Physical Products — electronics, vehicles, clothing, furniture, etc. (2) Digital Products — software, files, accounts, online courses, designs. (3) Services — freelance work, repairs, consulting, coding, any skill-based task. Essentially any transaction between strangers where trust is needed.",
   },
   {
-    question: "What happens if the seller doesn't deliver?",
+    question: "Is my money safe with Escrow Africa?",
     answer:
-      "If the seller fails to deliver as promised, you can raise a dispute. Our EA team will review the case, and if the seller is at fault, your funds will be returned to you. You never lose money for products or services you didn't receive.",
+      "Yes. Funds are held in our secure escrow system and never transferred to the seller automatically. Every transaction is manually reviewed by our EA team before any money changes hands. Your funds are only released after both parties submit proof and EA approves.",
+  },
+
+  // ── Fees ───────────────────────────────────────────────────────────────────
+  {
+    question: "What are the EA service fees?",
+    answer:
+      "Escrow Africa charges 5% for transactions under ₦10,000, and 2% for transactions of ₦10,000 and above. The fee is always paid BY THE BUYER — it's added on top of the deal amount. The seller always receives exactly the agreed amount with nothing deducted. Example: deal of ₦85,000 → EA fee = ₦1,700 (2%) → buyer pays ₦86,700 total, seller receives ₦85,000.",
   },
   {
-    question: "How long does it take to release funds?",
+    question: "Does the seller pay any fees?",
     answer:
-      "Once the buyer confirms successful delivery and both parties upload proof, our EA team reviews the transaction. Fund release typically happens within 24-48 hours after EA approval.",
+      "No. Sellers pay zero fees. The EA service fee is entirely the buyer's responsibility, added on top of the agreed deal amount. What you quote as a seller is what you receive in full.",
+  },
+
+  // ── Accounts & Identity ────────────────────────────────────────────────────
+  {
+    question: "Do both buyer and seller need an account?",
+    answer:
+      "Yes, both parties need an account to participate in a transaction. The seller can create a free account when they click the invite link — it only takes a minute. Accounts are free and required for security and identity verification purposes.",
   },
   {
-    question: "Does the seller need to have an account?",
+    question: "What is my Unique ID and why does it matter?",
     answer:
-      "No! When a buyer creates a transaction, the seller receives a notification via email with all the transaction details. The seller can view their transactions by logging in with the email address used in the transaction.",
+      "Every user gets an 8-character Unique ID (e.g. 3E604106) based on their account UUID. This is a random, unfakeable identifier. Before accepting any deal, always verify your trading partner's ID matches what they told you on WhatsApp or Telegram. It prevents impersonation and identity fraud. Your email is never shown publicly — only your ID is.",
   },
+  {
+    question: "Where can I find my Unique ID?",
+    answer:
+      "On desktop: click your name/email in the top-right corner of the navbar — your ID appears in the dropdown. On mobile: open the menu (hamburger icon) → Settings. You can also find it in Account Settings (/settings) on any device. Use the copy button to share it easily.",
+  },
+  {
+    question: "Can I change my email or password?",
+    answer:
+      "Yes, both can be changed in Settings (/settings). For email: enter your new email address and a confirmation link will be sent to the new address — the change only takes effect after you confirm it. For password: enter and confirm your new password (minimum 6 characters). Both changes trigger a security notification in your notification panel.",
+  },
+
+  // ── Transaction Flow ────────────────────────────────────────────────────────
+  {
+    question: "How does the buyer create a transaction?",
+    answer:
+      "Log in → go to your Buyer Dashboard → click 'New Transaction'. Enter the deal title, description, amount, and product type. Submit, and an invite link is automatically generated for your seller. Share that link with the seller via any platform (WhatsApp, Telegram, email, etc.).",
+  },
+  {
+    question: "How does the seller accept a deal?",
+    answer:
+      "The seller clicks the invite link shared by the buyer, reviews the deal details (title, description, amount they'll receive, buyer's ID, EA fee breakdown), logs in or creates a free account, then clicks 'Accept Deal as Seller'. They'll be redirected to their Seller Dashboard to track the transaction.",
+  },
+  {
+    question: "How long are invite links valid?",
+    answer:
+      "Invite links expire after 72 hours (3 days). If the seller doesn't accept within that time, ask the buyer to generate a new invite link from their transaction dashboard. Each link is also single-use — once accepted, it can't be used again.",
+  },
+  {
+    question: "What happens after the seller accepts the invite?",
+    answer:
+      "The buyer receives a notification that the seller has joined. The transaction status changes to 'Seller Joined' and the buyer can now proceed to payment. The funds are held in escrow until both parties confirm delivery.",
+  },
+
+  // ── Payment ─────────────────────────────────────────────────────────────────
+  {
+    question: "What payment methods are supported?",
+    answer:
+      "Currently, Crypto payments (BTC, USDT, ETH) are available. Paystack (cards, bank transfer, USSD), Stripe (international cards), and PayPal are coming soon. For crypto: select your coin, copy the wallet address shown, send the exact amount, then upload your proof (screenshot + TX hash).",
+  },
+  {
+    question: "What should I include when submitting crypto payment proof?",
+    answer:
+      "Include a clear screenshot of the successful send from your crypto wallet, plus the transaction hash (TX hash). The EA team needs the TX hash to verify on the blockchain. Incomplete proof will delay processing.",
+  },
+
+  // ── Delivery & Release ──────────────────────────────────────────────────────
   {
     question: "What proof do I need to upload?",
     answer:
-      "Buyers should upload proof of delivery receipt (photos, screenshots of delivery confirmation, etc.). Sellers should upload proof of delivery/completion (shipping receipts, delivery photos, service completion screenshots). This protects both parties.",
+      "Sellers should upload proof of delivery — shipping receipts, delivery photos, screenshots of digital files sent, or service completion evidence. Buyers should upload proof of receipt — photo of item received, screenshot confirming download or delivery. Both sides should upload strong, clear proof. It's used in case of disputes.",
+  },
+  {
+    question: "How long does fund release take?",
+    answer:
+      "Once both parties upload proof and the buyer confirms delivery, EA reviews the transaction. Approval and fund release usually happens within 24–48 hours. Both parties are notified via the notification panel when funds are released.",
+  },
+
+  // ── Disputes ────────────────────────────────────────────────────────────────
+  {
+    question: "What happens if the seller doesn't deliver?",
+    answer:
+      "Open the transaction in your Buyer Dashboard and click 'File a Complaint'. Explain what happened clearly. EA reviews your complaint alongside both parties' proof. If the seller is indeed at fault, your funds are refunded in full. Your money never goes anywhere until EA approves.",
+  },
+  {
+    question: "Can the seller file a complaint too?",
+    answer:
+      "Yes. If a buyer is making false claims or refuses to confirm delivery despite it being completed, the seller can also file a complaint from their Seller Dashboard. EA will investigate both sides fairly using the uploaded proof and chat history.",
+  },
+
+  // ── Notifications ────────────────────────────────────────────────────────────
+  {
+    question: "How do notifications work?",
+    answer:
+      "The bell 🔔 icon in the navbar is your notification center. It shows realtime alerts for all important events: invite accepted, payment confirmed, delivery done, dispute filed, funds released, profile updated, and more. Unread notifications show a red dot. You can mark individual notifications as read or clear them all.",
+  },
+
+  // ── Support ──────────────────────────────────────────────────────────────────
+  {
+    question: "How do I get help or contact support?",
+    answer:
+      "Look for the green headphone 🎧 button fixed at the bottom-right corner of every page on Escrow Africa. Click it anytime to chat with the EA support team. It's available to all users — even before you sign up. You can also visit the How It Works page from the navbar for a full platform guide.",
+  },
+  {
+    question: "Can my account get suspended?",
+    answer:
+      "Yes. Accounts can be suspended for filing false complaints, attempting fraud, abusing the platform, or violating our terms of service. If your account is suspended and you believe it's an error, contact EA support using the headphone button and our team will review your case.",
   },
 ];
 
@@ -57,8 +144,10 @@ export function FAQ() {
             Frequently Asked Questions
           </h2>
           <p className="text-muted-foreground">
-            Got questions? We've got answers. If you don't find what you're
-            looking for, feel free to contact us.
+            Got questions? We've got answers. Can't find what you're looking for?{" "}
+            <span className="font-medium text-foreground">
+              Tap the 🎧 button at the bottom-right of any page to reach our support team.
+            </span>
           </p>
         </div>
 
