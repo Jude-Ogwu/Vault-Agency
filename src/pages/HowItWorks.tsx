@@ -147,7 +147,7 @@ export default function HowItWorks() {
                     <p className="text-sm text-muted-foreground">As the buyer, you initiate every transaction. Here's the full flow:</p>
                     <div className="space-y-3">
                         <StepBadge n={1} label="Go to your Buyer Dashboard → click 'New Transaction'." />
-                        <StepBadge n={2} label="Enter the deal title, description, amount (₦), and product type." />
+                        <StepBadge n={2} label="Enter the deal title, description, amount, and product type." />
                         <StepBadge n={3} label="Submit the form — an invite link is automatically generated for your seller." />
                         <StepBadge n={4} label="Copy and share the invite link with your seller via WhatsApp, Telegram, or any platform." />
                         <StepBadge n={5} label="Wait for the seller to accept and join using the link." />
@@ -186,29 +186,44 @@ export default function HowItWorks() {
                             <span className="text-right">Who Pays?</span>
                         </div>
                         <div className="grid grid-cols-3 px-4 py-3 text-sm border-t">
-                            <span>Below ₦10,000</span>
+                            <span>Below 10,000</span>
                             <span className="text-center font-bold text-primary">5%</span>
                             <span className="text-right text-muted-foreground">Buyer</span>
                         </div>
                         <div className="grid grid-cols-3 px-4 py-3 text-sm border-t bg-success/5">
-                            <span>₦10,000 and above</span>
-                            <span className="text-center font-bold text-success">2%</span>
+                            <span>10,000 and above</span>
+                            <span className="text-center font-bold text-success">1%</span>
                             <span className="text-right text-muted-foreground">Buyer</span>
                         </div>
                     </div>
-                    <div className="rounded-xl bg-muted/50 p-4 text-sm space-y-1.5">
-                        <p className="font-semibold">Example: Deal for ₦85,000</p>
-                        <div className="flex justify-between text-muted-foreground">
-                            <span>Deal Amount (Seller receives)</span><span className="font-mono">₦85,000</span>
+                    <div className="rounded-xl bg-muted/50 p-4 text-sm space-y-3">
+                        <p className="font-semibold">Example 1: Deal for 1,000</p>
+                        <div className="space-y-1.5">
+                            <div className="flex justify-between text-muted-foreground">
+                                <span>Deal Amount (Seller receives)</span><span className="font-mono">1,000</span>
+                            </div>
+                            <div className="flex justify-between text-muted-foreground">
+                                <span>EA Fee (5%)</span><span className="font-mono">50</span>
+                            </div>
+                            <div className="flex justify-between font-bold border-t pt-1.5">
+                                <span>Buyer Pays Total</span><span className="font-mono">1,050</span>
+                            </div>
                         </div>
-                        <div className="flex justify-between text-muted-foreground">
-                            <span>EA Fee (2%)</span><span className="font-mono">₦1,700</span>
-                        </div>
-                        <div className="flex justify-between font-bold border-t pt-1.5">
-                            <span>Buyer Pays Total</span><span className="font-mono">₦86,700</span>
+                        <div className="border-t my-2" />
+                        <p className="font-semibold">Example 2: Deal for 10,000</p>
+                        <div className="space-y-1.5">
+                            <div className="flex justify-between text-muted-foreground">
+                                <span>Deal Amount (Seller receives)</span><span className="font-mono">10,000</span>
+                            </div>
+                            <div className="flex justify-between text-muted-foreground">
+                                <span>EA Fee (1%)</span><span className="font-mono">100</span>
+                            </div>
+                            <div className="flex justify-between font-bold border-t pt-1.5">
+                                <span>Buyer Pays Total</span><span className="font-mono">10,100</span>
+                            </div>
                         </div>
                     </div>
-                    <Callout type="info" text="The seller always receives the exact quoted amount. The EA fee is always paid on top by the buyer — it's never deducted from the seller's portion." />
+                    <Callout type="info" text="The seller always receives the exact quoted amount. The EA fee is always paid on top by the buyer — it's never deducted from the seller's portion. Amounts are in your chosen deal currency." />
                 </section>
 
                 {/* ─── 7. Making Payment ────────────────────────────────── */}

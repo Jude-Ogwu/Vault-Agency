@@ -27,7 +27,7 @@ const faqs = [
   {
     question: "What are the EA service fees?",
     answer:
-      "Escrow Africa charges 5% for transactions under ₦10,000, and 2% for transactions of ₦10,000 and above. The fee is always paid BY THE BUYER — it's added on top of the deal amount. The seller always receives exactly the agreed amount with nothing deducted. Example: deal of ₦85,000 → EA fee = ₦1,700 (2%) → buyer pays ₦86,700 total, seller receives ₦85,000.",
+      "Escrow Africa charges 5% for transactions under 10,000, and 1% for transactions of 10,000 and above (in your chosen deal currency). The fee is always paid BY THE BUYER — it's added on top of the deal amount. The seller always receives exactly the agreed amount with nothing deducted. Example: deal of 10,000 → EA fee = 100 (1%) → buyer pays 10,100 total, seller receives 10,000.",
   },
   {
     question: "Does the seller pay any fees?",

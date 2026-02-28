@@ -13,6 +13,7 @@ import { TransactionCard } from "@/components/transaction/TransactionCard";
 import { TransactionDetail } from "@/components/transaction/TransactionDetail";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { formatCurrency } from "@/lib/currencies";
 import { useToast } from "@/hooks/use-toast";
 import {
   Loader2,
@@ -226,10 +227,7 @@ export default function AdminDashboard() {
   };
 
   const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-    }).format(amount);
+    return formatCurrency(amount, "NGN");
   };
 
   const totalHeld = transactions

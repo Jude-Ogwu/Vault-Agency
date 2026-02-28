@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { PRODUCT_TYPES, TransactionStatus, ProductType } from "@/lib/constants";
+import { formatCurrency } from "@/lib/currencies";
 import { Package, Download, Briefcase, Calendar, Banknote } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
@@ -33,10 +34,7 @@ export function TransactionCard({ transaction, onClick, role }: TransactionCardP
   const productLabel = PRODUCT_TYPES[transaction.product_type]?.label || "Unknown";
 
   const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-    }).format(amount);
+    return formatCurrency(amount, (transaction as any).currency || "NGN");
   };
 
   return (

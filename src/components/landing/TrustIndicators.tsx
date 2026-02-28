@@ -8,7 +8,7 @@ const stats = [
   },
   {
     icon: ShieldCheck,
-    value: "₦500M+",
+    value: "$500M+",
     label: "Secured Transactions",
   },
   {

@@ -16,7 +16,7 @@ const AFRICAN_BANKS = [
     "First Bank of Nigeria", "First City Monument Bank (FCMB)", "Globus Bank", "Guaranty Trust Bank (GTBank)",
     "Heritage Bank (Nigeria)", "Jaiz Bank", "Keystone Bank", "Kuda Bank", "Lotus Bank",
     "Moniepoint MFB", "Opay (Nigeria)", "PalmPay", "Parallex Bank", "Polaris Bank",
-    "Providus Bank", "Stanbic IBTC Bank (Nigeria)", "Standard Chartered Nigeria",
+    "Premium Trust Bank (Nigeria)", "Providus Bank", "Stanbic IBTC Bank (Nigeria)", "Standard Chartered Nigeria",
     "Sterling Bank", "SunTrust Bank", "TAJBank", "Titan Trust Bank",
     "Union Bank of Nigeria", "United Bank for Africa (UBA)", "Unity Bank (Nigeria)",
     "VFD Microfinance Bank", "Wema Bank", "Zenith Bank",

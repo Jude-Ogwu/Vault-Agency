@@ -20,6 +20,7 @@ export type Database = {
           status: "active" | "suspended"
           suspension_reason: string | null
           can_chat: boolean
+          preferred_currency: string
         }
         Insert: {
           id: string
@@ -31,6 +32,7 @@ export type Database = {
           status?: "active" | "suspended"
           suspension_reason?: string | null
           can_chat?: boolean
+          preferred_currency?: string
         }
         Update: {
           id?: string
@@ -42,6 +44,7 @@ export type Database = {
           status?: "active" | "suspended"
           suspension_reason?: string | null
           can_chat?: boolean
+          preferred_currency?: string
         }
         Relationships: []
       }
@@ -72,6 +75,7 @@ export type Database = {
           deal_title: string
           deal_description: string | null
           amount: number
+          currency: string
           product_type: Database["public"]["Enums"]["product_type"]
           status: Database["public"]["Enums"]["transaction_status"]
           buyer_id: string | null
@@ -97,6 +101,7 @@ export type Database = {
           deal_title: string
           deal_description?: string | null
           amount: number
+          currency?: string
           product_type: Database["public"]["Enums"]["product_type"]
           status?: Database["public"]["Enums"]["transaction_status"]
           buyer_id?: string | null
@@ -122,6 +127,7 @@ export type Database = {
           deal_title?: string
           deal_description?: string | null
           amount?: number
+          currency?: string
           product_type?: Database["public"]["Enums"]["product_type"]
           status?: Database["public"]["Enums"]["transaction_status"]
           buyer_id?: string | null

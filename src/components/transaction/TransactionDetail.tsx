@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PRODUCT_TYPES, TRANSACTION_STATUSES, CRYPTO_WALLETS, ADMIN_EMAIL, ProductType, TransactionStatus, CryptoWalletKey } from "@/lib/constants";
+import { formatCurrency } from "@/lib/currencies";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -188,16 +189,13 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
   const productLabel = PRODUCT_TYPES[transaction.product_type]?.label || "Unknown";
 
   const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-    }).format(amount);
+    return formatCurrency(amount, (transaction as any).currency || "NGN");
   };
 
   // ─── Fee calculation (single source of truth for this component) ──────────
   // transaction.amount = BASE deal amount (what seller receives)
   // EA fee is charged TO THE BUYER on top.
-  const feePercent = transaction.amount < 10000 ? 5 : 2;
+  const feePercent = transaction.amount < 10000 ? 5 : 1;
   const eaFee = Math.round(transaction.amount * feePercent) / 100;
   const buyerTotal = transaction.amount + eaFee; // what buyer actually pays
 

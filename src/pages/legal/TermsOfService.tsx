@@ -49,11 +49,11 @@ export default function TermsOfService() {
                             Escrow Africa charges a service fee for each transaction.
                         </p>
                         <ul className="list-disc pl-6 mt-2">
-                            <li>Transactions under ₦10,000: <strong>5% fee</strong></li>
-                            <li>Transactions ₦10,000 and above: <strong>2% fee</strong></li>
+                            <li>Transactions under 10,000: <strong>5% fee</strong></li>
+                            <li>Transactions 10,000 and above: <strong>1% fee</strong></li>
                         </ul>
                         <p className="mt-2">
-                            Fees are deducted from the total amount released to the seller unless otherwise agreed. All fees are non-refundable once the service has been initiated.
+                            The EA service fee is always paid by the buyer — added on top of the deal amount. The seller receives the full agreed amount. All fees are non-refundable once the service has been initiated. Amounts are denominated in the currency selected for each transaction.
                         </p>
                     </section>
 

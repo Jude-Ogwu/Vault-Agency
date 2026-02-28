@@ -8,6 +8,7 @@ import { TransactionCard } from "@/components/transaction/TransactionCard";
 import { TransactionDetail } from "@/components/transaction/TransactionDetail";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { formatCurrency } from "@/lib/currencies";
 import { Package, Loader2, Wallet, TrendingUp, History, LayoutGrid, ArrowLeft } from "lucide-react";
 import { ProductType, TransactionStatus } from "@/lib/constants";
 import { HistoryTable } from "@/components/history/HistoryTable";
@@ -109,10 +110,7 @@ export default function SellerDashboard() {
   };
 
   const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-    }).format(amount);
+    return formatCurrency(amount, "NGN");
   };
 
   const totalHeld = transactions

@@ -15,7 +15,7 @@ interface Setting {
 const SETTING_LABELS: Record<string, { label: string; description: string; icon: React.ElementType; group: string }> = {
     service_fee_percent: { label: "Standard Fee (%)", description: "Fee for transactions below threshold", icon: Percent, group: "Business" },
     high_value_fee_percent: { label: "High Value Fee (%)", description: "Fee for transactions above threshold", icon: Percent, group: "Business" },
-    high_value_threshold: { label: "High Value Threshold (₦)", description: "Amount where high value fee applies", icon: Wallet, group: "Business" },
+    high_value_threshold: { label: "High Value Threshold", description: "Amount where high value fee applies", icon: Wallet, group: "Business" },
     admin_email: { label: "EA Email", description: "Email for all notifications", icon: Mail, group: "Contact" },
     whatsapp_number: { label: "WhatsApp Number", description: "Support WhatsApp number", icon: Phone, group: "Contact" },
     call_number: { label: "Call Number", description: "Support phone number", icon: Phone, group: "Contact" },

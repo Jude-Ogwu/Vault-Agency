@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { formatCurrency } from "@/lib/currencies";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -198,7 +199,7 @@ export default function InviteLink() {
 
     // ─── Valid State ───────────────────────────────────────────────────────────────
     // Fee is charged TO THE BUYER (added on top). Seller receives the FULL deal amount.
-    const feeRate = transaction.amount < 10000 ? 0.05 : 0.02;
+    const feeRate = transaction.amount < 10000 ? 0.05 : 0.01;
     const fee = Math.round(transaction.amount * feeRate);
     const buyerPays = transaction.amount + fee;
     const sellerReceives = transaction.amount; // seller always gets the full amount
@@ -253,11 +254,11 @@ export default function InviteLink() {
                             <div className="grid grid-cols-2 gap-3 text-sm">
                                 <div className="rounded-lg bg-muted/50 p-3">
                                     <div className="text-muted-foreground text-xs mb-1">Deal Amount</div>
-                                    <div className="font-semibold text-lg">₦{transaction.amount.toLocaleString()}</div>
+                                    <div className="font-semibold text-lg">{formatCurrency(transaction.amount, (transaction as any).currency || "NGN")}</div>
                                 </div>
                                 <div className="rounded-lg bg-success/10 p-3">
                                     <div className="text-muted-foreground text-xs mb-1">You'll Receive</div>
-                                    <div className="font-semibold text-lg text-success">₦{sellerReceives.toLocaleString()}</div>
+                                    <div className="font-semibold text-lg text-success">{formatCurrency(sellerReceives, (transaction as any).currency || "NGN")}</div>
                                 </div>
                             </div>
 
@@ -265,11 +266,11 @@ export default function InviteLink() {
                             <div className="rounded-lg bg-muted/30 px-3 py-2 text-xs text-muted-foreground space-y-1">
                                 <div className="flex justify-between">
                                     <span>EA service fee ({feeRate * 100}%)</span>
-                                    <span>₦{fee.toLocaleString()}</span>
+                                    <span>{formatCurrency(fee, (transaction as any).currency || "NGN")}</span>
                                 </div>
                                 <div className="flex justify-between font-medium text-foreground border-t border-border pt-1">
                                     <span>Buyer total payment</span>
-                                    <span>₦{buyerPays.toLocaleString()}</span>
+                                    <span>{formatCurrency(buyerPays, (transaction as any).currency || "NGN")}</span>
                                 </div>
                                 <p className="text-[11px] text-muted-foreground pt-0.5">
                                     EA fee is paid by the buyer — you receive the full deal amount.

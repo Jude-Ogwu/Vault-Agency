@@ -5,10 +5,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PRODUCT_TYPES, ProductType } from "@/lib/constants";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { formatCurrency, getCurrencySymbol, getSortedCurrencies, SUPPORTED_CURRENCIES, DEFAULT_CURRENCY } from "@/lib/currencies";
 import {
   Loader2, Package, Download, Briefcase, ArrowLeft, Info, MessageSquare,
   Copy, CheckCheck, Share2, Mail, ExternalLink
@@ -78,7 +80,8 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [feeConfig, setFeeConfig] = useState({ defaultPercent: 5, highValuePercent: 2, threshold: 10000 });
+  const [feeConfig, setFeeConfig] = useState({ defaultPercent: 5, highValuePercent: 1, threshold: 10000 });
+  const [selectedCurrency, setSelectedCurrency] = useState(initialData?.currency || DEFAULT_CURRENCY);
   const [showNegotiate, setShowNegotiate] = useState(false);
   const [negotiateMessage, setNegotiateMessage] = useState("");
   const [negotiateSending, setNegotiateSending] = useState(false);
@@ -121,7 +124,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
         const config = { ...feeConfig };
         data.forEach((s) => {
           if (s.key === "service_fee_percent") config.defaultPercent = parseFloat(s.value) || 5;
-          if (s.key === "high_value_fee_percent") config.highValuePercent = parseFloat(s.value) || 2;
+          if (s.key === "high_value_fee_percent") config.highValuePercent = parseFloat(s.value) || 1;
           if (s.key === "high_value_threshold") config.threshold = parseFloat(s.value) || 10000;
         });
         setFeeConfig(config);
@@ -135,8 +138,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
   const serviceFee = Math.round(baseAmount * activeFeePercent) / 100;
   const totalAmount = baseAmount + serviceFee;
 
-  const formatNaira = (n: number) =>
-    new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(n);
+  const fmt = (n: number) => formatCurrency(n, selectedCurrency);
 
   const handleNegotiate = async () => {
     if (!negotiateMessage.trim() || !user) return;
@@ -150,8 +152,8 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
             amount: baseAmount,
             buyer_email: user.email!,
             negotiation_message: negotiateMessage.trim(),
-            service_fee: formatNaira(serviceFee),
-            total_amount: formatNaira(totalAmount),
+            service_fee: fmt(serviceFee),
+            total_amount: fmt(totalAmount),
           },
         },
       });
@@ -191,6 +193,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
       //   - Buyer pays = amount + fee at checkout
       //   - No double-fee anywhere
       amount: baseAmount,
+      currency: selectedCurrency,
       product_type: formData.productType,
       seller_email: "", // Will be updated when seller joins via invite link
     };
@@ -272,7 +275,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
   };
 
   const getShareText = () =>
-    `You've been invited as a seller on Escrow Africa!\n\nTransaction: ${dealTitle}\nAmount: ${formatNaira(baseAmount)}\n\nClick to accept the invite:\n${generatedInviteUrl}`;
+    `You've been invited as a seller on Escrow Africa!\n\nTransaction: ${dealTitle}\nAmount: ${fmt(baseAmount)}\n\nClick to accept the invite:\n${generatedInviteUrl}`;
 
   const handleCopy = async () => {
     if (!generatedInviteUrl) return;
@@ -300,7 +303,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
           {/* Amount summary */}
           <div className="rounded-lg bg-primary/5 border border-primary/20 p-3 text-center">
             <p className="text-xs text-muted-foreground mb-0.5">Transaction Amount</p>
-            <p className="text-xl font-bold text-primary">{formatNaira(totalAmount)}</p>
+            <p className="text-xl font-bold text-primary">{fmt(totalAmount)}</p>
             <p className="text-xs text-muted-foreground mt-0.5">{dealTitle}</p>
           </div>
 
@@ -448,18 +451,34 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
             />
           </div>
 
-          {/* Amount */}
+          {/* Currency & Amount */}
           <div className="space-y-2">
-            <Label htmlFor="amount">Product Price (NGN)</Label>
+            <Label>Deal Currency</Label>
+            <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select currency" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                {getSortedCurrencies().map((c) => (
+                  <SelectItem key={c.code} value={c.code}>
+                    {c.symbol} — {c.name} ({c.code})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="amount">Product Price ({SUPPORTED_CURRENCIES[selectedCurrency]?.code || selectedCurrency})</Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">₦</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">{getCurrencySymbol(selectedCurrency)}</span>
               <Input
                 id="amount"
                 type="number"
                 placeholder="0.00"
                 value={formData.amount}
                 onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                className="pl-8"
+                className="pl-10"
                 min="100"
                 step="0.01"
                 required
@@ -471,18 +490,18 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
               <div className="rounded-lg border bg-muted/50 p-3 space-y-1.5">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Product price</span>
-                  <span>{formatNaira(baseAmount)}</span>
+                  <span>{fmt(baseAmount)}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground flex items-center gap-1">
                     <Info className="h-3 w-3" />
                     Service fee ({activeFeePercent}%)
                   </span>
-                  <span>{formatNaira(serviceFee)}</span>
+                  <span>{fmt(serviceFee)}</span>
                 </div>
                 <div className="border-t pt-1.5 flex items-center justify-between font-semibold">
                   <span>Total you'll pay</span>
-                  <span className="text-primary">{formatNaira(totalAmount)}</span>
+                  <span className="text-primary">{fmt(totalAmount)}</span>
                 </div>
 
                 {/* Negotiate */}
