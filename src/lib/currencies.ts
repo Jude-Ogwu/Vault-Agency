@@ -1,4 +1,4 @@
-// ─── All African Currencies + USD ────────────────────────────────────────────
+// ─── All Nigerian Currencies + USD ────────────────────────────────────────────
 // Each entry: { code, symbol, name, locale }
 // locale is used by Intl.NumberFormat for proper grouping/decimals
 

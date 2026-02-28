@@ -147,6 +147,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
   }, []);
 
   const baseAmount = parseFloat(formData.amount) || 0;
+
   const isUSD = selectedCurrency === "USD";
   const activeThreshold = isUSD ? feeConfig.cryptoThreshold : feeConfig.threshold;
   const activeDefaultPercent = isUSD ? feeConfig.cryptoDefaultPercent : feeConfig.defaultPercent;
@@ -472,18 +473,20 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
           {/* Currency & Amount */}
           <div className="space-y-2">
             <Label>Deal Currency</Label>
-            <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select currency" />
-              </SelectTrigger>
-              <SelectContent className="max-h-60">
-                {getSortedCurrencies().map((c) => (
-                  <SelectItem key={c.code} value={c.code}>
-                    {c.symbol} — {c.name} ({c.code})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2">
+              <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {getSortedCurrencies().map((c) => (
+                    <SelectItem key={c.code} value={c.code}>
+                      {c.symbol} — {c.name} ({c.code})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-2">

@@ -89,7 +89,7 @@ export default function TermsOfService() {
                         <h2 className="text-2xl font-semibold mb-4">10. Contact Information</h2>
                         <p>
                             For any questions regarding these Terms, please contact us at: <br />
-                            <strong>Email:</strong> support@escrowafrica.ng <br />
+                            <strong>Email:</strong> support@escrownigeria.ng <br />
                             <strong>Phone:</strong> +234 814 491 9893
                         </p>
                     </section>

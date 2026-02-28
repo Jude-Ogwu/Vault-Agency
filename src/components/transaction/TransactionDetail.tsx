@@ -146,7 +146,8 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cryptoProofRef = useRef<HTMLInputElement>(null);
 
-  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>("crypto");
+  const isUSD = (transaction as any).currency === "USD";
+  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(isUSD ? "crypto" : "bank_transfer");
   const [selectedCrypto, setSelectedCrypto] = useState<CryptoWalletKey | null>(null);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [showCryptoPaymentForm, setShowCryptoPaymentForm] = useState(false);
@@ -205,8 +206,11 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
   // ─── Fee calculation (single source of truth for this component) ──────────
   // transaction.amount = BASE deal amount (what seller receives)
   // EN fee is charged TO THE BUYER on top.
-  const feePercent = transaction.amount < 10000 ? 5 : 1;
-  const eaFee = Math.round(transaction.amount * feePercent) / 100;
+  const activeFeePercent = isUSD ?
+    (transaction.amount < (siteSettings?.crypto_high_value_threshold || 8) ? (siteSettings?.crypto_service_fee_percent || 5) : (siteSettings?.crypto_high_value_fee_percent || 1))
+    : (transaction.amount < (siteSettings?.high_value_threshold || 10000) ? (siteSettings?.service_fee_percent || 5) : (siteSettings?.high_value_fee_percent || 1));
+
+  const eaFee = Math.round(transaction.amount * activeFeePercent) / 100;
   const buyerTotal = transaction.amount + eaFee; // what buyer actually pays
 
   // --- Admin notification helper ---
@@ -612,34 +616,36 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
               </p>
             </div>
             <Label>Select Payment Method</Label>
-            <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
-              {paymentMethods.map((method) => {
-                const Icon = method.icon;
-                const isSelected = selectedPayment === method.id;
-                return (
-                  <button
-                    key={method.id}
-                    type="button"
-                    onClick={() => method.active && setSelectedPayment(method.id)}
-                    disabled={!method.active}
-                    className={`relative flex items-center gap-3 rounded-lg border-2 p-4 text-left transition-all ${isSelected && method.active
-                      ? "border-primary bg-primary/5"
-                      : method.active
-                        ? "border-border hover:border-primary/50"
-                        : "border-border/50 opacity-60 cursor-not-allowed"
-                      }`}
-                  >
-                    <Icon className={`h-5 w-5 ${isSelected && method.active ? "text-primary" : "text-muted-foreground"}`} />
-                    <div className="flex-1">
-                      <span className={`text-sm font-medium ${isSelected && method.active ? "text-primary" : ""}`}>{method.name}</span>
-                      <p className="text-xs text-muted-foreground">{method.description}</p>
-                    </div>
-                    {!method.active && (
-                      <Badge variant="secondary" className="absolute -top-2 -right-2 text-[10px] px-1.5 py-0.5">Coming Soon</Badge>
-                    )}
-                  </button>
-                );
-              })}
+            <div className={`grid gap-3 grid-cols-1 ${isUSD || !isUSD ? 'sm:grid-cols-1' : 'sm:grid-cols-2'}`}>
+              {paymentMethods
+                .filter(m => isUSD ? m.id === "crypto" : m.id === "bank_transfer")
+                .map((method) => {
+                  const Icon = method.icon;
+                  const isSelected = selectedPayment === method.id;
+                  return (
+                    <button
+                      key={method.id}
+                      type="button"
+                      onClick={() => method.active && setSelectedPayment(method.id)}
+                      disabled={!method.active}
+                      className={`relative flex items-center gap-3 rounded-lg border-2 p-4 text-left transition-all ${isSelected && method.active
+                        ? "border-primary bg-primary/5"
+                        : method.active
+                          ? "border-border hover:border-primary/50"
+                          : "border-border/50 opacity-60 cursor-not-allowed"
+                        }`}
+                    >
+                      <Icon className={`h-5 w-5 ${isSelected && method.active ? "text-primary" : "text-muted-foreground"}`} />
+                      <div className="flex-1">
+                        <span className={`text-sm font-medium ${isSelected && method.active ? "text-primary" : ""}`}>{method.name}</span>
+                        <p className="text-xs text-muted-foreground">{method.description}</p>
+                      </div>
+                      {!method.active && (
+                        <Badge variant="secondary" className="absolute -top-2 -right-2 text-[10px] px-1.5 py-0.5">Coming Soon</Badge>
+                      )}
+                    </button>
+                  );
+                })}
             </div>
 
             {/* Bank Transfer Payment */}
@@ -647,7 +653,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
               <div className="space-y-4">
                 <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">
                   <Label className="text-sm font-semibold mb-3 block text-primary">
-                    Transfer {formatAmount(buyerTotal)} <span className="text-xs opacity-75 font-normal">(incl. {feePercent}% EN fee)</span> to:
+                    Transfer {formatAmount(buyerTotal)} <span className="text-xs opacity-75 font-normal">(incl. {activeFeePercent}% EN fee)</span> to:
                   </Label>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between border-b border-primary/10 pb-2">
