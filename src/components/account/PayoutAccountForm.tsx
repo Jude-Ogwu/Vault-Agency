@@ -213,7 +213,7 @@ function BankSelector({ value, onChange }: { value: string; onChange: (v: string
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
 
-    const filtered = AFRICAN_BANKS.filter(b =>
+    const filtered = NIGERIAN_BANKS.filter(b =>
         b.toLowerCase().includes(search.toLowerCase())
     );
 
@@ -279,7 +279,7 @@ function BankSelector({ value, onChange }: { value: string; onChange: (v: string
                         )}
                     </div>
                     <div className="border-t px-3 py-1.5 text-[10px] text-muted-foreground text-center">
-                        {filtered.length} of {AFRICAN_BANKS.length} banks
+                        {filtered.length} of {NIGERIAN_BANKS.length} banks
                     </div>
                 </div>
             )}

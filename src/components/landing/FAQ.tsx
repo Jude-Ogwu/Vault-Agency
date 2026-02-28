@@ -8,31 +8,31 @@ import {
 const faqs = [
   // ── General ────────────────────────────────────────────────────────────────
   {
-    question: "How does Escrow Africa work?",
+    question: "How does Escrow Nigeria work?",
     answer:
-      "Escrow Africa is a secure middleman for online transactions. The buyer deposits funds into our escrow. We hold the money safely while the seller delivers. Once both parties upload proof and the buyer confirms delivery, our team verifies and releases the funds to the seller. Nobody loses money — we protect both sides.",
+      "Escrow Nigeria is a secure middleman for online transactions. The buyer deposits funds into our escrow. We hold the money safely while the seller delivers. Once both parties upload proof and the buyer confirms delivery, our team verifies and releases the funds to the seller. Nobody loses money — we protect both sides.",
   },
   {
-    question: "What types of transactions can I use Escrow Africa for?",
+    question: "What types of transactions can I use Escrow Nigeria for?",
     answer:
       "Three categories: (1) Physical Products — electronics, vehicles, clothing, furniture, etc. (2) Digital Products — software, files, accounts, online courses, designs. (3) Services — freelance work, repairs, consulting, coding, any skill-based task. Essentially any transaction between strangers where trust is needed.",
   },
   {
-    question: "Is my money safe with Escrow Africa?",
+    question: "Is my money safe with Escrow Nigeria?",
     answer:
-      "Yes. Funds are held in our secure escrow system and never transferred to the seller automatically. Every transaction is manually reviewed by our EA team before any money changes hands. Your funds are only released after both parties submit proof and EA approves.",
+      "Yes. Funds are held in our secure escrow system and never transferred to the seller automatically. Every transaction is manually reviewed by our EN team before any money changes hands. Your funds are only released after both parties submit proof and EN approves.",
   },
 
   // ── Fees ───────────────────────────────────────────────────────────────────
   {
-    question: "What are the EA service fees?",
+    question: "What are the EN service fees?",
     answer:
-      "Escrow Africa charges 5% for transactions under 10,000, and 1% for transactions of 10,000 and above (in your chosen deal currency). The fee is always paid BY THE BUYER — it's added on top of the deal amount. The seller always receives exactly the agreed amount with nothing deducted. Example: deal of 10,000 → EA fee = 100 (1%) → buyer pays 10,100 total, seller receives 10,000.",
+      "Escrow Nigeria charges a service fee that is always paid BY THE BUYER — it's added on top of the deal amount. For Naira (Bank Transfer) transactions below ₦10,000, the fee is 5%. For ₦10,000 and above, it drops to 1%. For Dollar (Crypto) transactions below $8, the fee is 5%. For $8 and above, it drops to 1%. The seller always receives exactly the agreed amount with nothing deducted.",
   },
   {
     question: "Does the seller pay any fees?",
     answer:
-      "No. Sellers pay zero fees. The EA service fee is entirely the buyer's responsibility, added on top of the agreed deal amount. What you quote as a seller is what you receive in full.",
+      "No. Sellers pay zero fees. The EN service fee is entirely the buyer's responsibility, added on top of the agreed deal amount. What you quote as a seller is what you receive in full.",
   },
 
   // ── Accounts & Identity ────────────────────────────────────────────────────
@@ -66,7 +66,7 @@ const faqs = [
   {
     question: "How does the seller accept a deal?",
     answer:
-      "The seller clicks the invite link shared by the buyer, reviews the deal details (title, description, amount they'll receive, buyer's ID, EA fee breakdown), logs in or creates a free account, then clicks 'Accept Deal as Seller'. They'll be redirected to their Seller Dashboard to track the transaction.",
+      "The seller clicks the invite link shared by the buyer, reviews the deal details (title, description, amount they'll receive, buyer's ID, EN fee breakdown), logs in or creates a free account, then clicks 'Accept Deal as Seller'. They'll be redirected to their Seller Dashboard to track the transaction.",
   },
   {
     question: "How long are invite links valid?",
@@ -88,7 +88,7 @@ const faqs = [
   {
     question: "What should I include when submitting crypto payment proof?",
     answer:
-      "Include a clear screenshot of the successful send from your crypto wallet, plus the transaction hash (TX hash). The EA team needs the TX hash to verify on the blockchain. Incomplete proof will delay processing.",
+      "Include a clear screenshot of the successful send from your crypto wallet, plus the transaction hash (TX hash). The EN team needs the TX hash to verify on the blockchain. Incomplete proof will delay processing.",
   },
 
   // ── Delivery & Release ──────────────────────────────────────────────────────
@@ -100,19 +100,19 @@ const faqs = [
   {
     question: "How long does fund release take?",
     answer:
-      "Once both parties upload proof and the buyer confirms delivery, EA reviews the transaction. Approval and fund release usually happens within 24–48 hours. Both parties are notified via the notification panel when funds are released.",
+      "Once both parties upload proof and the buyer confirms delivery, EN reviews the transaction. Approval and fund release usually happens within 24–48 hours. Both parties are notified via the notification panel when funds are released.",
   },
 
   // ── Disputes ────────────────────────────────────────────────────────────────
   {
     question: "What happens if the seller doesn't deliver?",
     answer:
-      "Open the transaction in your Buyer Dashboard and click 'File a Complaint'. Explain what happened clearly. EA reviews your complaint alongside both parties' proof. If the seller is indeed at fault, your funds are refunded in full. Your money never goes anywhere until EA approves.",
+      "Open the transaction in your Buyer Dashboard and click 'File a Complaint'. Explain what happened clearly. EN reviews your complaint alongside both parties' proof. If the seller is indeed at fault, your funds are refunded in full. Your money never goes anywhere until EN approves.",
   },
   {
     question: "Can the seller file a complaint too?",
     answer:
-      "Yes. If a buyer is making false claims or refuses to confirm delivery despite it being completed, the seller can also file a complaint from their Seller Dashboard. EA will investigate both sides fairly using the uploaded proof and chat history.",
+      "Yes. If a buyer is making false claims or refuses to confirm delivery despite it being completed, the seller can also file a complaint from their Seller Dashboard. EN will investigate both sides fairly using the uploaded proof and chat history.",
   },
 
   // ── Notifications ────────────────────────────────────────────────────────────
@@ -126,12 +126,12 @@ const faqs = [
   {
     question: "How do I get help or contact support?",
     answer:
-      "Look for the green headphone 🎧 button fixed at the bottom-right corner of every page on Escrow Africa. Click it anytime to chat with the EA support team. It's available to all users — even before you sign up. You can also visit the How It Works page from the navbar for a full platform guide.",
+      "Look for the green headphone 🎧 button fixed at the bottom-right corner of every page on Escrow Nigeria. Click it anytime to chat with the EN support team. It's available to all users — even before you sign up. You can also visit the How It Works page from the navbar for a full platform guide.",
   },
   {
     question: "Can my account get suspended?",
     answer:
-      "Yes. Accounts can be suspended for filing false complaints, attempting fraud, abusing the platform, or violating our terms of service. If your account is suspended and you believe it's an error, contact EA support using the headphone button and our team will review your case.",
+      "Yes. Accounts can be suspended for filing false complaints, attempting fraud, abusing the platform, or violating our terms of service. If your account is suspended and you believe it's an error, contact EN support using the headphone button and our team will review your case.",
   },
 ];
 

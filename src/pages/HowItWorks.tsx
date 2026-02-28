@@ -96,24 +96,24 @@ export default function HowItWorks() {
                         <ShieldCheck className="h-4 w-4" />
                         Platform Guide
                     </div>
-                    <h1 className="text-3xl font-bold">How Escrow Africa Works</h1>
+                    <h1 className="text-3xl font-bold">How Escrow Nigeria Works</h1>
                     <p className="text-muted-foreground max-w-md mx-auto text-sm leading-relaxed">
                         A complete, step-by-step guide to everything on the platform. Read this before you start — it'll save you time and protect your money.
                     </p>
                 </div>
 
-                {/* ─── 1. What is Escrow Africa? ──────────────────────────── */}
+                {/* ─── 1. What is Escrow Nigeria? ──────────────────────────── */}
                 <section className="space-y-4">
-                    <SectionTitle icon={ShieldCheck} label="1. What is Escrow Africa?" />
+                    <SectionTitle icon={ShieldCheck} label="1. What is Escrow Nigeria?" />
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                        Escrow Africa (EA) is a secure middleman platform for online transactions across Africa. Whether you're buying or selling a physical product, digital file, or service — EA holds the buyer's money safely until the seller delivers, then releases it. <strong>Nobody loses money to scams.</strong>
+                        Escrow Nigeria (EN) is a secure middleman platform for online transactions across Nigeria. Whether you're buying or selling a physical product, digital file, or service — EN holds the buyer's money safely until the seller delivers, then releases it. <strong>Nobody loses money to scams.</strong>
                     </p>
                     <div className="grid sm:grid-cols-3 gap-3">
                         <TipCard icon={Package} title="Physical Products" body="Electronics, vehicles, clothing, furniture — anything shipped or handed over." />
                         <TipCard icon={Download} title="Digital Products" body="Software, courses, designs, files, accounts — anything delivered digitally." />
                         <TipCard icon={Briefcase} title="Services" body="Freelance work, repairs, consulting, design, coding — any skill-based work." />
                     </div>
-                    <Callout type="tip" text="EA is the safest way to transact with strangers online across Africa. Funds never reach the seller until you're satisfied." />
+                    <Callout type="tip" text="EN is the safest way to transact with strangers online across Nigeria. Funds never reach the seller until you're satisfied." />
                 </section>
 
                 {/* ─── 2. Registration ──────────────────────────────────── */}
@@ -153,7 +153,7 @@ export default function HowItWorks() {
                         <StepBadge n={5} label="Wait for the seller to accept and join using the link." />
                         <StepBadge n={6} label="Once the seller joins, you'll be notified to proceed with payment." />
                     </div>
-                    <Callout type="tip" text="The amount you enter is exactly what the seller receives. The EA service fee is added on top — you pay slightly more, seller gets the full amount." />
+                    <Callout type="tip" text="The amount you enter is exactly what the seller receives. The EN service fee is added on top — you pay slightly more, seller gets the full amount." />
                 </section>
 
                 {/* ─── 5. Invite Link ───────────────────────────────────── */}
@@ -171,14 +171,14 @@ export default function HowItWorks() {
                         <TipCard icon={AlertTriangle} title="Invite links expire" body="Each invite link is valid for 72 hours. If expired, ask the buyer to generate a new one." />
                         <TipCard icon={Lock} title="One use only" body="Each link can only be accepted by one person. Once used, it's permanently deactivated." />
                         <TipCard icon={BadgeCheck} title="Check the Buyer ID" body="Before accepting, verify the buyer's 8-char ID matches who you're talking to on WhatsApp/Telegram." />
-                        <TipCard icon={Eye} title="Fee transparency" body="The invite page clearly shows Deal Amount, EA Fee, and Buyer Total — no hidden charges." />
+                        <TipCard icon={Eye} title="Fee transparency" body="The invite page clearly shows Deal Amount, EN Fee, and Buyer Total — no hidden charges." />
                     </div>
                     <Callout type="warning" text="Never accept an invite link from someone you haven't verified! Always cross-check the Buyer ID shown on the invite page against what your trading partner told you." />
                 </section>
 
                 {/* ─── 6. Service Fee ───────────────────────────────────── */}
                 <section className="space-y-4">
-                    <SectionTitle icon={DollarSign} label="6. EA Service Fee" />
+                    <SectionTitle icon={DollarSign} label="6. EN Service Fee" />
                     <div className="rounded-xl border overflow-hidden">
                         <div className="grid grid-cols-3 bg-muted/50 px-4 py-2 text-xs font-semibold text-muted-foreground">
                             <span>Transaction Amount</span>
@@ -186,44 +186,80 @@ export default function HowItWorks() {
                             <span className="text-right">Who Pays?</span>
                         </div>
                         <div className="grid grid-cols-3 px-4 py-3 text-sm border-t">
-                            <span>Below 10,000</span>
+                            <span>Naira (Bank Transfer)<br />Below ₦10,000</span>
                             <span className="text-center font-bold text-primary">5%</span>
                             <span className="text-right text-muted-foreground">Buyer</span>
                         </div>
                         <div className="grid grid-cols-3 px-4 py-3 text-sm border-t bg-success/5">
-                            <span>10,000 and above</span>
+                            <span>Naira (Bank Transfer)<br />₦10,000 and above</span>
+                            <span className="text-center font-bold text-success">1%</span>
+                            <span className="text-right text-muted-foreground">Buyer</span>
+                        </div>
+                        <div className="grid grid-cols-3 px-4 py-3 text-sm border-t">
+                            <span>Dollar (Crypto)<br />Below $8</span>
+                            <span className="text-center font-bold text-primary">5%</span>
+                            <span className="text-right text-muted-foreground">Buyer</span>
+                        </div>
+                        <div className="grid grid-cols-3 px-4 py-3 text-sm border-t bg-success/5">
+                            <span>Dollar (Crypto)<br />$8 and above</span>
                             <span className="text-center font-bold text-success">1%</span>
                             <span className="text-right text-muted-foreground">Buyer</span>
                         </div>
                     </div>
                     <div className="rounded-xl bg-muted/50 p-4 text-sm space-y-3">
-                        <p className="font-semibold">Example 1: Deal for 1,000</p>
+                        <p className="font-semibold">Example 1 (Naira): Deal for ₦1,000</p>
                         <div className="space-y-1.5">
                             <div className="flex justify-between text-muted-foreground">
-                                <span>Deal Amount (Seller receives)</span><span className="font-mono">1,000</span>
+                                <span>Deal Amount (Seller receives)</span><span className="font-mono">₦1,000</span>
                             </div>
                             <div className="flex justify-between text-muted-foreground">
-                                <span>EA Fee (5%)</span><span className="font-mono">50</span>
+                                <span>EN Fee (5%)</span><span className="font-mono">₦50</span>
                             </div>
                             <div className="flex justify-between font-bold border-t pt-1.5">
-                                <span>Buyer Pays Total</span><span className="font-mono">1,050</span>
+                                <span>Buyer Pays Total</span><span className="font-mono">₦1,050</span>
                             </div>
                         </div>
                         <div className="border-t my-2" />
-                        <p className="font-semibold">Example 2: Deal for 10,000</p>
+                        <p className="font-semibold">Example 2 (Naira): Deal for ₦10,000</p>
                         <div className="space-y-1.5">
                             <div className="flex justify-between text-muted-foreground">
-                                <span>Deal Amount (Seller receives)</span><span className="font-mono">10,000</span>
+                                <span>Deal Amount (Seller receives)</span><span className="font-mono">₦10,000</span>
                             </div>
                             <div className="flex justify-between text-muted-foreground">
-                                <span>EA Fee (1%)</span><span className="font-mono">100</span>
+                                <span>EN Fee (1%)</span><span className="font-mono">₦100</span>
                             </div>
                             <div className="flex justify-between font-bold border-t pt-1.5">
-                                <span>Buyer Pays Total</span><span className="font-mono">10,100</span>
+                                <span>Buyer Pays Total</span><span className="font-mono">₦10,100</span>
+                            </div>
+                        </div>
+                        <div className="border-t my-2" />
+                        <p className="font-semibold">Example 3 (Dollar/Crypto): Deal for $5</p>
+                        <div className="space-y-1.5">
+                            <div className="flex justify-between text-muted-foreground">
+                                <span>Deal Amount (Seller receives)</span><span className="font-mono">$5.00</span>
+                            </div>
+                            <div className="flex justify-between text-muted-foreground">
+                                <span>EN Fee (5%)</span><span className="font-mono">$0.25</span>
+                            </div>
+                            <div className="flex justify-between font-bold border-t pt-1.5">
+                                <span>Buyer Pays Total</span><span className="font-mono">$5.25</span>
+                            </div>
+                        </div>
+                        <div className="border-t my-2" />
+                        <p className="font-semibold">Example 4 (Dollar/Crypto): Deal for $10</p>
+                        <div className="space-y-1.5">
+                            <div className="flex justify-between text-muted-foreground">
+                                <span>Deal Amount (Seller receives)</span><span className="font-mono">$10.00</span>
+                            </div>
+                            <div className="flex justify-between text-muted-foreground">
+                                <span>EN Fee (1%)</span><span className="font-mono">$0.10</span>
+                            </div>
+                            <div className="flex justify-between font-bold border-t pt-1.5">
+                                <span>Buyer Pays Total</span><span className="font-mono">$10.10</span>
                             </div>
                         </div>
                     </div>
-                    <Callout type="info" text="The seller always receives the exact quoted amount. The EA fee is always paid on top by the buyer — it's never deducted from the seller's portion. Amounts are in your chosen deal currency." />
+                    <Callout type="info" text="The seller always receives the exact quoted amount. The EN fee is always paid on top by the buyer — it's never deducted from the seller's portion. Amounts are in your chosen deal currency." />
                 </section>
 
                 {/* ─── 7. Making Payment ────────────────────────────────── */}
@@ -235,7 +271,7 @@ export default function HowItWorks() {
                         <StepBadge n={2} label="You'll see the payment section — select your payment method." />
                         <StepBadge n={3} label="Currently supported: Crypto (BTC, USDT, ETH). Paystack, Stripe & PayPal coming soon." />
                         <StepBadge n={4} label="For crypto: copy the wallet address, send the exact amount shown, then upload your transaction proof (screenshot of successful send + TX hash)." />
-                        <StepBadge n={5} label="EA team confirms your payment and moves the transaction to 'Held' status." />
+                        <StepBadge n={5} label="EN team confirms your payment and moves the transaction to 'Held' status." />
                     </div>
                     <Callout type="warning" text="Always send the EXACT amount shown. Short sends or overpays may delay your transaction. Include the TX hash when submitting proof." />
                 </section>
@@ -248,7 +284,7 @@ export default function HowItWorks() {
                         <TipCard icon={FileText} title="Seller Proof" body="Upload proof of delivery — shipping receipt, delivery photo, service completion screenshot, or any evidence the item/service was provided." />
                         <TipCard icon={CheckCircle2} title="Buyer Proof" body="Upload proof of receipt — photo of item received, screenshot of digital file download, or confirmation of service delivery." />
                         <TipCard icon={Star} title="Max file size" body="Proof files can be up to 5MB each. Use clear, readable screenshots or photos." />
-                        <TipCard icon={Lock} title="Why it matters" body="Proof protects both sides. EA uses it to verify disputes. No proof = weak position in a dispute." />
+                        <TipCard icon={Lock} title="Why it matters" body="Proof protects both sides. EN uses it to verify disputes. No proof = weak position in a dispute." />
                     </div>
                 </section>
 
@@ -258,11 +294,11 @@ export default function HowItWorks() {
                     <div className="space-y-3">
                         <StepBadge n={1} label="Buyer confirms successful delivery in their dashboard." />
                         <StepBadge n={2} label="Both parties upload their respective proof." />
-                        <StepBadge n={3} label="EA team reviews all proof — typically within 24–48 hours." />
-                        <StepBadge n={4} label="EA approves and releases funds directly to the seller's payout account." />
+                        <StepBadge n={3} label="EN team reviews all proof — typically within 24–48 hours." />
+                        <StepBadge n={4} label="EN approves and releases funds directly to the seller's payout account." />
                         <StepBadge n={5} label="Both parties receive a notification confirming the release." />
                     </div>
-                    <Callout type="tip" text="Funds are only released after EA manually verifies both buyer and seller proof. This manual check is what makes Escrow Africa secure and scam-proof." />
+                    <Callout type="tip" text="Funds are only released after EN manually verifies both buyer and seller proof. This manual check is what makes Escrow Nigeria secure and scam-proof." />
                 </section>
 
                 {/* ─── 10. Disputes & Refunds ───────────────────────────── */}
@@ -272,7 +308,7 @@ export default function HowItWorks() {
                     <div className="space-y-3">
                         <StepBadge n={1} label="Go to the transaction → click 'File a Complaint'." />
                         <StepBadge n={2} label="Explain exactly what went wrong. Be specific and factual." />
-                        <StepBadge n={3} label="EA team reviews the complaint and all uploaded proof from both sides." />
+                        <StepBadge n={3} label="EN team reviews the complaint and all uploaded proof from both sides." />
                         <StepBadge n={4} label="If the seller is at fault, your money is refunded in full. If the buyer is at fault (e.g. false claim), funds are released to the seller." />
                     </div>
                     <Callout type="warning" text="False disputes are taken seriously. Always be honest — filing a false complaint can result in your account being suspended." />
@@ -284,7 +320,7 @@ export default function HowItWorks() {
                     <div className="grid sm:grid-cols-2 gap-3">
                         <TipCard icon={CreditCard} title="Buyer Dashboard" body="See all transactions you initiated as a buyer. Create new ones, track statuses, make payments, and confirm deliveries." />
                         <TipCard icon={Truck} title="Seller Dashboard" body="See all transactions where you're the seller. Track statuses, upload delivery proof, and monitor fund releases." />
-                        <TipCard icon={MessageSquare} title="In-transaction Chat" body="Every transaction has a built-in chat between buyer and seller. Use it for updates — EA team can also see it during disputes." />
+                        <TipCard icon={MessageSquare} title="In-transaction Chat" body="Every transaction has a built-in chat between buyer and seller. Use it for updates — EN team can also see it during disputes." />
                         <TipCard icon={Eye} title="Transaction Status" body="Statuses: Pending Payment → Held → Pending Delivery → Completed, or Disputed/Refunded/Cancelled." />
                     </div>
                 </section>
@@ -306,7 +342,7 @@ export default function HowItWorks() {
                     <SectionTitle icon={Settings} label="13. Account Settings" />
                     <p className="text-sm text-muted-foreground">Access Settings from the top-right dropdown (desktop) or the mobile menu. You can:</p>
                     <div className="grid sm:grid-cols-2 gap-3">
-                        <TipCard icon={UserPlus} title="Edit your profile" body="Update your full name and phone number anytime. These are used by EA support to identify you." />
+                        <TipCard icon={UserPlus} title="Edit your profile" body="Update your full name and phone number anytime. These are used by EN support to identify you." />
                         <TipCard icon={BadgeCheck} title="View your Unique ID" body="Copy your 8-char ID to share with trading partners for identity verification." />
                         <TipCard icon={MessageSquare} title="Change email" body="Enter a new email address — a confirmation link is sent to the new email before the change takes effect." />
                         <TipCard icon={Lock} title="Change password" body="Set a new password (min 6 characters). You'll get a security notification after the change." />
@@ -323,11 +359,11 @@ export default function HowItWorks() {
                         </div>
                         <div className="flex gap-3 p-3 items-start">
                             <Lock className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                            <div><p className="text-sm font-medium">Never pay outside of EA</p><p className="text-xs text-muted-foreground">If anyone asks you to pay directly to their bank account instead of through EA, it's a scam. Always use EA's payment flow.</p></div>
+                            <div><p className="text-sm font-medium">Never pay outside of EN</p><p className="text-xs text-muted-foreground">If anyone asks you to pay directly to their bank account instead of through EN, it's a scam. Always use EN's payment flow.</p></div>
                         </div>
                         <div className="flex gap-3 p-3 items-start">
                             <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
-                            <div><p className="text-sm font-medium">Use a strong password</p><p className="text-xs text-muted-foreground">At least 8 characters with numbers and symbols. Never share your password with anyone — including EA support staff.</p></div>
+                            <div><p className="text-sm font-medium">Use a strong password</p><p className="text-xs text-muted-foreground">At least 8 characters with numbers and symbols. Never share your password with anyone — including EN support staff.</p></div>
                         </div>
                         <div className="flex gap-3 p-3 items-start">
                             <Eye className="h-4 w-4 text-primary mt-0.5 shrink-0" />
@@ -345,7 +381,7 @@ export default function HowItWorks() {
                     <SectionTitle icon={Headphones} label="15. Need Help or Support?" />
                     <div className="rounded-xl border border-primary/30 bg-primary/5 p-5 space-y-3">
                         <p className="text-sm leading-relaxed text-muted-foreground">
-                            Confused about something? Stuck on a step? Have an issue with a transaction? <strong className="text-foreground">EA support is always here.</strong>
+                            Confused about something? Stuck on a step? Have an issue with a transaction? <strong className="text-foreground">EN support is always here.</strong>
                         </p>
                         <div className="flex items-start gap-3 rounded-lg bg-background border p-4">
                             <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
@@ -354,10 +390,10 @@ export default function HowItWorks() {
                             <div>
                                 <p className="font-semibold text-sm">The Headphone Icon 🎧</p>
                                 <p className="text-sm text-muted-foreground mt-1">
-                                    You'll find a <strong>green headphone button</strong> fixed at the <strong>bottom-right corner of every single page</strong> on Escrow Africa. Click it anytime to:
+                                    You'll find a <strong>green headphone button</strong> fixed at the <strong>bottom-right corner of every single page</strong> on Escrow Nigeria. Click it anytime to:
                                 </p>
                                 <ul className="mt-2 space-y-1 text-sm text-muted-foreground list-disc list-inside">
-                                    <li>Chat with the EA support team</li>
+                                    <li>Chat with the EN support team</li>
                                     <li>Report a problem or suspicious activity</li>
                                     <li>Get help with a stuck transaction</li>
                                     <li>Ask any question about the platform</li>
@@ -374,7 +410,7 @@ export default function HowItWorks() {
                     <HelpCircle className="h-8 w-8 text-primary mx-auto" />
                     <h3 className="font-bold text-lg">Still have questions?</h3>
                     <p className="text-sm text-muted-foreground">
-                        Check our FAQs or tap the <strong>🎧 headphone button</strong> at the bottom-right of this page to speak with the EA team directly.
+                        Check our FAQs or tap the <strong>🎧 headphone button</strong> at the bottom-right of this page to speak with the EN team directly.
                     </p>
                     <button
                         onClick={() => navigate("/#faqs")}

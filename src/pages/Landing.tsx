@@ -48,7 +48,7 @@ export default function Landing() {
     {
       icon: Wallet,
       title: "Buyer Pays",
-      description: "Buyer creates a transaction and makes payment. Funds are securely held by Escrow Africa.",
+      description: "Buyer creates a transaction and makes payment. Funds are securely held by Escrow Nigeria.",
     },
     {
       icon: Package,
@@ -57,8 +57,8 @@ export default function Landing() {
     },
     {
       icon: UserCheck,
-      title: "EA Releases",
-      description: "Once buyer confirms receipt, EA verifies and releases funds to seller.",
+      title: "EN Releases",
+      description: "Once buyer confirms receipt, EN verifies and releases funds to seller.",
     },
   ];
 
@@ -89,12 +89,12 @@ export default function Landing() {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Escrow Africa — Africa's Trusted Escrow Service</title>
+        <title>Escrow Nigeria — Nigeria's Trusted Escrow Service</title>
         <meta
           name="description"
-          content="Buy and sell online without fear. Escrow Africa protects your transactions across Africa by holding funds until both parties are satisfied."
+          content="Buy and sell online without fear. Escrow Nigeria protects your transactions across Nigeria by holding funds until both parties are satisfied."
         />
-        <meta property="og:title" content="Escrow Africa — Africa's Trusted Escrow Service" />
+        <meta property="og:title" content="Escrow Nigeria — Nigeria's Trusted Escrow Service" />
         <meta property="og:description" content="Secure payments for buyers and sellers worldwide." />
         <meta property="og:image" content="/favicon.png" />
       </Helmet>
@@ -107,7 +107,7 @@ export default function Landing() {
           <div className="mx-auto max-w-4xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
               <Shield className="h-4 w-4" />
-              Africa's Trusted Escrow Service
+              Nigeria's Trusted Escrow Service
             </div>
             <h1 className="mb-6 text-4xl font-extrabold tracking-tight md:text-6xl">
               Buy & Sell{" "}
@@ -116,7 +116,7 @@ export default function Landing() {
               </span>
             </h1>
             <p className="mb-10 text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto">
-              Escrow Africa protects your transactions by holding funds until both parties are satisfied.
+              Escrow Nigeria protects your transactions by holding funds until both parties are satisfied.
               No more scams. No more lost money.
             </p>
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -173,7 +173,7 @@ export default function Landing() {
       <section id="how-it-works" className="py-20">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center mb-16">
-            <h2 className="mb-4 text-3xl font-bold md:text-4xl">How Escrow Africa Works</h2>
+            <h2 className="mb-4 text-3xl font-bold md:text-4xl">How Escrow Nigeria Works</h2>
             <p className="text-muted-foreground">
               Simple, secure, and transparent. Complete your transaction in 3 easy steps.
             </p>
@@ -221,7 +221,7 @@ export default function Landing() {
       <section className="bg-muted/30 py-20">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center mb-16">
-            <h2 className="mb-4 text-3xl font-bold md:text-4xl">Why Choose Escrow Africa?</h2>
+            <h2 className="mb-4 text-3xl font-bold md:text-4xl">Why Choose Escrow Nigeria?</h2>
             <p className="text-muted-foreground">
               Built with security and trust at its core for buyers and sellers worldwide.
             </p>
@@ -261,7 +261,7 @@ export default function Landing() {
                 Ready to Trade Securely?
               </h2>
               <p className="mb-8 text-lg opacity-90 max-w-2xl mx-auto">
-                Join thousands of users who trust Escrow Africa for their online transactions.
+                Join thousands of users who trust Escrow Nigeria for their online transactions.
               </p>
               <Button
                 size="lg"

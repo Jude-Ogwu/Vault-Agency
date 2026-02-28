@@ -34,7 +34,7 @@ const roleColors: Record<string, string> = {
 const roleBadge: Record<string, string> = {
     buyer: "Buyer",
     seller: "Seller",
-    admin: "EA",
+    admin: "EN",
 };
 
 export function ChatPanel({ transactionId, role }: ChatPanelProps) {
@@ -208,8 +208,8 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
                 user_id: userId,
                 title: isMuted ? "Reference: Chat Access Restored" : "Reference: Chat Access Suspended",
                 message: isMuted
-                    ? "Your chat privileges for this transaction have been restored by EA."
-                    : "You have been muted in this transaction chat by EA.",
+                    ? "Your chat privileges for this transaction have been restored by EN."
+                    : "You have been muted in this transaction chat by EN.",
                 type: isMuted ? "success" : "warning",
                 link: `/dashboard/transaction/${transactionId}`
             } as any);
@@ -277,7 +277,7 @@ export function ChatPanel({ transactionId, role }: ChatPanelProps) {
         for (const recipient of uniqueRecipients) {
             await supabase.from("notifications").insert({
                 user_id: recipient.id,
-                title: `New Message from ${role === 'admin' ? 'EA' : role}`,
+                title: `New Message from ${role === 'admin' ? 'EN' : role}`,
                 message: content.substring(0, 50) + (content.length > 50 ? "..." : ""),
                 type: "info",
                 link: recipient.link,

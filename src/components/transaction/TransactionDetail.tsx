@@ -43,7 +43,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 
-type PaymentMethod = "paystack" | "crypto" | "stripe" | "paypal";
+type PaymentMethod = "bank_transfer" | "crypto";
 
 const SOCIAL_PLATFORMS = [
   {
@@ -78,7 +78,7 @@ const SOCIAL_PLATFORMS = [
     color: "bg-slate-600 hover:bg-slate-700 text-white",
     icon: "✉️",
     getUrl: (text: string) =>
-      `mailto:?subject=You're invited as a seller on Escrow Africa&body=${encodeURIComponent(text)}`,
+      `mailto:?subject=You're invited as a seller on Escrow Nigeria&body=${encodeURIComponent(text)}`,
   },
 ] as const;
 
@@ -91,10 +91,8 @@ interface PaymentOption {
 }
 
 const paymentMethods: PaymentOption[] = [
-  { id: "paystack", name: "Paystack", icon: CreditCard, active: false, description: "Cards, Bank Transfer, USSD" },
+  { id: "bank_transfer", name: "Bank Transfer", icon: CreditCard, active: true, description: "Naira Bank Transfer" },
   { id: "crypto", name: "Crypto", icon: Bitcoin, active: true, description: "BTC, USDT, ETH" },
-  { id: "stripe", name: "Stripe", icon: Wallet, active: false, description: "International Cards" },
-  { id: "paypal", name: "PayPal", icon: Globe, active: false, description: "PayPal Balance, Cards" },
 ];
 
 interface Transaction {
@@ -169,6 +167,18 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [copiedInvite, setCopiedInvite] = useState(false);
 
+  // Site Settings for Bank
+  const [siteSettings, setSiteSettings] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.from("site_settings").select("*").then(({ data }) => {
+      if (data) {
+        const settings = data.reduce((acc, row) => ({ ...acc, [row.key]: row.value }), {});
+        setSiteSettings(settings);
+      }
+    });
+  }, []);
+
   useEffect(() => {
     if (role !== "buyer" || transaction.status !== "pending_payment") return;
     supabase
@@ -194,7 +204,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
 
   // ─── Fee calculation (single source of truth for this component) ──────────
   // transaction.amount = BASE deal amount (what seller receives)
-  // EA fee is charged TO THE BUYER on top.
+  // EN fee is charged TO THE BUYER on top.
   const feePercent = transaction.amount < 10000 ? 5 : 1;
   const eaFee = Math.round(transaction.amount * feePercent) / 100;
   const buyerTotal = transaction.amount + eaFee; // what buyer actually pays
@@ -222,41 +232,48 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
     }
   };
 
-  // --- Paystack Integration ---
-  const handlePaystackSuccess = useCallback(async (response: PaystackResponse) => {
-    setLoading(true);
-    const { error } = await supabase
-      .from("transactions")
-      .update({
-        status: "held",
-        paid_at: new Date().toISOString(),
-        payment_reference: response.reference,
-      })
-      .eq("id", transaction.id);
-
-    if (error) {
-      toast({ title: "Payment recorded but status update failed", description: "Contact support with ref: " + response.reference, variant: "destructive" });
-    } else {
-      toast({ title: "Payment successful!", description: `${formatAmount(transaction.amount)} secured. Ref: ${response.reference}` });
-      notifyAdmin("payment_confirmed", { payment_reference: response.reference, payment_method: "Paystack" });
-      onUpdate();
+  // --- Bank Transfer Integration ---
+  const handleBankTransferSubmit = useCallback(async () => {
+    if (!cryptoProofFile) {
+      toast({ title: "Receipt required", description: "Please upload your transfer receipt.", variant: "destructive" });
+      return;
     }
-    setLoading(false);
-  }, [transaction.id, transaction.amount]);
+    setLoading(true);
 
-  const handlePaystackClose = useCallback(() => {
-    toast({ title: "Payment cancelled", description: "You closed the payment window." });
-  }, []);
+    try {
+      const fileExt = cryptoProofFile.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage.from("proofs").upload(fileName, cryptoProofFile);
+      if (uploadError) throw uploadError;
 
-  const { initializePayment } = usePaystack({ onSuccess: handlePaystackSuccess, onClose: handlePaystackClose });
+      const { data: { publicUrl } } = supabase.storage.from("proofs").getPublicUrl(fileName);
 
-  const handlePaystackPayment = () => {
-    if (!user?.email) return;
-    const reference = `TL-${transaction.id.slice(0, 8)}-${Date.now()}`;
-    initializePayment(user.email, buyerTotal, reference); // buyer pays base + EA fee
-  };
+      const { error } = await supabase
+        .from("transactions")
+        .update({
+          status: "held",
+          paid_at: new Date().toISOString(),
+          payment_reference: `bank_transfer_${Date.now()}`,
+          proof_url: publicUrl,
+          proof_description: "Bank Transfer Receipt",
+        })
+        .eq("id", transaction.id);
 
-  // --- Crypto Payment ---
+      if (error) throw error;
+
+      toast({ title: "Payment recorded!", description: "Admin will verify your transfer shortly." });
+      notifyAdmin("payment_submitted", { payment_method: "Bank Transfer", proof_url: publicUrl });
+      onUpdate();
+      setShowCryptoPaymentForm(false);
+      setCryptoProofFile(null);
+    } catch (err: any) {
+      toast({ title: "Failed to submit payment", description: err.message || "An error occurred", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  }, [transaction.id, cryptoProofFile, onUpdate, toast]);
+
+  // --- Crypto Integration ---
   const handleCopyAddress = (address: string) => {
     navigator.clipboard.writeText(address);
     setCopiedAddress(true);
@@ -625,12 +642,72 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
               })}
             </div>
 
-            {/* Paystack Payment */}
-            {selectedPayment === "paystack" && (
-              <Button onClick={handlePaystackPayment} className="w-full gradient-hero border-0" disabled={loading}>
-                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CreditCard className="mr-2 h-4 w-4" />}
-                Pay {formatAmount(buyerTotal)} <span className="ml-1 text-xs opacity-75">(incl. {feePercent}% EA fee)</span>
-              </Button>
+            {/* Bank Transfer Payment */}
+            {selectedPayment === "bank_transfer" && (
+              <div className="space-y-4">
+                <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">
+                  <Label className="text-sm font-semibold mb-3 block text-primary">
+                    Transfer {formatAmount(buyerTotal)} <span className="text-xs opacity-75 font-normal">(incl. {feePercent}% EN fee)</span> to:
+                  </Label>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between border-b border-primary/10 pb-2">
+                      <span className="text-muted-foreground">Bank Name:</span>
+                      <span className="font-semibold">{siteSettings?.bankName || "Moniepoint"}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-primary/10 pb-2">
+                      <span className="text-muted-foreground">Account Name:</span>
+                      <span className="font-semibold">{siteSettings?.accountName || "Escrow Nigeria"}</span>
+                    </div>
+                    <div className="flex justify-between items-center pb-1">
+                      <span className="text-muted-foreground">Account No:</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-lg">{siteSettings?.accountNumber || "8144919893"}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 bg-muted hover:bg-muted/80"
+                          onClick={() => {
+                            navigator.clipboard.writeText(siteSettings?.accountNumber || "8144919893");
+                            toast({ title: "Account Number Copied!" });
+                          }}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-4">
+                    ⚠️ Please ensure you transfer exactly <strong>{formatAmount(buyerTotal)}</strong>. <br />
+                    Include your order title in the transfer narration if possible.
+                  </p>
+                </div>
+
+                <div className="space-y-3 rounded-lg border p-4 bg-muted/10">
+                  <Label className="font-semibold">Confirm Payment</Label>
+                  <div className="space-y-2">
+                    <Label className="text-xs">Upload Transfer Receipt <span className="text-destructive">(MANDATORY)</span></Label>
+                    <input
+                      ref={cryptoProofRef} // Reusing crypto proof ref for file dialog
+                      type="file"
+                      accept="image/*,.pdf"
+                      className="hidden"
+                      onChange={(e) => setCryptoProofFile(e.target.files?.[0] || null)}
+                    />
+                    <Button variant="outline" className="w-full bg-background" onClick={() => cryptoProofRef.current?.click()}>
+                      <Upload className="mr-2 h-4 w-4" />
+                      {cryptoProofFile ? cryptoProofFile.name : "Choose Receipt File"}
+                    </Button>
+                  </div>
+                  <Button
+                    onClick={handleBankTransferSubmit}
+                    className="w-full gradient-hero border-0 mt-2"
+                    disabled={loading || !cryptoProofFile}
+                  >
+                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
+                    I've Made Payment
+                  </Button>
+                </div>
+              </div>
             )}
 
             {/* Crypto Payment */}
@@ -934,11 +1011,11 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
           )}
         </div>
 
-        {/* EA Manual Override */}
+        {/* EN Manual Override */}
         <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-3">
           <div className="flex items-center gap-2 text-primary font-medium">
             <Settings className="h-4 w-4" />
-            <h3>EA Override Zone</h3>
+            <h3>EN Override Zone</h3>
           </div>
           <p className="text-xs text-muted-foreground">Force update the transaction status (use with caution).</p>
 
@@ -959,7 +1036,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
           </div>
 
           <div className="space-y-2">
-            <Label>EA Note (Required for override)</Label>
+            <Label>EN Note (Required for override)</Label>
             <Input
               placeholder="Reason for manual update..."
               value={manualNote}
@@ -1081,10 +1158,10 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
             </div>
           )}
 
-          {/* EA Notes */}
+          {/* EN Notes */}
           {transaction.admin_notes && (
             <div className="rounded-lg border border-warning/30 bg-warning/5 p-4">
-              <Label className="text-warning font-semibold">EA Notes</Label>
+              <Label className="text-warning font-semibold">EN Notes</Label>
               <p className="mt-1 text-sm">{transaction.admin_notes}</p>
             </div>
           )}
@@ -1242,7 +1319,7 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
                 key={platform.name}
                 type="button"
                 onClick={() => {
-                  const text = `Hi! You've been invited as a seller on a secure escrow deal on Escrow Africa. Click to view and accept:\n${inviteLink ?? ""}`;
+                  const text = `Hi! You've been invited as a seller on a secure escrow deal on Escrow Nigeria. Click to view and accept:\n${inviteLink ?? ""}`;
                   const url = platform.getUrl(text, inviteLink ?? "");
                   window.open(url, "_blank");
                 }}
@@ -1257,8 +1334,8 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
                 type="button"
                 onClick={() =>
                   inviteLink && navigator.share({
-                    title: "Escrow Africa Invite",
-                    text: `You've been invited as a seller on Escrow Africa. Click to view and accept.`,
+                    title: "Escrow Nigeria Invite",
+                    text: `You've been invited as a seller on Escrow Nigeria. Click to view and accept.`,
                     url: inviteLink,
                   })
                 }

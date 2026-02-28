@@ -72,7 +72,7 @@ const SOCIAL_PLATFORMS = [
     color: "bg-slate-600 hover:bg-slate-700 text-white",
     icon: "✉️",
     getUrl: (text: string) =>
-      `mailto:?subject=You're invited as a seller on Escrow Africa&body=${encodeURIComponent(text)}`,
+      `mailto:?subject=You're invited as a seller on Escrow Nigeria&body=${encodeURIComponent(text)}`,
   },
 ] as const;
 
@@ -80,7 +80,10 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [feeConfig, setFeeConfig] = useState({ defaultPercent: 5, highValuePercent: 1, threshold: 10000 });
+  const [feeConfig, setFeeConfig] = useState({
+    defaultPercent: 5, highValuePercent: 1, threshold: 10000,
+    cryptoDefaultPercent: 5, cryptoHighValuePercent: 1, cryptoThreshold: 8
+  });
   const [selectedCurrency, setSelectedCurrency] = useState(initialData?.currency || DEFAULT_CURRENCY);
   const [showNegotiate, setShowNegotiate] = useState(false);
   const [negotiateMessage, setNegotiateMessage] = useState("");
@@ -99,10 +102,14 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
   // Reverse-calculate base amount from total if editing
   useEffect(() => {
     if (initialData?.amount && feeConfig.defaultPercent) {
-      const total = initialData.amount;
-      let derivedBase = total / (1 + feeConfig.highValuePercent / 100);
-      if (derivedBase < feeConfig.threshold) {
-        derivedBase = total / (1 + feeConfig.defaultPercent / 100);
+      const isUSD = (initialData.currency || DEFAULT_CURRENCY) === "USD";
+      const threshold = isUSD ? feeConfig.cryptoThreshold : feeConfig.threshold;
+      const defaultPercent = isUSD ? feeConfig.cryptoDefaultPercent : feeConfig.defaultPercent;
+      const highValuePercent = isUSD ? feeConfig.cryptoHighValuePercent : feeConfig.highValuePercent;
+
+      let derivedBase = total / (1 + highValuePercent / 100);
+      if (derivedBase < threshold) {
+        derivedBase = total / (1 + defaultPercent / 100);
       }
       setFormData(prev => {
         if (prev.amount === "" || prev.amount === initialData.amount.toString()) {
@@ -119,13 +126,19 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
       const { data } = await supabase
         .from("site_settings")
         .select("key, value")
-        .in("key", ["service_fee_percent", "high_value_fee_percent", "high_value_threshold"]);
+        .in("key", [
+          "service_fee_percent", "high_value_fee_percent", "high_value_threshold",
+          "crypto_service_fee_percent", "crypto_high_value_fee_percent", "crypto_high_value_threshold"
+        ]);
       if (data) {
         const config = { ...feeConfig };
         data.forEach((s) => {
           if (s.key === "service_fee_percent") config.defaultPercent = parseFloat(s.value) || 5;
           if (s.key === "high_value_fee_percent") config.highValuePercent = parseFloat(s.value) || 1;
           if (s.key === "high_value_threshold") config.threshold = parseFloat(s.value) || 10000;
+          if (s.key === "crypto_service_fee_percent") config.cryptoDefaultPercent = parseFloat(s.value) || 5;
+          if (s.key === "crypto_high_value_fee_percent") config.cryptoHighValuePercent = parseFloat(s.value) || 1;
+          if (s.key === "crypto_high_value_threshold") config.cryptoThreshold = parseFloat(s.value) || 8;
         });
         setFeeConfig(config);
       }
@@ -134,7 +147,12 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
   }, []);
 
   const baseAmount = parseFloat(formData.amount) || 0;
-  const activeFeePercent = baseAmount >= feeConfig.threshold ? feeConfig.highValuePercent : feeConfig.defaultPercent;
+  const isUSD = selectedCurrency === "USD";
+  const activeThreshold = isUSD ? feeConfig.cryptoThreshold : feeConfig.threshold;
+  const activeDefaultPercent = isUSD ? feeConfig.cryptoDefaultPercent : feeConfig.defaultPercent;
+  const activeHighValuePercent = isUSD ? feeConfig.cryptoHighValuePercent : feeConfig.highValuePercent;
+
+  const activeFeePercent = baseAmount >= activeThreshold ? activeHighValuePercent : activeDefaultPercent;
   const serviceFee = Math.round(baseAmount * activeFeePercent) / 100;
   const totalAmount = baseAmount + serviceFee;
 
@@ -157,7 +175,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
           },
         },
       });
-      toast({ title: "Negotiation request sent!", description: "EA will contact you soon." });
+      toast({ title: "Negotiation request sent!", description: "EN will contact you soon." });
       setShowNegotiate(false);
       setNegotiateMessage("");
     } catch {
@@ -188,7 +206,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
       deal_title: formData.dealTitle.trim(),
       deal_description: formData.dealDescription.trim() || null,
       // IMPORTANT: Store baseAmount (what seller receives), NOT totalAmount.
-      // The EA fee is paid BY THE BUYER on top. This ensures:
+      // The EN fee is paid BY THE BUYER on top. This ensures:
       //   - Seller gets exactly what they quoted
       //   - Buyer pays = amount + fee at checkout
       //   - No double-fee anywhere
@@ -250,7 +268,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
         variant: "destructive",
       });
     } else {
-      // Notify EA via email
+      // Notify EN via email
       supabase.functions.invoke("notify-transaction", {
         body: {
           event_type: "transaction_created",
@@ -275,7 +293,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
   };
 
   const getShareText = () =>
-    `You've been invited as a seller on Escrow Africa!\n\nTransaction: ${dealTitle}\nAmount: ${fmt(baseAmount)}\n\nClick to accept the invite:\n${generatedInviteUrl}`;
+    `You've been invited as a seller on Escrow Nigeria!\n\nTransaction: ${dealTitle}\nAmount: ${fmt(baseAmount)}\n\nClick to accept the invite:\n${generatedInviteUrl}`;
 
   const handleCopy = async () => {
     if (!generatedInviteUrl) return;
@@ -357,7 +375,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
                   type="button"
                   onClick={() =>
                     navigator.share({
-                      title: "Escrow Africa Invite",
+                      title: "Escrow Nigeria Invite",
                       text: getShareText(),
                       url: generatedInviteUrl,
                     })
@@ -518,7 +536,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
                   {showNegotiate && (
                     <div className="mt-2 space-y-2 rounded-lg border p-3 bg-card">
                       <p className="text-xs text-muted-foreground">
-                        For large transactions, you can negotiate the service fee with our EA.
+                        For large transactions, you can negotiate the service fee with our EN.
                       </p>
                       <Textarea
                         placeholder="Explain your transaction and preferred fee..."
@@ -539,7 +557,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
                         ) : (
                           <MessageSquare className="mr-1 h-3 w-3" />
                         )}
-                        Send to EA
+                        Send to EN
                       </Button>
                     </div>
                   )}
@@ -571,7 +589,7 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               <span className="truncate">
                 {initialData ? "Update Transaction" : "Create Transaction"}
-                {baseAmount > 0 ? ` (${formatNaira(totalAmount)})` : ""}
+                {baseAmount > 0 ? ` (${fmt(totalAmount)})` : ""}
               </span>
             </Button>
           </div>

@@ -355,7 +355,7 @@ export default function Settings() {
                 <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
                     <h3 className="text-sm font-semibold text-destructive mb-1">Account</h3>
                     <p className="text-xs text-muted-foreground mb-3">
-                        Need help with your account? Contact Escrow Africa support through the help widget below.
+                        Need help with your account? Contact Escrow Nigeria support through the help widget below.
                     </p>
                     <p className="text-xs text-muted-foreground">
                         Account ID: <span className="font-mono text-foreground">{user?.id}</span>

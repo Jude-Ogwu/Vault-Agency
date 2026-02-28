@@ -15,7 +15,7 @@ export default function PrivacyPolicy() {
                     <section>
                         <h2 className="text-2xl font-semibold mb-4">1. Introduction</h2>
                         <p>
-                            Escrow Africa ("EA", "we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclosure, and safeguard your information when you visit our website or use our escrow services.
+                            Escrow Nigeria ("EN", "we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclosure, and safeguard your information when you visit our website or use our escrow services.
                         </p>
                     </section>
 

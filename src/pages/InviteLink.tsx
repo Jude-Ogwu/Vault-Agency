@@ -223,7 +223,7 @@ export default function InviteLink() {
                     <div className="text-center">
                         <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
                             <Shield className="h-4 w-4" />
-                            Escrow Africa — Secure Transaction Invite
+                            Escrow Nigeria — Secure Transaction Invite
                         </div>
                         <h1 className="text-2xl font-bold">You've been invited as a Seller</h1>
                         <p className="text-muted-foreground mt-1">
@@ -265,7 +265,7 @@ export default function InviteLink() {
                             {/* Fee breakdown */}
                             <div className="rounded-lg bg-muted/30 px-3 py-2 text-xs text-muted-foreground space-y-1">
                                 <div className="flex justify-between">
-                                    <span>EA service fee ({feeRate * 100}%)</span>
+                                    <span>EN service fee ({feeRate * 100}%)</span>
                                     <span>{formatCurrency(fee, (transaction as any).currency || "NGN")}</span>
                                 </div>
                                 <div className="flex justify-between font-medium text-foreground border-t border-border pt-1">
@@ -273,7 +273,7 @@ export default function InviteLink() {
                                     <span>{formatCurrency(buyerPays, (transaction as any).currency || "NGN")}</span>
                                 </div>
                                 <p className="text-[11px] text-muted-foreground pt-0.5">
-                                    EA fee is paid by the buyer — you receive the full deal amount.
+                                    EN fee is paid by the buyer — you receive the full deal amount.
                                 </p>
                             </div>
 
@@ -304,7 +304,7 @@ export default function InviteLink() {
 
                             <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs text-muted-foreground">
                                 <strong className="text-foreground">How it works:</strong> After you accept, the buyer will pay
-                                into Escrow Africa's secure escrow. Funds are only released to you once the buyer confirms delivery.
+                                into Escrow Nigeria's secure escrow. Funds are only released to you once the buyer confirms delivery.
                             </div>
                         </CardContent>
                     </Card>

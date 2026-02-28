@@ -22,7 +22,7 @@ export default function SuspendedPage() {
                 <h1 className="text-2xl font-bold mb-2">Account Suspended</h1>
 
                 <p className="text-muted-foreground mb-6">
-                    Your account has been suspended by the Escrow Africa administrators.
+                    Your account has been suspended by the Escrow Nigeria administrators.
                     You rarely lose access without a valid reason.
                 </p>
 
@@ -45,7 +45,7 @@ export default function SuspendedPage() {
 
             <div className="mt-8 flex items-center gap-2 text-muted-foreground text-sm">
                 <Shield className="h-4 w-4" />
-                <span>Escrow Africa Security</span>
+                <span>Escrow Nigeria Security</span>
             </div>
         </div>
     );

@@ -1,7 +1,8 @@
 import { Shield, Mail, Phone, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Logo } from "@/components/ui/logo";
 
-const WHATSAPP_LINK = `https://wa.me/2348144919893?text=${encodeURIComponent("Hi Escrow Africa, I need assistance with...")}`;
+const WHATSAPP_LINK = `https://wa.me/2348144919893?text=${encodeURIComponent("Hi Escrow Nigeria, I need assistance with...")}`;
 
 export function Footer() {
   return (
@@ -10,14 +11,9 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-4 text-center">
           {/* Brand */}
           <div className="space-y-4 flex flex-col items-center">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-hero">
-                <Shield className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold text-primary">Escrow Africa</span>
-            </Link>
+            <Logo />
             <p className="text-sm text-muted-foreground">
-              Africa's trusted escrow service for secure online transactions.
+              Nigeria's trusted escrow service for secure online transactions.
             </p>
           </div>
 
@@ -37,7 +33,7 @@ export function Footer() {
             <h4 className="mb-4 text-sm font-semibold">Contact Support</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
-                <a href="mailto:ogwujude872@gmail.com?subject=Escrow Africa Support" className="inline-flex items-center gap-1.5 hover:text-foreground">
+                <a href="mailto:ogwujude872@gmail.com?subject=Escrow Nigeria Support" className="inline-flex items-center gap-1.5 hover:text-foreground">
                   <Mail className="h-3.5 w-3.5" /> ogwujude872@gmail.com
                 </a>
               </li>
@@ -69,8 +65,8 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Escrow Africa. All rights reserved.</p>
-          <p className="mt-1">Proudly serving businesses and consumers across Africa.</p>
+          <p>© {new Date().getFullYear()} Escrow Nigeria. All rights reserved.</p>
+          <p className="mt-1">Proudly serving businesses and consumers across Nigeria.</p>
         </div>
       </div>
     </footer>

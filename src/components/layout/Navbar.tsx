@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { LogOut, User, Menu, X, Store, HelpCircle, LayoutDashboard, Copy, Check, Settings } from "lucide-react";
+import { Logo } from "@/components/ui/logo";
 import { useState, useCallback } from "react";
 import {
   DropdownMenu,
@@ -69,51 +70,7 @@ export function Navbar() {
       <div className="container mx-auto px-6 md:px-12">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5" onClick={() => scrollToSection("top")}>
-            {/* EA Geometric Maze Logo */}
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-hero shrink-0">
-              <svg
-                viewBox="0 0 40 40"
-                className="h-6 w-6"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-label="Escrow Africa logo"
-              >
-                {/* Outer border */}
-                <rect x="1" y="1" width="38" height="38" rx="2" fill="none" stroke="white" strokeWidth="3" />
-
-                {/* Top-left U-channel (opens right) */}
-                <rect x="5" y="5" width="14" height="3" fill="white" />
-                <rect x="5" y="5" width="3" height="13" fill="white" />
-                <rect x="5" y="15" width="9" height="3" fill="white" />
-
-                {/* Top-right U-channel (opens down) */}
-                <rect x="21" y="5" width="14" height="3" fill="white" />
-                <rect x="32" y="5" width="3" height="13" fill="white" />
-                <rect x="24" y="15" width="11" height="3" fill="white" />
-
-                {/* Bottom-left U-channel (opens up) */}
-                <rect x="5" y="22" width="11" height="3" fill="white" />
-                <rect x="5" y="22" width="3" height="13" fill="white" />
-                <rect x="5" y="32" width="14" height="3" fill="white" />
-
-                {/* Bottom-right U-channel (opens left) */}
-                <rect x="24" y="22" width="11" height="3" fill="white" />
-                <rect x="32" y="22" width="3" height="13" fill="white" />
-                <rect x="21" y="32" width="14" height="3" fill="white" />
-
-                {/* Center square */}
-                <rect x="16" y="16" width="8" height="8" fill="white" />
-              </svg>
-            </div>
-            <div className="flex flex-col items-start leading-tight">
-              <span className="text-xl font-bold text-primary tracking-tight">Escrow Africa</span>
-              <span className="flex items-center gap-1 text-[10px] font-semibold text-muted-foreground tracking-[0.2em] uppercase">
-                <span className="w-5 h-[1.5px] bg-muted-foreground/50 inline-block"></span>
-                EA
-                <span className="w-5 h-[1.5px] bg-muted-foreground/50 inline-block"></span>
-              </span>
-            </div>
-          </Link>
+          <Logo onClick={() => scrollToSection("top")} />
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-6 md:flex">
@@ -290,7 +247,7 @@ export function Navbar() {
                   >
                     Seller Dashboard
                   </Link>
-                  {/* Mobile Menu - EA Link */}
+                  {/* Mobile Menu - EN Link */}
                   {isAdmin && (
                     <Link
                       to="/admin"
@@ -298,7 +255,7 @@ export function Navbar() {
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <LayoutDashboard className="h-4 w-4" />
-                      EA Dashboard
+                      EN Dashboard
                     </Link>
                   )}
                   <Link
