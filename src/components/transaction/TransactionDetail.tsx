@@ -267,6 +267,10 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
 
       toast({ title: "Payment recorded!", description: "Admin will verify your transfer shortly." });
       notifyAdmin("payment_submitted", { payment_method: "Bank Transfer", proof_url: publicUrl });
+
+      // Log History
+      await logHistory("payment", `Bank Transfer payment submitted. Waiting for verification.`);
+
       onUpdate();
       setShowCryptoPaymentForm(false);
       setCryptoProofFile(null);
@@ -327,6 +331,10 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
         crypto_tx_hash: cryptoForm.txHash,
         proof_url: proofUrl,
       });
+
+      // Log History
+      await logHistory("payment", `Crypto payment via ${CRYPTO_WALLETS[selectedCrypto].label} submitted. Waiting for verification.`);
+
       setShowCryptoPaymentForm(false);
       setCryptoForm({ senderAddress: "", amountSent: "", txHash: "" });
       setCryptoProofFile(null);
@@ -464,6 +472,9 @@ export function TransactionDetail({ transaction, onBack, onUpdate, role, onEdit,
     } else {
       toast({ title: "Complaint submitted", description: "Admin will review your complaint." });
       notifyAdmin("complaint_filed", { complaint_from: role, complaint_message: complaintMessage.trim() });
+
+      // Log History
+      await logHistory("dispute", `Complaint opened by ${role}. Waiting for admin review.`);
     }
     setShowComplaintForm(false);
     setComplaintMessage("");

@@ -256,6 +256,15 @@ export function CreateTransactionForm({ onSuccess, onCancel, initialData }: Crea
           expires_at: expiresAt,
         });
         await supabase.from("transactions").update({ invite_token: token }).eq("id", transactionId);
+
+        // Log transaction creation to history
+        await supabase.from("transaction_history").insert({
+          transaction_id: transactionId,
+          actor_id: user.id,
+          action_type: "transaction_created",
+          description: `Transaction "${transactionData.deal_title}" created`
+        });
+
         const inviteUrl = `${window.location.origin}/invite/${token}`;
         setGeneratedInviteUrl(inviteUrl);
         setDealTitle(formData.dealTitle.trim());

@@ -1,4 +1,4 @@
-# Vault Agency
+# Escrow Nigeria
 
 Nigeria's trusted escrow service for secure online transactions.
 

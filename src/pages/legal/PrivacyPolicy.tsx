@@ -69,7 +69,7 @@ export default function PrivacyPolicy() {
                         <h2 className="text-2xl font-semibold mb-4">7. Contact Us</h2>
                         <p>
                             If you have questions or comments about this Privacy Policy, please contact us at:<br />
-                            <strong>Email:</strong> privacy@vaultagency.ng
+                            <strong>Email:</strong> privacy@escrownigeria.com
                         </p>
                     </section>
                 </div>

@@ -119,6 +119,14 @@ export default function InviteLink() {
 
             if (linkError) throw linkError;
 
+            // Log history
+            await supabase.from("transaction_history").insert({
+                transaction_id: inviteLink.transaction_id,
+                actor_id: user.id,
+                action_type: "seller_joined",
+                description: `Seller accepted the invite and joined the transaction`
+            });
+
             setState("joined");
             toast({ title: "You've joined!", description: "You are now the seller on this transaction." });
         } catch (err: any) {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bell, Check, Trash2 } from "lucide-react";
+import { Bell, Check } from "lucide-react";
 import {
     Popover,
     PopoverContent,
@@ -10,17 +10,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 
@@ -119,33 +108,6 @@ export function NotificationCenter() {
         }
     };
 
-    const deleteNotification = async (id: string, e: React.MouseEvent) => {
-        e.stopPropagation(); // Prevent triggering item click
-        const { error } = await (supabase.from("notifications") as any)
-            .delete()
-            .eq("id", id);
-
-        if (!error) {
-            setNotifications(prev => prev.filter(n => n.id !== id));
-            // Recalculate unread count if we deleted an unread one
-            const wasUnread = notifications.find(n => n.id === id)?.read === false;
-            if (wasUnread) setUnreadCount(prev => Math.max(0, prev - 1));
-        }
-    };
-
-    const clearAllNotifications = async () => {
-        if (!user) return;
-        const { error } = await (supabase.from("notifications") as any)
-            .delete()
-            .eq("user_id", user.id);
-
-        if (!error) {
-            setNotifications([]);
-            setUnreadCount(0);
-            toast({ title: "Notifications cleared" });
-        }
-    };
-
     if (!user) return null;
 
     return (
@@ -166,29 +128,6 @@ export function NotificationCenter() {
                             <Button variant="ghost" size="sm" onClick={markAllAsRead} className="h-6 text-xs px-2">
                                 <Check className="mr-1 h-3 w-3" /> Mark all read
                             </Button>
-                        )}
-                        {notifications.length > 0 && (
-                            <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" title="Clear all">
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Clear all notifications?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            This action cannot be undone. This will permanently delete all your notifications.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={clearAllNotifications} className="bg-destructive hover:bg-destructive/90">
-                                            Clear All
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
                         )}
                     </div>
                 </div>
@@ -219,14 +158,20 @@ export function NotificationCenter() {
                                         <p className={`text-sm ${!notification.read ? "font-semibold" : ""}`}>
                                             {notification.title}
                                         </p>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive absolute right-2 top-2"
-                                            onClick={(e) => deleteNotification(notification.id, e)}
-                                        >
-                                            <Trash2 className="h-3 w-3" />
-                                        </Button>
+                                        {!notification.read && (
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-primary absolute right-2 top-2"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    markAsRead(notification.id);
+                                                }}
+                                                title="Mark as read"
+                                            >
+                                                <Check className="h-3 w-3" />
+                                            </Button>
+                                        )}
                                     </div>
                                     <p className="text-xs text-muted-foreground">{notification.message}</p>
                                     <span className="text-[10px] text-muted-foreground/50 mt-1">

@@ -37,7 +37,7 @@ export default function SuspendedPage() {
                     <Button variant="outline" onClick={handleSignOut} className="w-full">
                         Sign Out
                     </Button>
-                    <Button variant="link" className="text-xs text-muted-foreground" onClick={() => window.location.href = "mailto:support@vaultagency.ng"}>
+                    <Button variant="link" className="text-xs text-muted-foreground" onClick={() => window.location.href = "mailto:support@escrownigeria.com"}>
                         Contact Support
                     </Button>
                 </div>

@@ -70,6 +70,8 @@ export function HistoryTable({ limit, userId }: { limit?: number; userId?: strin
                 return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Payment</Badge>;
             case "dispute":
                 return <Badge variant="destructive">Dispute</Badge>;
+            case "seller_joined":
+                return <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200">Joined</Badge>;
             default:
                 return <Badge variant="secondary">{type}</Badge>;
         }

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { Shield, Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Logo } from "@/components/ui/logo";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
@@ -72,8 +73,8 @@ export default function ForgotPassword() {
 
                 <Card className="border-0 shadow-escrow-lg">
                     <CardHeader className="text-center pb-2">
-                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl gradient-hero">
-                            <Shield className="h-6 w-6 text-primary-foreground" />
+                        <div className="mx-auto mb-4 flex justify-center">
+                            <Logo showText={false} />
                         </div>
                         <CardTitle className="text-2xl">Forgot Password</CardTitle>
                         <CardDescription>
